@@ -3,7 +3,9 @@
  * - เก็บข้อมูลเป็นไฟล์ JSON ใน Google Drive + สำเนาเป็น Google Sheets (ไว้ให้คนเปิดดู)
  * - สร้างโฟลเดอร์ใบรับรองอัตโนมัติ: CalTrack-ใบรับรอง / ปีงบประมาณ XXXX / กลุ่มงาน
  * - ผู้ชม: อ่านได้อย่างเดียว | ผู้ดูแล: ต้องล็อกอิน (ตรวจที่ฝั่งเซิร์ฟเวอร์)
- * ตั้งค่าผู้ดูแลที่ Project Settings > Script properties:  ADMIN_USERS = {"ชื่อ":"รหัสผ่าน","ชื่อ2":"รหัสผ่าน2"}
+ * ผู้ดูแล: ครั้งแรกเปิดเว็บ CalTrack แล้วตั้งชื่อ+รหัสผ่านผู้ดูแลคนแรกได้เลย จากนั้นเพิ่ม/ลบผู้ดูแลได้ที่หน้าเว็บ
+ * (ยังใช้ Script property ADMIN_USERS = {"ชื่อ":"รหัสผ่าน"} แบบเดิมได้ รหัสที่ตั้งจากหน้าเว็บเก็บแบบเข้ารหัส)
+ * ถ้าต้องการเก็บไฟล์ในโฟลเดอร์ที่สร้างเองใน Drive: เพิ่ม Script property ROOT_ID = รหัสโฟลเดอร์ (ตัวอักษรหลัง /folders/)
  */
 const ROOT_NAME = 'CalTrack-ใบรับรอง';
 
@@ -36,15 +38,29 @@ function sheet_() {
 }
 function tab_(ss, name) { return ss.getSheetByName(name) || ss.insertSheet(name); }
 
+// ---------- ผู้ดูแล ----------
+function users_() { try { return JSON.parse(P_().getProperty('ADMIN_USERS') || '{}') || {}; } catch (e) { return {}; } }
+function saveUsers_(u) { P_().setProperty('ADMIN_USERS', JSON.stringify(u)); }
+function hash_(pass, salt) {
+  const b = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, salt + '|' + pass, Utilities.Charset.UTF_8);
+  return b.map(function (x) { return ('0' + (x & 255).toString(16)).slice(-2); }).join('');
+}
+function mkPass_(pass) { const salt = Utilities.getUuid(); return 'h1$' + salt + '$' + hash_(pass, salt); }
+function check_(stored, pass) {
+  if (typeof stored !== 'string') return false;
+  if (stored.indexOf('h1$') === 0) { const p = stored.split('$'); return p.length === 3 && hash_(pass, p[1]) === p[2]; }
+  return stored === pass; // รหัสแบบเดิมที่พิมพ์ไว้ใน Script properties
+}
+function token_(name) { const t = Utilities.getUuid(); CacheService.getScriptCache().put('t_' + t, name, 21600); return t; }
+function badPass_(p) { return !p || String(p).length < 6 ? 'รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร' : ''; }
+
 // ---------- ล็อกอิน (จำกัดผิดไม่เกิน 5 ครั้งต่อ 10 นาที) ----------
 function login_(name, pass) {
   const c = CacheService.getScriptCache(), k = 'f_' + name, n = +(c.get(k) || 0);
   if (n >= 5) return null;
-  const users = JSON.parse(P_().getProperty('ADMIN_USERS') || '{}');
-  if (name && users[name] !== undefined && users[name] === pass) {
-    const t = Utilities.getUuid();
-    c.put('t_' + t, name, 21600); // อยู่ได้ 6 ชั่วโมง
-    return t;
+  const users = users_();
+  if (name && users[name] !== undefined && check_(users[name], pass)) {
+    return token_(name); // อยู่ได้ 6 ชั่วโมง
   }
   c.put(k, n + 1, 600);
   return null;
@@ -55,7 +71,7 @@ function who_(t) { return t ? CacheService.getScriptCache().get('t_' + t) : null
 function doGet(e) {
   if (e && e.parameter && e.parameter.action === 'get') {
     const rev = +(P_().getProperty('REV') || 0);
-    return out_({ rev: rev, state: rev ? JSON.parse(dataFile_().getBlob().getDataAsString()) : null });
+    return out_({ rev: rev, needSetup: !Object.keys(users_()).length, state: rev ? JSON.parse(dataFile_().getBlob().getDataAsString()) : null });
   }
   return out_({ ok: true });
 }
@@ -69,9 +85,40 @@ function doPost(e) {
       const t = login_(String(b.name || '').trim(), String(b.pass || ''));
       return out_(t ? { ok: true, token: t } : { error: 'auth' });
     }
+    if (b.action === 'setup') { // ตั้งผู้ดูแลคนแรก ทำได้ครั้งเดียวตอนยังไม่มีผู้ดูแลเลย
+      lock.waitLock(20000);
+      const u0 = users_(), nm = String(b.name || '').trim(), bp = badPass_(b.pass);
+      if (Object.keys(u0).length) return out_({ error: 'มีผู้ดูแลแล้ว กรุณาเข้าสู่ระบบ' });
+      if (!nm) return out_({ error: 'กรอกชื่อผู้ใช้' });
+      if (bp) return out_({ error: bp });
+      u0[nm] = mkPass_(String(b.pass)); saveUsers_(u0);
+      return out_({ ok: true, token: token_(nm) });
+    }
     const user = who_(b.token);
     if (!user) return out_({ error: 'auth' });
     lock.waitLock(20000);
+    if (b.action === 'users') return out_({ ok: true, users: Object.keys(users_()), me: user });
+    if (b.action === 'adduser') {
+      const u = users_(), nm = String(b.name || '').trim(), bp = badPass_(b.pass);
+      if (!nm) return out_({ error: 'กรอกชื่อผู้ใช้' });
+      if (u[nm] !== undefined) return out_({ error: 'มีชื่อนี้แล้ว' });
+      if (bp) return out_({ error: bp });
+      u[nm] = mkPass_(String(b.pass)); saveUsers_(u);
+      return out_({ ok: true, users: Object.keys(u) });
+    }
+    if (b.action === 'deluser') {
+      const u = users_(), nm = String(b.name || '');
+      if (nm === user) return out_({ error: 'ลบบัญชีที่กำลังใช้อยู่ไม่ได้' });
+      if (u[nm] === undefined) return out_({ error: 'ไม่พบผู้ใช้นี้' });
+      delete u[nm]; saveUsers_(u);
+      return out_({ ok: true, users: Object.keys(u) });
+    }
+    if (b.action === 'passwd') {
+      const u = users_(), bp = badPass_(b.pass);
+      if (bp) return out_({ error: bp });
+      u[user] = mkPass_(String(b.pass)); saveUsers_(u);
+      return out_({ ok: true });
+    }
     if (b.action === 'save') return out_(save_(b, user));
     if (b.action === 'upload') return out_(upload_(b));
     return out_({ error: 'bad action' });
