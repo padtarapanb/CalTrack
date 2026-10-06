@@ -285,7 +285,15 @@ body:not(.admin) .adm{display:none!important}
     <button class="go" id="bk">ดาวน์โหลดไฟล์สำรอง (.json)</button>
     <label class="go alt" style="display:inline-block;cursor:pointer">กู้คืนจากไฟล์สำรอง<input type="file" id="rf" accept=".json" style="display:none"></label>
     <button class="go alt" id="rs">ล้างข้อมูลทั้งหมด</button> <button class="go alt" id="fp">ซิงก์ขึ้น Google ตอนนี้</button>
-    <p class="lead" style="margin:10px 0 0;font-size:.85rem">ไฟล์ใบรับรอง (PDF/รูป) ที่อัปโหลดไม่รวมในไฟล์สำรอง และเปิดดูไม่ได้หลังรีเฟรช ระบบเก็บเฉพาะชื่อไฟล์ ต้องใช้ที่เก็บไฟล์จริงเมื่อเปิดใช้งานจริง</p>
+    <p class="lead" style="margin:10px 0 0;font-size:.85rem" id="bknote">ไฟล์ใบรับรอง (PDF/รูป) ที่อัปโหลดไม่รวมในไฟล์สำรอง และเปิดดูไม่ได้หลังรีเฟรช ระบบเก็บเฉพาะชื่อไฟล์ ต้องใช้ที่เก็บไฟล์จริงเมื่อเปิดใช้งานจริง</p>
+  </div>
+  <div class="box" id="ubox" style="margin-top:16px;display:none"><h2>3) ผู้ดูแลระบบ</h2>
+    <p class="lead" style="margin:0 0 10px;font-size:.88rem">ผู้ดูแลเข้าสู่ระบบแล้วแก้ไขข้อมูลและอัปโหลดใบรับรองได้ · คนอื่นเปิดเว็บได้แบบดูอย่างเดียว</p>
+    <div id="ulist" style="margin-bottom:12px"></div>
+    <div class="fgrid"><div><label for="un">ชื่อผู้ดูแลที่จะเพิ่ม</label><input id="un" autocomplete="off"></div><div><label for="upw">รหัสผ่าน (อย่างน้อย 6 ตัว)</label><input id="upw" type="password" autocomplete="new-password"></div></div>
+    <p style="margin:0 0 14px"><button class="go" id="uadd">+ เพิ่มผู้ดูแล</button></p>
+    <details class="xbox"><summary>เปลี่ยนรหัสผ่านของฉัน</summary><div class="fgrid"><div><label for="umy">รหัสผ่านใหม่</label><input id="umy" type="password" autocomplete="new-password"></div></div><button class="go alt" id="umyok">บันทึกรหัสผ่านใหม่</button></details>
+    <div class="err" id="uerr" role="alert"></div>
   </div>
 </section>
 
@@ -346,6 +354,10 @@ body:not(.admin) .adm{display:none!important}
 <dialog id="lgd" style="border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:22px;max-width:360px;width:90%"><h2 style="margin:0 0 12px;font-size:1.1rem">เข้าสู่ระบบผู้ดูแล</h2>
   <div class="fgrid" style="grid-template-columns:1fr"><div><label for="ln">ชื่อผู้ใช้</label><input id="ln" autocomplete="username"></div><div><label for="lp">รหัสผ่าน</label><input id="lp" type="password" autocomplete="current-password"></div></div>
   <div class="err" id="le" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="lok">เข้าสู่ระบบ</button> <button class="go alt" id="lc">ยกเลิก</button></p></dialog>
+<dialog id="sud" style="border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:22px;max-width:400px;width:92%"><h2 style="margin:0 0 6px;font-size:1.1rem">ตั้งผู้ดูแลคนแรก</h2>
+  <p class="lead" style="margin:0 0 12px;font-size:.88rem">ยังไม่มีผู้ดูแลในระบบ ตั้งชื่อและรหัสผ่านของคุณได้เลย ทำครั้งเดียว · คนอื่นเพิ่มภายหลังได้ที่เมนู นำเข้า / สำรองข้อมูล</p>
+  <div class="fgrid" style="grid-template-columns:1fr"><div><label for="sn">ชื่อผู้ใช้ (ใช้ตอนเข้าสู่ระบบ)</label><input id="sn" autocomplete="username" placeholder="เช่น ชวิศา"></div><div><label for="sp">รหัสผ่าน (อย่างน้อย 6 ตัว)</label><input id="sp" type="password" autocomplete="new-password"></div><div><label for="sp2">พิมพ์รหัสผ่านอีกครั้ง</label><input id="sp2" type="password" autocomplete="new-password"></div></div>
+  <div class="err" id="se" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="sok">ตั้งเป็นผู้ดูแล</button> <button class="go alt" id="sc">ไว้ทีหลัง</button></p></dialog>
 <datalist id="dlP"></datalist><datalist id="dlV"></datalist><datalist id="dlK"></datalist>
 <div class="toast" id="toast" role="status"></div>
 
@@ -711,7 +723,20 @@ function who(){const w=$('#who');w.innerHTML=!API?'<span>โหมดเคร�
 document.body.classList.toggle('admin',ADMIN);who();$('#fp').style.display=API?'':'none';
 $('#fp').onclick=push;$('#lc').onclick=()=>$('#lgd').close();
 $('#lok').onclick=async()=>{const n=$('#ln').value.trim();$('#le').textContent='';try{const r=await api('login',{name:n,pass:$('#lp').value});if(r.ok){sessionStorage.setItem('caltrack-ses',JSON.stringify({name:n,token:r.token}));location.reload()}else $('#le').textContent='ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง (หรือพยายามเกินกำหนด รอ 10 นาที)'}catch(e){$('#le').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'}};
+// ผู้ดูแลคนแรก + จัดการผู้ดูแลจากหน้าเว็บ
+$('#sc').onclick=()=>$('#sud').close();
+$('#sok').onclick=async()=>{const n=$('#sn').value.trim(),p=$('#sp').value;$('#se').textContent='';
+ if(!n){$('#se').textContent='กรอกชื่อผู้ใช้';return}if(p.length<6){$('#se').textContent='รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร';return}if(p!==$('#sp2').value){$('#se').textContent='รหัสผ่านสองช่องไม่ตรงกัน';return}
+ $('#sok').disabled=true;try{const r=await api('setup',{name:n,pass:p});if(r.ok){sessionStorage.setItem('caltrack-ses',JSON.stringify({name:n,token:r.token}));location.reload()}else{$('#se').textContent=r.error||'ตั้งค่าไม่สำเร็จ';$('#sok').disabled=false}}catch(e){$('#se').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ (ถ้าเพิ่งอัปเดต Code.gs ต้อง Deploy เวอร์ชันใหม่ก่อน)';$('#sok').disabled=false}};
+function urow(us,me){$('#ulist').innerHTML=us.map(u=>`<div class="todo" style="cursor:default"><div><b>${esc(u)}</b>${u===me?' <small style="display:inline">(คุณ)</small>':''}</div>${u===me?'':`<button class="go alt sm" data-ud="${esc(u)}">ลบ</button>`}</div>`).join('')||'<p class="lead">ยังไม่มีผู้ดูแล</p>'}
+async function uload(){if(!(API&&ADMIN))return;$('#ubox').style.display='block';try{const r=await api('users',{token:SES.token});if(r.ok)urow(r.users,r.me);else $('#uerr').textContent=r.error==='auth'?'หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่':'โหลดรายชื่อผู้ดูแลไม่ได้ (ถ้าเพิ่งอัปเดต Code.gs ต้อง Deploy เวอร์ชันใหม่)'}catch(e){$('#uerr').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'}}
+$('#uadd').onclick=async()=>{const n=$('#un').value.trim(),p=$('#upw').value;$('#uerr').textContent='';if(!n||p.length<6){$('#uerr').textContent='กรอกชื่อ และรหัสผ่านอย่างน้อย 6 ตัวอักษร';return}
+ const r=await api('adduser',{token:SES.token,name:n,pass:p});if(r.ok){$('#un').value='';$('#upw').value='';log('เพิ่มผู้ดูแล',n,null,{โดย:SES.name});uload();toast('เพิ่มผู้ดูแล '+n+' แล้ว — แจ้งชื่อและรหัสผ่านให้เจ้าตัว')}else $('#uerr').textContent=r.error||'เพิ่มไม่สำเร็จ'};
+$('#ulist').onclick=async e=>{const b=e.target.closest('[data-ud]');if(!b||!confirm('ลบผู้ดูแล “'+b.dataset.ud+'” ?'))return;const r=await api('deluser',{token:SES.token,name:b.dataset.ud});if(r.ok){log('ลบผู้ดูแล',b.dataset.ud,null,{โดย:SES.name});uload();toast('ลบแล้ว')}else $('#uerr').textContent=r.error||'ลบไม่สำเร็จ'};
+$('#umyok').onclick=async()=>{const p=$('#umy').value;if(p.length<6){$('#uerr').textContent='รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร';return}const r=await api('passwd',{token:SES.token,pass:p});if(r.ok){$('#umy').value='';toast('เปลี่ยนรหัสผ่านแล้ว')}else $('#uerr').textContent=r.error||'เปลี่ยนไม่สำเร็จ'};
+document.querySelector('nav button[data-v=data]').addEventListener('click',uload);
 if(API)fetch(API+'?action=get').then(r=>r.json()).then(r=>{
+ if(r&&r.needSetup&&!ADMIN){$('#sud').showModal();$('#sn').focus()}
  if(r&&r.state&&(r.rev>REV||(!ADMIN&&r.rev!==REV))){localStorage.setItem('caltrack-v1',JSON.stringify({...r.state,rev:r.rev,sample:false}));location.reload()}
  else stat(r&&r.state?'เชื่อมต่อ Google แล้ว':'เชื่อมต่อ Google แล้ว (ยังไม่มีข้อมูลบนเซิร์ฟเวอร์)')}).catch(()=>stat('เชื่อมต่อ Google ไม่ได้ — แสดงข้อมูลในเครื่อง',1));
 
