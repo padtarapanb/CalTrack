@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calibration LINE Alerts – Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f4f1;--panel:#fff;--ink:#1d2320;--mute:#68716c;--line:#dfe3df;--accent:#06c755;--accent-ink:#04431f;--warn:#d9382b;--amber:#c77d00}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121513;--panel:#1b201d;--ink:#eef1ee;--mute:#9aa49e;--line:#2c332f;--accent-ink:#bff0d1}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",system-ui,sans-serif;line-height:1.55;padding:24px 16px 48px}
+.wrap{max-width:1060px;margin:0 auto}
+h1{font-size:1.6rem;margin:0 0 4px;font-weight:700}
+.sub{color:var(--mute);margin:0 0 28px;max-width:60ch}
+.grid{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+/* phone / LINE chat */
+.phone{background:#1c1c1e;color:#f2f2f2;border-radius:34px;border:8px solid #0c0c0d;overflow:hidden;max-width:380px;width:100%;margin:0 auto}
+.bar{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #2e2e30;font-weight:600}
+.bar small{color:#9b9b9f;font-weight:400}
+.chat{padding:12px 12px 16px;height:640px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin}
+.date{align-self:center;background:#2c2c2e;color:#bdbdc2;font-size:.75rem;padding:3px 12px;border-radius:99px}
+.msg{display:flex;gap:8px;align-items:flex-start}
+.av{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:.8rem;font-weight:700;flex:none}
+.who{font-size:.75rem;color:#a7a7ac;margin-bottom:3px}
+.bub{background:#2c2c2e;border-radius:16px;padding:9px 13px;font-size:.92rem;max-width:270px}
+.me{align-self:flex-end}.me .bub{background:#06c755;color:#04230f}
+.car{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scroll-snap-type:x mandatory;max-width:100%}
+.card{flex:none;width:250px;background:#fff;color:#222;border-radius:14px;overflow:hidden;scroll-snap-align:start}
+.card.alert{border-top:0}
+.ch{padding:11px 14px;font-weight:700;color:#fff;font-size:.95rem}
+.ch.p{background:#6f42c1}.ch.r{background:#d9382b}.ch.l{background:#f5f1fb;color:#6f42c1}
+.cb{padding:12px 14px;font-size:.85rem}
+.stat{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid #eee}
+.stat:last-child{border:0}
+.stat b{font-size:1.7rem;line-height:1}
+.n-amber{color:#c77d00}.n-red{color:#d9382b}.n-green{color:#0b8a43}
+.row{padding:6px 0;border-bottom:1px solid #eee}.row:last-child{border:0}
+.row span{display:block;color:#777;font-size:.78rem}
+.btn-line{display:block;text-align:center;padding:10px;color:#6f42c1;font-weight:600;border-top:1px solid #eee;font-size:.88rem;text-decoration:none}
+.time{font-size:.68rem;color:#8e8e93;align-self:flex-end;margin:0 4px}
+.input{display:flex;gap:8px;padding:10px 12px;border-top:1px solid #2e2e30}
+.input div{flex:1;background:#2c2c2e;border-radius:99px;padding:8px 14px;color:#7c7c80;font-size:.85rem}
+/* settings panel */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;padding:13px;background:none;border:0;border-bottom:3px solid transparent;font:inherit;font-weight:600;color:var(--mute);cursor:pointer}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs button:focus-visible,.go:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pane{padding:22px;display:none}.pane.on{display:block}
+.pane h2{font-size:1.05rem;margin:0 0 4px}
+.pane p.h{color:var(--mute);font-size:.88rem;margin:0 0 14px}
+label.f{display:block;font-size:.85rem;font-weight:600;margin:14px 0 5px}
+input[type=text],input[type=password],select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tg{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.tg:last-of-type{border:0}
+.tg small{display:block;color:var(--mute)}
+.sw{appearance:none;width:42px;height:24px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;flex:none;transition:background .15s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s}
+.sw:checked{background:var(--accent)}.sw:checked::after{transform:translateX(18px)}
+.go{margin-top:18px;background:var(--accent);color:#04230f;border:0;border-radius:8px;padding:11px 18px;font:inherit;font-weight:700;cursor:pointer}
+.go.alt{background:none;color:var(--ink);border:1px solid var(--line);margin-left:8px}
+.ok{display:none;margin-top:12px;color:var(--accent-ink);background:color-mix(in srgb,var(--accent) 18%,transparent);padding:8px 12px;border-radius:8px;font-size:.88rem}
+pre{background:#101311;color:#d7ded9;padding:16px;border-radius:10px;overflow-x:auto;font-size:.8rem;line-height:1.5;margin:10px 0}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 4px;font-size:.85rem}
+.flow span{border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.flow i{color:var(--mute);font-style:normal}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>แจ้งเตือนสอบเทียบเครื่องมือผ่าน LINE</h1>
+  <p class="sub">ต้นแบบหน้าจอ: บอตส่งสรุปรายสัปดาห์และแจ้งเตือนเครื่องมือใกล้ครบกำหนดเข้ากลุ่ม LINE ของห้องแล็บ ลองกด “ส่งข้อความทดสอบ” ทางขวาเพื่อดูผลในแชต</p>
+
+  <div class="grid">
+    <!-- LINE chat -->
+    <div class="phone" aria-label="ตัวอย่างแชต LINE">
+      <div class="bar">แล็บ QC – สอบเทียบ (24) <small>กลุ่ม</small></div>
+      <div class="chat" id="chat">
+        <div class="date">จันทร์ 28/9</div>
+        <div class="msg"><div class="av">CB</div><div>
+          <div class="who">Calib Bot</div>
+          <div class="car">
+            <div class="card">
+              <div class="ch p">📊 สรุปสถานะสัปดาห์นี้</div>
+              <div class="cb">
+                <div class="stat"><span>เครื่องมือทั้งหมด</span><b>135</b></div>
+                <div class="stat"><span>ใกล้ครบกำหนด (30 วัน)</span><b class="n-amber">5</b></div>
+                <div class="stat"><span>เกินกำหนด</span><b class="n-red">2</b></div>
+                <div class="stat"><span>ปกติ</span><b class="n-green">128</b></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="ch l">📋 รายละเอียด</div>
+              <div class="cb">
+                <b>เกินกำหนด (2)</b>
+                <div class="row">AB-014 เครื่องชั่ง 4 ตำแหน่ง<span>เกิน 3 วัน · ห้อง Chem 1</span></div>
+                <div class="row">PH-007 pH meter<span>เกิน 1 วัน · ห้อง Micro</span></div>
+                <b style="display:block;margin-top:8px">ใกล้ครบกำหนด (5)</b>
+                <div class="row">TH-021 เทอร์โมมิเตอร์<span>อีก 6 วัน</span></div>
+                <div class="row">PP-032 ไมโครปิเปต<span>อีก 12 วัน</span></div>
+              </div>
+              <a class="btn-line" href="#">เปิดดูทั้งหมดในระบบ</a>
+            </div>
+          </div>
+        </div><span class="time">13:02</span></div>
+
+        <div class="date">พุธ 30/9</div>
+        <div class="msg"><div class="av">CB</div><div>
+          <div class="who">Calib Bot</div>
+          <div class="card">
+            <div class="ch r">⚠️ เครื่องมือเกินกำหนดสอบเทียบ</div>
+            <div class="cb">
+              <b>AB-014 · เครื่องชั่ง 4 ตำแหน่ง</b>
+              <div class="row" style="border:0">ครบกำหนด 27/9/2569<span>ผู้รับผิดชอบ: คุณสมชาย · ห้อง Chem 1</span></div>
+              <div style="color:#d9382b;font-weight:600">ห้ามใช้งานจนกว่าจะสอบเทียบใหม่</div>
+            </div>
+            <a class="btn-line" href="#">ขอสอบเทียบ</a>
+            <a class="btn-line" href="#">ดูประวัติเครื่องมือ</a>
+          </div>
+        </div><span class="time">08:00</span></div>
+      </div>
+      <div class="input"><div>Aa</div></div>
+    </div>
+
+    <!-- settings -->
+    <div class="panel">
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" data-p="p1">ตั้งค่า LINE</button>
+        <button role="tab" aria-selected="false" data-p="p3">ขอ Group ID</button>
+        <button role="tab" aria-selected="false" data-p="p2">โครงสร้างบน Vercel</button>
+      </div>
+
+      <div class="pane on" id="p1" role="tabpanel">
+        <h2>เชื่อมต่อกลุ่ม LINE</h2>
+        <p class="h">สร้าง LINE Official Account แล้วเปิด Messaging API จากนั้นเชิญบอตเข้ากลุ่มของห้องแล็บ</p>
+        <label class="f" for="tok">Channel access token</label>
+        <input type="password" id="tok" value="••••••••••••••••••••" autocomplete="off">
+        <label class="f" for="gid">Group ID</label>
+        <input type="text" id="gid" placeholder="ยังไม่มี? ดูแท็บ “ขอ Group ID”">
+        <div class="two">
+          <div><label class="f" for="hr">เวลาส่งทุกวัน</label>
+            <select id="hr"><option>08:00</option><option>07:00</option><option>09:00</option></select></div>
+          <div><label class="f" for="wd">สรุปรายสัปดาห์</label>
+            <select id="wd"><option>ทุกวันจันทร์</option><option>ทุกวันศุกร์</option></select></div>
+        </div>
+
+        <label class="f" style="margin-top:20px">เมื่อไรให้แจ้งเตือน</label>
+        <div class="tg"><div>ล่วงหน้า 30 / 14 / 7 วัน<small>ก่อนถึงกำหนดสอบเทียบ</small></div><input class="sw" type="checkbox" checked aria-label="แจ้งล่วงหน้า"></div>
+        <div class="tg"><div>เครื่องมือเกินกำหนด<small>ส่งซ้ำทุกวันจนกว่าจะสอบเทียบ</small></div><input class="sw" type="checkbox" checked aria-label="แจ้งเกินกำหนด"></div>
+        <div class="tg"><div>ผลสอบเทียบไม่ผ่าน<small>ส่งทันทีหลังอนุมัติผล</small></div><input class="sw" type="checkbox" checked aria-label="แจ้งไม่ผ่าน"></div>
+        <div class="tg"><div>ใบรับรองใหม่ออกแล้ว<small>ส่งลิงก์ใบรับรองให้ผู้รับผิดชอบ</small></div><input class="sw" type="checkbox" aria-label="แจ้งใบรับรอง"></div>
+
+        <button class="go" id="test">ส่งข้อความทดสอบ</button><button class="go alt" id="save">บันทึกการตั้งค่า</button>
+        <div class="ok" id="ok" role="status"></div>
+      </div>
+
+      <div class="pane" id="p3" role="tabpanel">
+        <h2>ขอ Group ID (เมื่อเชิญบอตเข้ากลุ่มแล้ว)</h2>
+        <p class="h">LINE ไม่แสดง Group ID ในแอป ต้องให้บอตรับ Webhook แล้วตอบกลับ — ทำครั้งเดียว</p>
+        <ol style="padding-left:20px;line-height:1.7;margin:0">
+          <li><b>Vercel → Environment variables</b> ใส่ <code>LINE_CHANNEL_SECRET</code> (LINE Developers → Basic settings) และ <code>LINE_CHANNEL_ACCESS_TOKEN</code> (แท็บ Messaging API → Issue) แล้ว <b>Trigger deploy</b></li>
+          <li><b>LINE Developers → Messaging API</b> → Webhook URL: <code>https://<โดเมน-vercel-ของคุณ>.vercel.app/api/line-webhook</code> → กด <b>Verify</b> → เปิด <b>Use webhook</b></li>
+          <li><b>LINE Official Account Manager → ตั้งค่า → การตอบกลับ</b> ติ๊ก “อนุญาตให้บัญชีเข้าร่วมกลุ่มและห้องแชท” และปิดข้อความตอบกลับอัตโนมัติ</li>
+          <li>ในกลุ่มที่เชิญบอตแล้ว <b>พิมพ์ <code>groupid</code></b> บอตจะตอบ Group ID (ขึ้นต้นด้วย C) — ถ้าไม่ตอบ ให้นำบอตออกแล้วเชิญใหม่ บอตจะตอบเองทันทีที่เข้ากลุ่ม</li>
+          <li>ใส่ค่าที่ได้เป็น <code>LINE_GROUP_ID</code> พร้อม <code>CALTRACK_API</code> (URL ใน config.js) และ <code>TEST_KEY</code> (ตั้งเอง) → deploy ใหม่ → เปิด <code>/api/line-test?key=ค่าTEST_KEY</code> ต้องมีข้อความเข้ากลุ่ม</li>
+        </ol>
+        <p class="h" style="margin-top:12px">สำรอง: ดู Group ID ได้ที่ Vercel → Logs → Functions → line-webhook (บรรทัด “LINE source group …”)</p>
+      </div>
+
+      <div class="pane" id="p2" role="tabpanel">
+        <h2>ทำงานอย่างไรเมื่อ deploy บน Vercel</h2>
+        <p class="h">หน้าเว็บเป็นไฟล์ static ส่วนการแจ้งเตือนใช้ Scheduled Function ที่ทำงานตามเวลา โดย token เก็บใน Environment variables ไม่อยู่ในโค้ด</p>
+        <div class="flow"><span>Scheduled Function (ทุกวัน 08:00)</span><i>→</i><span>อ่านทะเบียนจาก Google (Apps Script)</span><i>→</i><span>LINE Messaging API (push)</span><i>→</i><span>กลุ่ม LINE</span></div>
+        <p class="h" style="margin-top:14px">ไฟล์ในโปรเจกต์ (โฟลเดอร์ <code>api</code>)</p>
+<pre>line-webhook.mjs  รับ Webhook ตอบ Group ID
+notify.mjs        แจ้งเตือนทุกวัน 08:00 (ไทย)
+line-test.mjs     ทดสอบส่งข้อความเข้ากลุ่ม
+
+Environment variables
+LINE_CHANNEL_SECRET
+LINE_CHANNEL_ACCESS_TOKEN
+LINE_GROUP_ID
+CALTRACK_API   (URL Apps Script เดียวกับ config.js)
+SITE_URL       https://<โดเมน-vercel-ของคุณ>.vercel.app
+TEST_KEY</pre>
+        <p class="h">เกินกำหนด แจ้งทุกวัน · ใกล้ครบกำหนด แจ้งเมื่อเหลือ 30/14/7 วัน · วันจันทร์ส่งสรุปรายสัปดาห์ (ปรับในไฟล์ notify.mjs)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+}));
+function note(t){const o=$('#ok');o.textContent=t;o.style.display='block'}
+$('#save').addEventListener('click',()=>note('บันทึกการตั้งค่าแล้ว'));
+$('#test').addEventListener('click',()=>{
+  const c=$('#chat'),t=new Date().toTimeString().slice(0,5);
+  c.insertAdjacentHTML('beforeend',`<div class="msg"><div class="av">CB</div><div><div class="who">Calib Bot</div><div class="bub">✅ ทดสอบการเชื่อมต่อสำเร็จ — บอตส่งข้อความเข้ากลุ่มนี้ได้</div></div><span class="time">${t}</span></div>`);
+  c.scrollTop=c.scrollHeight;note('ส่งข้อความทดสอบแล้ว');
+});
+</script>
+</body>
+</html>
