@@ -126,6 +126,7 @@ body:not(.radm) .radmo{display:none!important}
 .badge{display:inline-block;min-width:20px;padding:0 6px;border-radius:99px;background:var(--bad);color:#fff;font-size:.72rem;line-height:20px;text-align:center;margin-left:6px}.badge:empty{display:none}
 .uhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
 .gtabs{margin:4px 0 14px}.gtabs button{flex:1}
+.unl{display:flex;flex-wrap:wrap;gap:8px}.unl>span{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 6px 4px 12px;font-size:.88rem}.unl>span.off{opacity:.6}.unl>span.off>i{text-decoration:line-through}.unl i{font-style:normal}.unl button{font-size:.8rem}
 .udlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:22px;max-width:560px;width:92%}
 .abar{display:none}body.apage.admin .abar{display:block;background:var(--brand);color:#fff;font-size:.85rem;padding:6px 14px;border-radius:8px;margin:-10px 0 16px}
 </style>
@@ -152,7 +153,7 @@ body:not(.radm) .radmo{display:none!important}
   <div class="who" id="who"></div>
 </aside>
 
-<main><div class="abar">หน้าเจ้าหน้าที่ — เพิ่ม/แก้ไขข้อมูลได้ · การแก้ไขบันทึกขึ้น Google อัตโนมัติ</div>
+<main><div class="abar" id="abar">หน้าเจ้าหน้าที่ — เพิ่ม/แก้ไขข้อมูลได้ · การแก้ไขบันทึกขึ้น Google อัตโนมัติ</div>
 <!-- Dashboard -->
 <section class="view on" id="dash">
   <h1>ภาพรวมการสอบเทียบ</h1><p class="lead" id="asof"></p><div id="demo" class="box" style="display:none;margin-bottom:16px;border-color:var(--soon);color:var(--soon)">กำลังแสดงข้อมูลตัวอย่าง — ไปที่เมนู “นำเข้า / สำรองข้อมูล” เพื่อนำเข้าทะเบียนจริงจากไฟล์ Excel</div>
@@ -295,6 +296,8 @@ body:not(.radm) .radmo{display:none!important}
   <div class="tw"><table class="rtab"><thead><tr><th>ผู้ใช้</th><th>ชื่อ-สกุล</th><th>สิทธิ์</th><th>กลุ่ม / ฝ่าย</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="utb"></tbody></table></div>
   <div class="err" id="uerr" role="alert"></div>
   <p class="lead" style="margin:10px 0 0;font-size:.85rem"><b>ผู้ดูแลระบบ</b> = ทำได้ทุกอย่าง รวมถึงจัดการผู้ใช้ นำเข้า/สำรองข้อมูล · <b>เจ้าหน้าที่</b> = เพิ่ม/แก้ข้อมูลเครื่องมือ แผน ใบรับรอง แบบฟอร์ม · คนที่ไม่ได้เข้าสู่ระบบดูได้อย่างเดียวที่หน้าผู้ชม</p>
+  <div class="box" id="unbox" hidden style="margin-top:16px"><h2>กลุ่มงาน / ฝ่าย</h2><p class="lead" style="font-size:.85rem;margin:0 0 10px">รายชื่อนี้คือตัวเลือกในดรอปดาวน์ตอนสมัครสมาชิก · เพิ่มชื่อที่ยังไม่มี แก้ชื่อ หรือซ่อนชื่อที่เลิกใช้ (ไม่มีการลบ)</p><div id="unl" class="unl"></div>
+   <div class="tools" style="margin-top:10px"><input id="unn" placeholder="ชื่อกลุ่มงาน / ฝ่าย ที่จะเพิ่ม" aria-label="ชื่อกลุ่มงานใหม่"><button class="go sm" id="unadd">+ เพิ่ม</button></div><div class="err" id="unerr" role="alert"></div></div>
   <div class="box" style="margin-top:16px"><h2>สถานะการเชื่อมต่อ</h2><div id="cst"></div></div>
 </section>
 <section class="view" id="data">
@@ -315,6 +318,7 @@ body:not(.radm) .radmo{display:none!important}
     <label class="go alt" style="display:inline-block;cursor:pointer">กู้คืนจากไฟล์สำรอง<input type="file" id="rf" accept=".json" style="display:none"></label>
     <button class="go alt" id="fp">ซิงก์ขึ้น Google ตอนนี้</button>
     <div id="bkst" style="margin:12px 0 0"></div>
+    <div id="hbox" hidden style="margin-top:14px;border-top:1px solid var(--line);padding-top:12px"><b>สำเนาย้อนหลังออนไลน์</b> <span class="lead" style="font-size:.85rem">ระบบเก็บให้อัตโนมัติ · ดาวน์โหลดแล้วใช้ปุ่ม “กู้คืนจากไฟล์สำรอง” เพื่อย้อนกลับ</span><div class="tw" style="margin-top:8px;max-height:280px;overflow:auto"><table><thead><tr><th>เวลา</th><th>รุ่น</th><th>เหตุการณ์</th><th>โดย</th><th>จำนวน</th><th></th></tr></thead><tbody id="htb"></tbody></table></div></div>
     <p class="lead" style="margin:10px 0 0;font-size:.85rem" id="bknote">ไฟล์ใบรับรอง (PDF/รูป) ที่อัปโหลดไม่รวมในไฟล์สำรอง และเปิดดูไม่ได้หลังรีเฟรช ระบบเก็บเฉพาะชื่อไฟล์ ต้องใช้ที่เก็บไฟล์จริงเมื่อเปิดใช้งานจริง</p>
   </div>
   <div class="box radmo dz" style="margin-top:16px"><h2>Danger Zone</h2><p class="lead" style="margin:0 0 10px;font-size:.88rem">ลบข้อมูลทั้งหมดในเครื่องนี้ ย้อนกลับไม่ได้ · เฉพาะผู้ดูแลระบบ · ต้องดูจำนวนที่จะถูกลบและพิมพ์คำยืนยันก่อน</p><button class="go alt" id="rs" style="border-color:var(--bad);color:var(--bad)">ล้างข้อมูลทั้งหมด…</button></div>
@@ -425,7 +429,8 @@ const D=[
 const SAVED=(()=>{try{return JSON.parse(localStorage.getItem('caltrack-v1'))}catch(e){return null}})();
 let SAMPLE=!(SAVED&&SAVED.sample===false);
 const API=(window.CALTRACK_API||'').trim(),APAGE=/\/admin\/?$/.test(location.pathname)||/[?&]admin\b/.test(location.search)||location.hash==='#admin',
- SES=(()=>{try{return JSON.parse(localStorage.getItem('caltrack-ses')||sessionStorage.getItem('caltrack-ses'))}catch(e){return null}})(),ADMIN=APAGE&&(!API||!!(SES&&SES.token&&SES.role)),ROLE=!API?'admin':(SES&&SES.role)||'',
+ SBC=(c=>c&&c.url&&c.key?{url:String(c.url).trim().replace(/\/+$/,''),key:String(c.key).trim()}:null)(window.CALTRACK_SUPABASE),AUTH=!!(API||SBC),SYNC=AUTH,
+ SES=(()=>{try{return JSON.parse(localStorage.getItem('caltrack-ses')||sessionStorage.getItem('caltrack-ses'))}catch(e){return null}})(),ADMIN=APAGE&&(!AUTH||!!(SES&&SES.token&&SES.role)),ROLE=!AUTH?'admin':(SES&&SES.role)||'',
  AHREF=location.protocol==='file:'?location.pathname+'?admin':'/?admin',VHREF=location.protocol==='file:'?location.pathname:'/';
 const sesSet=v=>{try{if(v)localStorage.setItem('caltrack-ses',JSON.stringify(v));else localStorage.removeItem('caltrack-ses');sessionStorage.removeItem('caltrack-ses')}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
@@ -673,7 +678,7 @@ rpl();
 
 // persistence, dashboard, import, backup
 function store(){try{localStorage.setItem('caltrack-v1',JSON.stringify({sample:SAMPLE,rev:REV,D:D.map(({days,s,m,...r})=>r),G:GROUPS,C:C.map(({url,...r})=>r),PL,nid,CO,PS,A:AUD,RC:window.RC||[],FT:window.FT||[],PLD:typeof PLD!=='undefined'?PLD:undefined}))}catch(e){}}
-function persist(){store();if(API&&ADMIN){clearTimeout(sy);sy=setTimeout(push,900)}}
+function persist(){store();if(SYNC&&ADMIN){clearTimeout(sy);sy=setTimeout(push,900)}}
 function dash(){const a=D.filter(i=>i.s!=='out'),bad=a.filter(i=>i.s==='bad').length;
  $('#asof').textContent=`ข้อมูล ณ ${fd(TODAY)} · ปีงบประมาณ ${fy(TODAY)}`;
  $('#kAll').textContent=D.length;$('#kBad').textContent=bad;$('#kSoon').textContent=a.filter(i=>i.s==='soon').length;
@@ -732,7 +737,7 @@ $('#igo').onclick=async()=>{const r=IM&&IM.res;if(!r||!r.items.length){toast('�
    snapshot('ก่อนล้างข้อมูลเพื่อนำเข้า Excel');log('ล้างข้อมูลก่อนนำเข้า','-',cnt(curState()).reduce((o,[k,v])=>(o[k]=v,o),{}),null)}
   D.length=0;C.length=0;PL=[];nid=1;GROUPS.length=0}
  r.items.forEach(it=>{if(D.some(d=>d.id===it.id))return;D.push(mk(it));if(!GROUPS.includes(it.group))GROUPS.push(it.group);if(it.last)C.push({no:(it.cert?it.cert+' ':'ไม่ระบุเลขที่ ')+'('+it.id+')',id:it.id,date:it.last,by:'',res:'ไม่ระบุ',file:null,url:''})});
- SAMPLE=false;log('นำเข้า Excel','-',null,{เครื่อง:r.items.length});store();(API&&ADMIN?push():Promise.resolve()).then(()=>location.reload())};
+ SAMPLE=false;log('นำเข้า Excel','-',null,{เครื่อง:r.items.length});store();(SYNC&&ADMIN?push('นำเข้า Excel'):Promise.resolve()).then(()=>location.reload())};
 function dl(name,txt,type){const a=document.createElement('a');a.href='data:'+type+';charset=utf-8,'+encodeURIComponent(txt);a.download=name;a.click()}
 // ---------- Safety: สำรอง / ยืนยันก่อนลบหรือเขียนทับ ----------
 const LBK='caltrack-lastbk',PREV='caltrack-v1-prev';
@@ -752,7 +757,7 @@ $('#bk').onclick=backupNow;bkst();
 $('#rf').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const r=new FileReader();r.onload=async()=>{let j;try{j=JSON.parse(r.result);if(!Array.isArray(j.D))throw 0}catch(x){toast('ไฟล์สำรองไม่ถูกต้อง');return}
  const a=cnt(curState()),b=cnt(j);if(!SAMPLE&&!await danger({title:'กู้คืนจากไฟล์สำรอง: แทนที่ข้อมูลทั้งหมด',phrase:'กู้คืน',ok:'แทนที่ด้วยไฟล์สำรอง',body:'ข้อมูลในเครื่องนี้จะถูก<b>แทนที่ทั้งหมด</b>ด้วยไฟล์ “'+esc(f.name)+'”'+ctable(a.map((x,i)=>[x[0],x[1],b[i][1]]),['ตอนนี้','ในไฟล์'])+(API?'<p style="margin:6px 0 0">และจะถูกบันทึกขึ้น Google แทนข้อมูลเดิมบนเซิร์ฟเวอร์</p>':'')}))return;
  snapshot('ก่อนกู้คืนจากไฟล์ '+f.name);j.rev=REV;j.sample=false;const lg=Array.isArray(j.A)?j.A:(j.A=[]);lg.push({t:new Date().toISOString(),u:SES&&SES.name||'ผู้ดูแล(เครื่องนี้)',act:'กู้คืนจากไฟล์สำรอง',id:f.name,b:a.reduce((o,[k,v])=>(o[k]=v,o),{}),a:b.reduce((o,[k,v])=>(o[k]=v,o),{})});
- lss('caltrack-v1',JSON.stringify(j));(API&&ADMIN?push():Promise.resolve()).then(()=>location.reload())};r.readAsText(f)};
+ lss('caltrack-v1',JSON.stringify(j));(SYNC&&ADMIN?push('กู้คืนจากไฟล์สำรอง'):Promise.resolve()).then(()=>location.reload())};r.readAsText(f)};
 $('#rs').onclick=async()=>{if(ROLE!=='admin'){toast('เฉพาะผู้ดูแลระบบ');return}const a=cnt(curState());
  if(!await danger({title:'ล้างข้อมูลทั้งหมดในเครื่องนี้',phrase:'ลบทั้งหมด',ok:'ลบทั้งหมด',body:'ข้อมูลต่อไปนี้จะถูกลบออกจากเบราว์เซอร์นี้ และกลับเป็นข้อมูลตัวอย่าง:'+ctable(a)+'<p style="margin:6px 0 0"><b>ย้อนกลับไม่ได้</b> ยกเว้นกู้คืนจากไฟล์สำรอง · ข้อมูลบน Google จะไม่ถูกลบจากปุ่มนี้</p>'}))return;
  snapshot('ก่อนล้างข้อมูลทั้งหมด');localStorage.removeItem('caltrack-v1');location.reload()};
@@ -760,7 +765,8 @@ dash();
 
 // roles, edit, audit, Google sync
 const S=v=>v==null?'–':typeof v==='object'?JSON.stringify(v):v;
-function log(act,id,b,a){AUD.push({t:new Date().toISOString(),u:SES&&SES.name||'ผู้ดูแล(เครื่องนี้)',act,id,b,a});if(AUD.length>2000)AUD.shift()}
+function log(act,id,b,a){AUD.push({t:new Date().toISOString(),u:SES&&SES.name||'ผู้ดูแล(เครื่องนี้)',act,id,b,a});if(AUD.length>2000)AUD.shift();
+ if(SBC&&ADMIN&&/สำรอง|กู้คืน|นำเข้า|ลบข้อมูล|ลบทั้งหมด|ล้าง/.test(act))sb().then(c=>c.rpc('log_event',{p_action:act,p_target:String(id==null?'':id),p_detail:a&&typeof a==='object'?a:null})).catch(()=>{})}
 function raud(){$('#at').innerHTML=[...AUD].reverse().slice(0,300).map(a=>{const ks=[...new Set([...Object.keys(a.b||{}),...Object.keys(a.a||{})])],d=ks.map(k=>`${esc(k)}: ${esc(S(a.b&&a.b[k]))} → ${esc(S(a.a&&a.a[k]))}`).join('<br>');
  return`<tr><td>${new Date(a.t).toLocaleString('th-TH')}</td><td>${esc(a.u)}</td><td>${esc(a.act)}</td><td>${esc(a.id)}</td><td>${d||'–'}</td></tr>`}).join('')||'<tr><td colspan="5">ยังไม่มีรายการ</td></tr>'}
 function diff(o,n){const b={},a={};['name','brand','serial','loc','group','own','own2','scope','cat','vendor','calco','ops','last','due','note'].forEach(k=>{const d=k==='ops'?'ใช้งาน':'',p=o[k]||d,q=n[k]||d;if(p!==q){b[k]=p;a[k]=q}});if(JSON.stringify(o.x||{})!==JSON.stringify(n.x||{})){b['ข้อมูลเพิ่มเติม']='(เดิม)';a['ข้อมูลเพิ่มเติม']='แก้ไขแล้ว'}return[b,a]}
@@ -776,29 +782,79 @@ function saveEdit(a){const k=D.findIndex(i=>i.id===EID),o=D[k],
  D[k]=nw;log('แก้ไขเครื่องมือ',a,b,af);$('#form').classList.remove('on');EID=null;dclose();render(1);toast('บันทึกการแก้ไขแล้ว')}
 function del(id){const o=D.find(i=>i.id===id),why=prompt('ลบ “'+o.name+'” (ลงทะเบียนผิด) — ระบุเหตุผล:');if(!why)return;
  log('ลบเครื่องมือ',id,{...o,เหตุผล:why},null);D.splice(D.indexOf(o),1);PL.forEach(p=>{p.items=p.items.filter(i=>i!==id);p.skip=p.skip.filter(s=>s.id!==id)});dclose();render();toast('ลบแล้ว (เก็บไว้ในประวัติการแก้ไข)')}
-async function api(action,body){const c=new AbortController(),t=setTimeout(()=>c.abort(),30000);try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...body}),signal:c.signal});const x=await r.text();try{return JSON.parse(x)}catch(e){throw new Error('notjson')}}catch(e){throw new Error(e.name==='AbortError'?'timeout':e.message||'net')}finally{clearTimeout(t)}}
+// ---------- Supabase: ระบบสมาชิกใหม่ (ทำงานเมื่อใส่ CALTRACK_SUPABASE ใน config.js) ----------
+let SBP=null,UNITS=null;
+function sb(){if(!SBC)return Promise.reject(new Error('nosb'));if(SBP)return SBP;
+ return SBP=new Promise((ok,no)=>{const go=()=>{try{ok(window.supabase.createClient(SBC.url,SBC.key))}catch(e){SBP=null;no(e)}};if(window.supabase&&window.supabase.createClient)return go();
+  const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';s.onload=go;s.onerror=()=>{SBP=null;no(new Error('net'))};document.head.appendChild(s)})}
+const sbe=e=>{const m=String((e&&e.message)||e||'');return /fetch|network|^net$/i.test(m)?'เชื่อมต่อฐานข้อมูลไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่':/Could not find the (function|table)|schema cache/i.test(m)?'ฐานข้อมูลยังไม่ได้ติดตั้ง (ยังไม่ได้รัน supabase/01_members.sql)':/JWT|Invalid API key|apikey/i.test(m)?'คีย์ Supabase ใน config.js ไม่ถูกต้อง':m}
+async function sbMe(c){const{data:{session}}=await c.auth.getSession();if(!session)return null;const{data,error}=await c.from('profiles').select('*').eq('id',session.user.id).maybeSingle();if(error)throw error;return data}
+const sbU=p=>({id:p.id,name:p.username,full:p.full_name,email:p.email,group:p.unit,role:p.role,status:p.status,created:p.created_at});
+const sbUser=p=>({name:p.username,role:p.role,full:p.full_name});
+const SBA={
+ async login({name,pass}){const c=await sb();let em=String(name||'').trim();
+  if(!em.includes('@')){const{data,error}=await c.rpc('login_email',{p_username:em});if(error)throw error;if(!data)return{ok:false,why:'nouser'};em=data}
+  const{error}=await c.auth.signInWithPassword({email:em,password:pass});
+  if(error)return/invalid login|invalid_credentials/i.test(error.message)?{ok:false,why:'badpass'}:/not confirmed/i.test(error.message)?{ok:false,why:'unconfirmed'}:{ok:false,why:'x',error:sbe(error)};
+  const p=await sbMe(c);if(!p||p.status!=='active'){await c.auth.signOut().catch(()=>{});return{ok:false,why:p?p.status:'noprofile'}}
+  return{ok:true,token:'sb',user:sbUser(p)}},
+ async signup(f){const c=await sb();const{data:av,error:e1}=await c.rpc('username_available',{p_username:f.name});if(e1)throw e1;if(!av)return{ok:false,error:'ชื่อผู้ใช้นี้มีคนใช้แล้ว เลือกชื่ออื่น'};
+  const{data,error}=await c.auth.signUp({email:f.email,password:f.pass,options:{data:{username:f.name.toLowerCase(),full_name:f.full,unit:f.group}}});
+  if(error)return{ok:false,error:/already/i.test(error.message)?'อีเมลนี้สมัครไว้แล้ว — เข้าสู่ระบบ หรือให้ผู้ดูแลระบบตั้งรหัสผ่านใหม่ให้':/Database error/i.test(error.message)?'ชื่อผู้ใช้นี้มีคนใช้แล้ว หรือข้อมูลไม่ถูกต้อง':/rate limit/i.test(error.message)?'สมัครถี่เกินไป รอสักครู่แล้วลองใหม่':sbe(error)};
+  if(!data.session)return{ok:true,confirm:true};
+  const p=await sbMe(c);if(p&&p.status==='active')return{ok:true,first:true,token:'sb',user:sbUser(p)};
+  await c.auth.signOut().catch(()=>{});return{ok:true}},
+ async users(){const c=await sb();const{data,error}=await c.from('profiles').select('*').order('created_at',{ascending:true});if(error)return{ok:false,error:sbe(error)};
+  const me=await sbMe(c);if(!me||me.status!=='active'||me.role!=='admin')return{ok:false,error:'auth'};return{ok:true,users:data.map(sbU),me:me.username}},
+ async setuser(f){const c=await sb(),u=UL.find(x=>x.name===f.name);if(!u)return{ok:false,error:'ไม่พบผู้ใช้'};const up={};
+  if(f.full!=null)up.full_name=f.full;if(f.group!=null)up.unit=f.group;if(f.role)up.role=f.role;if(f.status)up.status=f.status;
+  const{data,error}=await c.from('profiles').update(up).eq('id',u.id).select();if(error)return{ok:false,error:sbe(error)};if(!data||!data.length)return{ok:false,error:'ไม่มีสิทธิ์แก้ไขผู้ใช้นี้'};
+  if(f.pass){const r=await c.rpc('admin_set_password',{p_user:u.id,p_password:f.pass});if(r.error)return{ok:false,error:sbe(r.error)}}return{ok:true}},
+ async adduser(f){const c=await sb();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email||''))return{ok:false,error:'ใส่อีเมลของผู้ใช้ (ใช้เป็นบัญชีเข้าสู่ระบบ)'};if(!/^[A-Za-z0-9._-]{3,30}$/.test(f.name||''))return{ok:false,error:'ชื่อผู้ใช้ใช้ตัวอักษรอังกฤษ ตัวเลข . _ - ยาว 3–30 ตัว'};
+  const{data:av}=await c.rpc('username_available',{p_username:f.name});if(av===false)return{ok:false,error:'ชื่อผู้ใช้นี้มีคนใช้แล้ว'};
+  const t=window.supabase.createClient(SBC.url,SBC.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'caltrack-adduser'}});
+  const{data,error}=await t.auth.signUp({email:f.email,password:f.pass,options:{data:{username:f.name.toLowerCase(),full_name:f.full,unit:f.group}}});
+  if(error)return{ok:false,error:/already/i.test(error.message)?'อีเมลนี้มีบัญชีอยู่แล้ว':sbe(error)};if(!data.user)return{ok:false,error:'สร้างบัญชีไม่สำเร็จ'};
+  const r=await c.from('profiles').update({status:'active',role:f.role||'staff'}).eq('id',data.user.id).select();if(r.error)return{ok:false,error:sbe(r.error)};if(!r.data||!r.data.length)return{ok:false,error:'สร้างบัญชีแล้ว แต่ยังอนุมัติไม่ได้ — ลองกดรีเฟรชแล้วอนุมัติจากรายการ'};return{ok:true}},
+ async deluser({name}){const c=await sb(),u=UL.find(x=>x.name===name);if(!u)return{ok:false,error:'ไม่พบผู้ใช้'};const{error}=await c.rpc('admin_delete_user',{p_user:u.id});return error?{ok:false,error:sbe(error)}:{ok:true}},
+ async save({baseRev,state,note}){const c=await sb();const{data,error}=await c.rpc('save_state',{p_base_rev:baseRev,p_state:state,p_note:note||null});if(error)throw error;return data},
+ async passwd({pass}){const c=await sb();const{error}=await c.auth.updateUser({password:pass});return error?{ok:false,error:/different from the old/i.test(error.message)?'รหัสผ่านใหม่ต้องไม่ซ้ำรหัสเดิม':sbe(error)}:{ok:true}}
+};
+async function dget(){if(SBC){const c=await sb();const{data,error}=await c.rpc('get_state');if(error)throw error;return data||{rev:0,state:null}}const r=await fetch(API+'?action=get');if(!r.ok)throw new Error('http '+r.status);return r.json()}
+const WHERE=SBC?'ออนไลน์':'Google';
+async function sbUnits(){try{const c=await sb();const{data,error}=await c.from('units').select('*').order('sort',{ascending:true}).order('name',{ascending:true});if(error)throw error;UNITS=data;
+  const g=$('#gsg'),v=g.value;g.innerHTML=gopts(v==='__o'?'':v);if(v==='__o')g.value='__o';unrender();return data}catch(e){return null}}
+function unrender(){const b=$('#unbox');if(!b)return;b.hidden=!(SBC&&ADMIN&&ROLE==='admin');if(b.hidden||!UNITS)return;
+ $('#unl').innerHTML=UNITS.map(u=>`<span class="${u.active?'':'off'}"><i>${esc(u.name)}</i> <button class="lnk" data-unr="${u.id}">แก้ชื่อ</button><button class="lnk" data-unh="${u.id}">${u.active?'ซ่อน':'แสดง'}</button></span>`).join('')||'<p>ยังไม่มีรายชื่อ</p>'}
+async function unsave(q,ok){$('#unerr').textContent='';try{const{data,error}=await q;if(error)throw error;if(!data||!data.length)throw new Error('ไม่มีสิทธิ์แก้ไข');toast(ok);await sbUnits()}catch(e){$('#unerr').textContent=/duplicate|unique/i.test(e.message)?'มีชื่อนี้อยู่แล้ว':sbe(e)}}
+async function api(action,body){if(SBC&&SBA[action]){try{return await SBA[action](body||{})}catch(e){const m=(e&&e.message)||'';if(/fetch|network|^net$|load failed/i.test(m))throw new Error('net');return{ok:false,why:'x',error:sbe(e)}}}
+ if(!API)throw new Error('net');const c=new AbortController(),t=setTimeout(()=>c.abort(),30000);try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...body}),signal:c.signal});const x=await r.text();try{return JSON.parse(x)}catch(e){throw new Error('notjson')}}catch(e){throw new Error(e.name==='AbortError'?'timeout':e.message||'net')}finally{clearTimeout(t)}}
 function stat(t,bad){const e=$('#sy');if(e){e.textContent=t;e.style.color=bad?'#ff9a92':'#7fa0ab'}}
-async function push(){try{stat('กำลังบันทึกขึ้น Google…');const r=await api('save',{token:SES.token,baseRev:REV,state:JSON.parse(localStorage.getItem('caltrack-v1'))});
- if(r.error==='conflict'){stat('ข้อมูลขัดแย้ง',1);if(confirm('มีผู้ดูแลคนอื่นแก้ไขข้อมูลไปก่อน ต้องโหลดข้อมูลล่าสุด (การแก้ไขล่าสุดบนเครื่องนี้จะหาย) ตกลงไหม?')){localStorage.removeItem('caltrack-v1');location.reload()}return}
+async function push(note){try{stat('กำลังบันทึก'+WHERE+'…');const r=await api('save',{token:SES.token,baseRev:REV,state:JSON.parse(localStorage.getItem('caltrack-v1')),note});
+ if(r.error==='sample'){stat('ข้อมูลตัวอย่างจะไม่ถูกบันทึกขึ้น'+WHERE,1);return}
+ if(r.error==='conflict'){stat('ข้อมูลขัดแย้ง',1);if(confirm('มีคนอื่นบันทึกข้อมูลไปก่อน ต้องโหลดข้อมูลล่าสุดมาแทน (ข้อมูลในเครื่องนี้จะถูกเก็บเป็นสำเนาไว้ในหน้า นำเข้า/สำรอง) ตกลงไหม?')){snapshot('ก่อนโหลดข้อมูลล่าสุด (บันทึกขัดแย้งกับคนอื่น)');localStorage.removeItem('caltrack-v1');location.reload()}return}
  if(r.error==='auth'){stat('หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่',1);sesSet(null);toast('หมดเวลาเข้าสู่ระบบ (6 ชั่วโมง) — กำลังกลับไปหน้าเข้าสู่ระบบ');setTimeout(()=>location.reload(),1500);return}
- if(r.error)throw 0;REV=r.rev;store();stat('บันทึกขึ้น Google แล้ว')}catch(e){stat('บันทึกขึ้น Google ไม่สำเร็จ ลองใหม่',1)}}
+ if(r.error)throw new Error(r.error);REV=r.rev;try{const j=JSON.parse(localStorage.getItem('caltrack-v1'));j.rev=REV;localStorage.setItem('caltrack-v1',JSON.stringify(j))}catch(e){store()}stat('บันทึก'+WHERE+'แล้ว'+(r.counts?' · เครื่องมือ '+r.counts['เครื่องมือ']+' · ใบรับรอง '+r.counts['ใบรับรอง']:''));return r}catch(e){stat('บันทึก'+WHERE+'ไม่สำเร็จ ลองใหม่'+(e&&e.message&&e.message!=='0'?' ('+e.message+')':''),1)}}
 function who(){const w=$('#who');
  w.innerHTML=!APAGE?`<span>หน้าผู้ชม (ดูอย่างเดียว)</span><a class="wl" href="${AHREF}">ไปหน้าผู้ดูแลระบบ →</a>`
-  :!API?`<span>โหมดเครื่องเดียว · ผู้ดูแล</span><a class="wl" href="${VHREF}">เปิดหน้าผู้ชม</a>`
+  :!AUTH?`<span>โหมดเครื่องเดียว · ผู้ดูแล</span><a class="wl" href="${VHREF}">เปิดหน้าผู้ชม</a>`
   :ADMIN?`<span>${esc(SES.full||SES.name)}<small style="display:block">${ROLE==='admin'?'ผู้ดูแลระบบ':'เจ้าหน้าที่'} · ${esc(SES.name)}</small></span><button id="lg">ออกจากระบบ</button><button id="mypw">เปลี่ยนรหัสผ่าน</button><a class="wl" href="${VHREF}">เปิดหน้าผู้ชม</a>`:'<span>หน้าเจ้าหน้าที่</span>';
- w.insertAdjacentHTML('beforeend','<div id="sy"></div>');const b=$('#lg');if(b)b.onclick=()=>{sesSet(null);location.reload()}}
-document.body.classList.toggle('admin',ADMIN);document.body.classList.toggle('apage',APAGE);document.body.classList.toggle('radm',ADMIN&&ROLE==='admin');who();$('#fp').style.display=API?'':'none';
-$('#fp').onclick=push;
+ w.insertAdjacentHTML('beforeend','<div id="sy"></div>');const b=$('#lg');if(b)b.onclick=async()=>{b.disabled=true;if(SBC)try{await(await sb()).auth.signOut()}catch(e){}sesSet(null);location.reload()}}
+if(!API)$('#abar').textContent=SBC?'หน้าเจ้าหน้าที่ — เพิ่ม/แก้ไขข้อมูลได้ · ตอนนี้ข้อมูลเครื่องมือยังเก็บในเบราว์เซอร์เครื่องนี้ ดาวน์โหลดไฟล์สำรองเป็นระยะ':'หน้าเจ้าหน้าที่ — เพิ่ม/แก้ไขข้อมูลได้ · ข้อมูลอยู่ในเบราว์เซอร์นี้';
+document.body.classList.toggle('admin',ADMIN);document.body.classList.toggle('apage',APAGE);document.body.classList.toggle('radm',ADMIN&&ROLE==='admin');who();$('#fp').style.display=SYNC?'':'none';if(SBC)$('#fp').textContent='อัปโหลดข้อมูลในเครื่องนี้ขึ้นออนไลน์';
+$('#fp').onclick=async()=>{if(SAMPLE){toast('ข้อมูลตอนนี้เป็นข้อมูลตัวอย่าง — นำเข้า Excel หรือกู้คืนจากไฟล์สำรองก่อน');return}
+ const c=cnt(curState());if(!confirm('บันทึกข้อมูลในเครื่องนี้ขึ้น'+WHERE+'\n\n'+c.map(([k,v])=>'• '+k+': '+v).join('\n')+'\n\nตกลงไหม?'))return;
+ const r=await push(REV===0?'อัปโหลดข้อมูลขึ้นออนไลน์ครั้งแรก':'อัปโหลดโดยผู้ดูแล');if(r&&r.ok)alert('บันทึก'+WHERE+'แล้ว (รุ่นที่ '+r.rev+')'+(r.counts?'\n\nตรวจกระทบยอดบนเซิร์ฟเวอร์:\n'+Object.entries(r.counts).map(([k,v])=>'• '+k+': '+v).join('\n'):''));if(SBC)hload()};
 // ผู้ดูแลคนแรก + จัดการผู้ดูแลจากหน้าเว็บ
 // ---------- จัดการผู้ใช้งาน (ผู้ดูแลระบบ) ----------
 const RL={admin:'ผู้ดูแลระบบ',staff:'เจ้าหน้าที่'},STL={pending:'รออนุมัติ',active:'ใช้งาน',disabled:'ระงับ'},STC={pending:'p-soon',active:'p-ok',disabled:'p-bad'};
 let UL=[],UT='all',UME='',UED=null;
-const gopts=sel=>{const L=[...new Set([...GROUPS,...(sel?[sel]:[])])];return'<option value="">— เลือก —</option>'+L.map(g=>`<option ${g===sel?'selected':''}>${esc(g)}</option>`).join('')+'<option value="__o">อื่น ๆ (พิมพ์เอง)</option>'};
+const gopts=sel=>{const L=[...new Set([...(SBC&&UNITS?UNITS.filter(u=>u.active).map(u=>u.name):GROUPS),...(sel?[sel]:[])])];return'<option value="">— เลือก —</option>'+L.map(g=>`<option ${g===sel?'selected':''}>${esc(g)}</option>`).join('')+'<option value="__o">อื่น ๆ (พิมพ์เอง)</option>'};
 const gval=(sel,inp)=>sel.value==='__o'?inp.value.trim():sel.value;
 const gwire=(sel,inp)=>{sel.addEventListener('change',()=>{inp.hidden=sel.value!=='__o';if(!inp.hidden)inp.focus()})};
 $('#gsg').innerHTML=gopts('');gwire($('#gsg'),$('#gsgo'));gwire($('#udg'),$('#udgo'));
 function ubadge(){const n=UL.filter(u=>u.status==='pending').length;$('#upn').textContent=n||'';$('#navpn').textContent=n||''}
-async function uload(){if(!API){$('#utb').innerHTML='<tr><td colspan="6">โหมดเครื่องเดียว: ยังไม่ได้เชื่อม Google จึงไม่มีระบบผู้ใช้</td></tr>';return}
+async function uload(){if(SBC)sbUnits();if(!AUTH){$('#utb').innerHTML='<tr><td colspan="6">โหมดเครื่องเดียว: ยังไม่ได้เชื่อม Google จึงไม่มีระบบผู้ใช้</td></tr>';return}
  $('#uerr').textContent='';try{const r=await api('users',{token:SES.token});if(r.ok){UL=r.users;UME=r.me;urender();ubadge()}else $('#uerr').textContent=r.error==='auth'?'หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่':(r.error||'โหลดรายชื่อไม่ได้')}catch(e){$('#uerr').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'}}
 function urender(){const q=($('#uq').value||'').trim().toLowerCase(),k=(l,n,c)=>`<div class="k ${c||''}"><span>${l}</span><b>${n}</b></div>`;
  $('#ukpi').innerHTML=k('ผู้ใช้ทั้งหมด',UL.length)+k('ผู้ดูแลระบบ',UL.filter(u=>u.role==='admin'&&u.status!=='pending').length)+k('เจ้าหน้าที่',UL.filter(u=>u.role==='staff'&&u.status!=='pending').length)+k('รออนุมัติ',UL.filter(u=>u.status==='pending').length,'soon');
@@ -813,51 +869,68 @@ $('#usr').addEventListener('click',async e=>{const t=e.target.closest('[data-ut]
  else if(d.ux&&confirm('ปฏิเสธและลบคำขอของ “'+d.ux+'” ?')){await run('deluser',{name:d.ux},'ปฏิเสธแล้ว');log('ปฏิเสธผู้สมัคร',d.ux,null,{โดย:SES.name})}
  else if(d.ud&&confirm('ลบบัญชี “'+d.ud+'” ? เข้าสู่ระบบไม่ได้อีก')){await run('deluser',{name:d.ud},'ลบบัญชีแล้ว');log('ลบผู้ใช้',d.ud,null,{โดย:SES.name})}
  else if(d.ue)uedit(UL.find(u=>u.name===d.ue))});
-function uedit(u){UED=u||null;$('#udt').textContent=u?'แก้ไขผู้ใช้ · '+u.name:'เพิ่มผู้ใช้';$('#udn').value=u?u.name:'';$('#udn').readOnly=!!u;$('#udf').value=u?u.full:'';$('#ude').value=u?u.email:'';$('#udg').innerHTML=gopts(u?u.group:'');$('#udgo').hidden=true;$('#udgo').value='';
+function uedit(u){UED=u||null;$('#udt').textContent=u?'แก้ไขผู้ใช้ · '+u.name:'เพิ่มผู้ใช้';$('#udn').value=u?u.name:'';$('#udn').readOnly=!!u;$('#udf').value=u?u.full:'';$('#ude').value=u?u.email:'';$('#ude').readOnly=!!(SBC&&u);$('#udg').innerHTML=gopts(u?u.group:'');$('#udgo').hidden=true;$('#udgo').value='';
  $('#udr').value=u?u.role:'staff';$('#uds').value=u?u.status:'active';$('#uds').disabled=!u;$('#udp').value='';$('#udpl').textContent=u?'ตั้งรหัสผ่านใหม่ (เว้นว่างถ้าไม่เปลี่ยน)':'รหัสผ่าน (อย่างน้อย 6 ตัว) — แจ้งให้เจ้าตัวเปลี่ยนเองภายหลัง';$('#ude2').textContent='';$('#ud').showModal()}
 $('#uaddb').onclick=()=>uedit(null);$('#udc').onclick=()=>$('#ud').close();
 $('#udok').onclick=async()=>{const f={name:$('#udn').value.trim(),full:$('#udf').value.trim(),email:$('#ude').value.trim(),group:gval($('#udg'),$('#udgo')),role:$('#udr').value,status:$('#uds').value,pass:$('#udp').value};$('#ude2').textContent='';
  if(f.pass&&f.pass.length<6){$('#ude2').textContent='รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร';return}if(!UED&&!f.pass){$('#ude2').textContent='ตั้งรหัสผ่านให้ผู้ใช้ใหม่';return}
  const r=await api(UED?'setuser':'adduser',{token:SES.token,...f});if(r.ok){$('#ud').close();log(UED?'แก้ไขผู้ใช้':'เพิ่มผู้ใช้',f.name,null,{สิทธิ์:RL[f.role],สถานะ:STL[f.status],โดย:SES.name});toast('บันทึกแล้ว');uload()}else $('#ude2').textContent=r.error||'บันทึกไม่สำเร็จ'};
 document.querySelector('nav button[data-v=usr]').addEventListener('click',()=>{uload();cstat()});
-if(APAGE&&ADMIN&&ROLE==='admin'&&API)uload();
+if(APAGE&&ADMIN&&ROLE==='admin'&&AUTH)uload();
+async function hload(){if(!(SBC&&ADMIN&&ROLE==='admin'))return;$('#hbox').hidden=false;try{const c=await sb();const{data,error}=await c.rpc('list_history');if(error)throw error;
+ $('#htb').innerHTML=(data||[]).map(h=>`<tr><td>${esc(new Date(h.at).toLocaleString('th-TH'))}</td><td>${h.rev}</td><td>${esc(h.note||'')}</td><td>${esc(h.by||'-')}</td><td>${h.counts?'เครื่องมือ '+h.counts['เครื่องมือ']+' · ใบรับรอง '+h.counts['ใบรับรอง']:''}</td><td><button class="go alt sm" data-hid="${h.id}" data-hrev="${h.rev}">ดาวน์โหลด</button></td></tr>`).join('')||'<tr><td colspan="6">ยังไม่มีสำเนา</td></tr>'}catch(e){$('#htb').innerHTML='<tr><td colspan="6">'+esc(sbe(e))+'</td></tr>'}}
+if(SBC){$('#htb').onclick=async e=>{const b=e.target.closest('[data-hid]');if(!b)return;const c=await sb();const{data,error}=await c.rpc('get_history',{p_id:+b.dataset.hid});if(error){toast(sbe(error));return}dl('caltrack-online-rev'+b.dataset.hrev+'.json',JSON.stringify({...data,rev:0}),'application/json')};
+ document.querySelector('nav button[data-v=data]').addEventListener('click',hload)}
+if(SBC){$('#unadd').onclick=async()=>{const n=$('#unn').value.trim();if(!n){$('#unerr').textContent='พิมพ์ชื่อกลุ่มงาน / ฝ่าย';return}const c=await sb();await unsave(c.from('units').insert({name:n,sort:100+(UNITS||[]).length}).select(),'เพิ่ม “'+n+'” แล้ว');$('#unn').value=''};
+ $('#unl').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const u=(UNITS||[]).find(x=>String(x.id)===(b.dataset.unr||b.dataset.unh));if(!u)return;const c=await sb();
+  if(b.dataset.unh)return unsave(c.from('units').update({active:!u.active}).eq('id',u.id).select(),(u.active?'ซ่อน':'แสดง')+' “'+u.name+'” แล้ว');
+  const n=(prompt('แก้ชื่อ “'+u.name+'” เป็น:',u.name)||'').trim();if(n&&n!==u.name)unsave(c.from('units').update({name:n}).eq('id',u.id).select(),'แก้ชื่อแล้ว (ผู้ใช้เดิมที่เลือกชื่อเก่ายังแสดงชื่อเก่า)')};
+ if(APAGE&&ADMIN)sb().then(async c=>{const p=await sbMe(c);
+  if(!p||p.status!=='active'){await c.auth.signOut().catch(()=>{});sesSet(null);toast(p?'บัญชีนี้ถูกระงับหรือรออนุมัติ':'หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่');setTimeout(()=>location.reload(),1500);return}
+  if(p.role!==SES.role||p.username!==SES.name||p.full_name!==SES.full){sesSet({name:p.username,token:'sb',role:p.role,full:p.full_name});location.reload();return}
+  stat('เชื่อมต่อระบบสมาชิกแล้ว')}).catch(()=>stat('เชื่อมต่อระบบสมาชิกไม่ได้ — ใช้งานในเครื่องต่อได้',1))}
 // เปลี่ยนรหัสผ่านของตัวเอง
 document.addEventListener('click',e=>{if(e.target.id==='mypw'){$('#mp1').value='';$('#mp2').value='';$('#mpe').textContent='';$('#mpd').showModal()}});
 $('#mpc').onclick=()=>$('#mpd').close();
 $('#mpok').onclick=async()=>{const a=$('#mp1').value;if(a.length<6){$('#mpe').textContent='รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร';return}if(a!==$('#mp2').value){$('#mpe').textContent='รหัสผ่านสองช่องไม่ตรงกัน';return}
- if(!API){$('#mpe').textContent='โหมดเครื่องเดียวไม่มีรหัสผ่าน';return}const r=await api('passwd',{token:SES.token,pass:a});if(r.ok){$('#mpd').close();toast('เปลี่ยนรหัสผ่านแล้ว')}else $('#mpe').textContent=r.error||'เปลี่ยนไม่สำเร็จ'};
-function cstat(){const e=$('#cst');if(!API){e.innerHTML='<p>โหมดเครื่องเดียว: ข้อมูลอยู่ในเบราว์เซอร์นี้เท่านั้น (ยังไม่ได้ใส่ลิงก์ Apps Script ใน config.js)</p>';return}
+ if(!AUTH){$('#mpe').textContent='โหมดเครื่องเดียวไม่มีรหัสผ่าน';return}const r=await api('passwd',{token:SES.token,pass:a});if(r.ok){$('#mpd').close();toast('เปลี่ยนรหัสผ่านแล้ว')}else $('#mpe').textContent=r.error||'เปลี่ยนไม่สำเร็จ'};
+function cstat(){const e=$('#cst');if(SBC){e.innerHTML=`<dl><div><dt>ระบบสมาชิก</dt><dd>Supabase · ${esc(SBC.url.replace(/^https?:\/\//,''))}</dd></div><div><dt>ผู้ใช้ในระบบ</dt><dd>${UL.length} คน (รออนุมัติ ${UL.filter(u=>u.status==='pending').length})</dd></div><div><dt>ข้อมูลเครื่องมือ</dt><dd id="cstd">กำลังตรวจ…</dd></div></dl>`;dget().then(r=>{const n=r.state&&Array.isArray(r.state.D)?r.state.D.length:0;$('#cstd').innerHTML=r.rev?`ออนไลน์ · รุ่นที่ ${r.rev} · เครื่องมือ ${n} รายการ<br><small>บันทึกล่าสุด ${esc(new Date(r.savedAt).toLocaleString('th-TH'))} โดย ${esc(r.by||'-')}</small>`:'ยังไม่มีข้อมูลออนไลน์'}).catch(e=>$('#cstd').textContent='ตรวจไม่ได้ ('+sbe(e)+')');return}
+ if(!API){e.innerHTML='<p>โหมดเครื่องเดียว: ข้อมูลอยู่ในเบราว์เซอร์นี้เท่านั้น (ยังไม่ได้ใส่ลิงก์ Apps Script ใน config.js)</p>';return}
  e.innerHTML='<p>กำลังตรวจ…</p>';fetch(API+'?action=get').then(r=>r.json()).then(r=>{e.innerHTML=`<dl><div><dt>Google</dt><dd>เชื่อมต่อแล้ว</dd></div><div><dt>โค้ด Apps Script</dt><dd>${r.ver>=3?'เวอร์ชันล่าสุด':'<span style="color:var(--bad)">เวอร์ชันเก่า — ต้อง Deploy ใหม่</span>'}</dd></div><div><dt>ข้อมูลบน Drive</dt><dd>${r.rev?'บันทึกแล้ว '+r.rev+' ครั้ง':'ยังไม่มี — กด “ซิงก์ขึ้น Google ตอนนี้” ในหน้านำเข้า/สำรอง'}</dd></div></dl>`}).catch(()=>e.innerHTML='<p style="color:var(--bad)">เชื่อมต่อ Google ไม่ได้</p>')}
 
 // ---------- ประตูหน้าเจ้าหน้าที่: เข้าสู่ระบบ / สมัครสมาชิก ----------
-const GW={nouser:'ไม่มีชื่อผู้ใช้นี้ — ตรวจตัวสะกด หรือสมัครสมาชิกก่อน',badpass:'รหัสผ่านไม่ถูกต้อง',locked:'กรอกผิดหลายครั้ง ระบบล็อกชื่อนี้ไว้ 10 นาที',nousers:'ยังไม่มีผู้ใช้ในระบบ — สมัครสมาชิกได้เลย คนแรกจะเป็นผู้ดูแลระบบ',pending:'บัญชีนี้รอผู้ดูแลระบบอนุมัติ',disabled:'บัญชีนี้ถูกระงับ — ติดต่อผู้ดูแลระบบ'};
+const GW={nouser:'ไม่มีชื่อผู้ใช้นี้ — ตรวจตัวสะกด หรือสมัครสมาชิกก่อน',badpass:'รหัสผ่านไม่ถูกต้อง',locked:'กรอกผิดหลายครั้ง ระบบล็อกชื่อนี้ไว้ 10 นาที',nousers:'ยังไม่มีผู้ใช้ในระบบ — สมัครสมาชิกได้เลย คนแรกจะเป็นผู้ดูแลระบบ',pending:'บัญชีนี้รอผู้ดูแลระบบอนุมัติ',disabled:'บัญชีนี้ถูกระงับ — ติดต่อผู้ดูแลระบบ',unconfirmed:'บัญชีนี้ยังไม่ได้ยืนยันอีเมล — แจ้งผู้ดูแลระบบ',noprofile:'บัญชีนี้ไม่มีข้อมูลสมาชิก — แจ้งผู้ดูแลระบบ'};
 function gtab(m){document.querySelectorAll('#gate .gtabs [data-gt]').forEach(b=>b.setAttribute('aria-selected',b.dataset.gt===m));$('#gLogin').hidden=m!=='login';$('#gSign').hidden=m!=='sign';$('#gDone').hidden=true;const f=$(m==='sign'?'#gsn':'#gln');if(f)f.focus()}
 function gstat(t,bad){$('#gst').textContent=t;$('#gst').className='gst'+(bad?' bad':'')}
 $('#gate').addEventListener('click',e=>{const b=e.target.closest('[data-gt]');if(b)gtab(b.dataset.gt)});
-$('#gview').href=VHREF;$('#gbk').onclick=()=>{backupNow();const c=cnt(curState());$('#gbks').textContent='✓ ดาวน์โหลดแล้ว ('+c[0][1]+' เครื่อง, '+c[1][1]+' ใบรับรอง'+(SAMPLE?' — เป็นข้อมูลตัวอย่าง ไม่ใช่ข้อมูลจริง':'')+')'};if(API)$('#dlead').textContent='ข้อมูลหลักเก็บใน Google Drive (ซิงก์อัตโนมัติเมื่อแก้ไข) และมีสำเนาในเบราว์เซอร์นี้ · ดาวน์โหลดไฟล์สำรองเก็บไว้เป็นระยะ';
+$('#gview').href=VHREF;$('#gbk').onclick=()=>{backupNow();const c=cnt(curState());$('#gbks').textContent='✓ ดาวน์โหลดแล้ว ('+c[0][1]+' เครื่อง, '+c[1][1]+' ใบรับรอง'+(SAMPLE?' — เป็นข้อมูลตัวอย่าง ไม่ใช่ข้อมูลจริง':'')+')'};if(SBC)$('#dlead').textContent='ข้อมูลหลักเก็บออนไลน์ (Supabase) บันทึกอัตโนมัติเมื่อแก้ไข และมีสำเนาในเบราว์เซอร์นี้ · ระบบเก็บสำเนาย้อนหลังให้อัตโนมัติ และควรดาวน์โหลดไฟล์สำรองเก็บไว้เป็นระยะ';else if(API)$('#dlead').textContent='ข้อมูลหลักเก็บใน Google Drive (ซิงก์อัตโนมัติเมื่อแก้ไข) และมีสำเนาในเบราว์เซอร์นี้ · ดาวน์โหลดไฟล์สำรองเก็บไว้เป็นระยะ';
 if(SES&&!SES.role)sesSet(null);
 let GOLD=false,GDOWN=false;const GNR='ระบบยังไม่พร้อมใช้งาน กรุณาแจ้งผู้ดูแลระบบ (ดู “รายละเอียดสำหรับผู้ดูแลระบบ” ด้านล่าง)';
 function gdiag(html){$('#gdx').hidden=false;$('#gdxb').innerHTML=html}
 const GFIX=`<ol style="margin:6px 0 0;padding-left:18px"><li>เปิด script.google.com → โครงการ CalTrack → ปุ่ม <b>Deploy</b> → <b>Manage deployments</b></li><li>ดูว่ามีรายการที่ใช้งานอยู่ (Active) และ <b>Who has access = Anyone (ทุกคน)</b></li><li>คัดลอก <b>Web app URL</b> ในหน้านั้น เทียบกับลิงก์ใน <code>config.js</code> บน GitHub — ถ้าไม่ตรง ให้วางลิงก์ใหม่ใน config.js</li><li>ถ้าเพิ่งวาง Code.gs ใหม่: กดรูปดินสอ → Version = <b>New version</b> → Deploy</li></ol>`;
-if(APAGE&&API&&!ADMIN){$('#gate').hidden=false;document.body.classList.add('gated');gtab('login');
+if(APAGE&&AUTH&&!ADMIN&&SBC){$('#gate').hidden=false;document.body.classList.add('gated');gtab('login');$('label[for=gln]').textContent='ชื่อผู้ใช้ หรืออีเมล';sbUnits();
+ sb().then(c=>c.rpc('has_users')).then(({data,error})=>{if(error)throw error;
+  if(!data){gstat('ยังไม่มีผู้ใช้ในระบบ · คนแรกที่สมัครจะได้สิทธิ์ผู้ดูแลระบบทันที');$('#gfirst').textContent=' · คุณเป็นคนแรก จะได้สิทธิ์ผู้ดูแลระบบทันที';gtab('sign')}
+ }).catch(e=>{GDOWN=true;gstat('ตอนนี้ยังเชื่อมต่อฐานข้อมูลสมาชิกไม่ได้ จึงยังสมัครหรือเข้าสู่ระบบไม่ได้',1);gdiag('เรียก Supabase ไม่สำเร็จ ('+esc(e.message||'error')+')<ol style="margin:6px 0 0;padding-left:18px"><li>ตรวจ <code>url</code> และ <code>key</code> ใน <code>config.js</code> ว่าคัดลอกมาครบ</li><li>ตรวจว่าได้รันไฟล์ <code>supabase/01_members.sql</code> ใน SQL Editor แล้ว</li><li>ถ้าไม่ได้เปิดโปรเจกต์นานกว่า 7 วัน โปรเจกต์ฟรีจะหยุดพัก → เข้า supabase.com กด Restore project</li></ol>')})}
+else if(APAGE&&API&&!ADMIN){$('#gate').hidden=false;document.body.classList.add('gated');gtab('login');
  fetch(API+'?action=get').then(r=>{if(!r.ok)throw new Error('http '+r.status);return r.json()}).then(r=>{
   if(!(r.ver>=3)){GOLD=true;gdiag('เซิร์ฟเวอร์ Google ตอบกลับแล้ว แต่ยังรันโค้ดเวอร์ชันเก่า (ยังไม่มีระบบสมัครสมาชิก) — ต้องวาง Code.gs ใหม่และ Deploy เป็น New version'+GFIX);return}
   if(r.needSetup){gstat('ยังไม่มีผู้ใช้ในระบบ · คนแรกที่สมัครจะได้สิทธิ์ผู้ดูแลระบบทันที');$('#gfirst').textContent=' · คุณเป็นคนแรก จะได้สิทธิ์ผู้ดูแลระบบทันที';gtab('sign')}
  }).catch(e=>{GDOWN=true;gstat('ตอนนี้ยังเชื่อมต่อเซิร์ฟเวอร์ไม่ได้ จึงยังสมัครหรือเข้าสู่ระบบไม่ได้',1);gdiag('เว็บเรียกลิงก์ Apps Script ใน config.js แล้วไม่ได้คำตอบที่ถูกต้อง ('+esc(e.message||'error')+') — มักเกิดจากการ Deploy ถูกลบ/เปลี่ยนลิงก์ หรือสิทธิ์ไม่ใช่ “Anyone”'+GFIX)})}
 const gbusy=(b,on,t)=>{b.disabled=on;if(on){b.dataset.t=b.textContent;b.textContent=t}else if(b.dataset.t)b.textContent=b.dataset.t};
 const gerr=e=>e.message==='timeout'?'เซิร์ฟเวอร์ไม่ตอบภายใน 30 วินาที ลองใหม่อีกครั้ง':GDOWN||e.message==='notjson'?GNR:'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่';
-const gin=(r,n)=>{sesSet({name:n,token:r.token,role:r.user.role,full:r.user.full});location.reload()};
+const gin=(r,n)=>{sesSet({name:r.user.name||n,token:r.token,role:r.user.role,full:r.user.full});location.reload()};
 $('#glok').onclick=async()=>{const n=$('#gln').value.trim(),p=$('#glp').value;$('#gle').textContent='';if(!n||!p){$('#gle').textContent='กรอกชื่อผู้ใช้และรหัสผ่าน';return}
- gbusy($('#glok'),1,'กำลังเข้าสู่ระบบ…');try{const r=await api('login',{name:n,pass:p});if(r.ok)return gin(r,n);$('#gle').textContent=GOLD?GNR:GW[r.why]||'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';if(r.why==='nousers')gtab('sign')}catch(e){$('#gle').textContent=gerr(e)}gbusy($('#glok'),0)};
+ gbusy($('#glok'),1,'กำลังเข้าสู่ระบบ…');try{const r=await api('login',{name:n,pass:p});if(r.ok)return gin(r,n);$('#gle').textContent=GOLD?GNR:GW[r.why]||r.error||'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';if(r.why==='nousers')gtab('sign')}catch(e){$('#gle').textContent=gerr(e)}gbusy($('#glok'),0)};
 $('#glp').onkeydown=e=>{if(e.key==='Enter')$('#glok').click()};
 $('#gsok').onclick=async()=>{const f={name:$('#gsn').value.trim(),full:$('#gsf').value.trim(),email:$('#gse2').value.trim(),group:gval($('#gsg'),$('#gsgo')),pass:$('#gsp').value},er=t=>$('#gse').textContent=t;er('');
  if(!/^[A-Za-z0-9._-]{3,30}$/.test(f.name))return er('ชื่อผู้ใช้ใช้ตัวอักษรอังกฤษ ตัวเลข . _ - ยาว 3–30 ตัว ไม่มีช่องว่าง');if(!f.full)return er('กรอกชื่อ-สกุล');
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))return er('อีเมลไม่ถูกต้อง');if(f.pass.length<6)return er('รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร');if(f.pass!==$('#gsp2').value)return er('รหัสผ่านสองช่องไม่ตรงกัน');
- gbusy($('#gsok'),1,'กำลังสมัคร…');try{const r=await api('signup',f);if(r.ok&&r.first)return gin(r,f.name);if(r.ok){$('#gSign').hidden=true;$('#gDone').hidden=false;$('#gln').value=f.name}else er(GOLD||r.error==='auth'||r.error==='bad action'?GNR:(r.error||'สมัครไม่สำเร็จ'))}catch(e){er(gerr(e))}gbusy($('#gsok'),0)};
-if(API)fetch(API+'?action=get').then(r=>r.json()).then(r=>{
+ gbusy($('#gsok'),1,'กำลังสมัคร…');try{const r=await api('signup',f);if(r.ok&&r.first)return gin(r,f.name);if(r.ok){$('#gSign').hidden=true;$('#gDone').hidden=false;$('#gln').value=f.name;if(r.confirm){$('#gDone').className='verdict p-soon';$('#gDone').firstChild.textContent='สมัครแล้ว แต่ระบบตั้งให้ต้องกดยืนยันจากอีเมลก่อน — แจ้งผู้ดูแลระบบให้ปิด “Confirm email” ใน Supabase แล้วรออนุมัติ ';gdiag('Supabase ยังเปิด <b>Confirm email</b> อยู่ → Authentication → Sign In / Providers → Email → ปิด Confirm email → Save')}}else er(GOLD||r.error==='auth'||r.error==='bad action'?GNR:(r.error||'สมัครไม่สำเร็จ'))}catch(e){er(gerr(e))}gbusy($('#gsok'),0)};
+if(SYNC)dget().then(r=>{
  if(APAGE&&!ADMIN)return;
  if(r&&r.state&&(r.rev>REV||(!ADMIN&&r.rev!==REV))){snapshot('ก่อนโหลดข้อมูลจากเซิร์ฟเวอร์ (rev '+r.rev+')');localStorage.setItem('caltrack-v1',JSON.stringify({...r.state,rev:r.rev,sample:false}));location.reload()}
- else stat(r&&r.state?'เชื่อมต่อ Google แล้ว':'เชื่อมต่อ Google แล้ว (ยังไม่มีข้อมูลบนเซิร์ฟเวอร์)')}).catch(()=>stat('เชื่อมต่อ Google ไม่ได้ — แสดงข้อมูลในเครื่อง',1));
+ else stat(r&&r.state?'ข้อมูล'+WHERE+'ล่าสุดแล้ว':(ADMIN&&!SAMPLE?'ยังไม่มีข้อมูล'+WHERE+' — ไปหน้า นำเข้า/สำรอง แล้วกด “อัปโหลดข้อมูลในเครื่องนี้ขึ้นออนไลน์”':'ยังไม่มีข้อมูล'+WHERE),!(r&&r.state)&&ADMIN&&!SAMPLE)}).catch(()=>stat('เชื่อมต่อ'+WHERE+'ไม่ได้ — แสดงข้อมูลในเครื่อง',1));
 
 // calibration
 let RP=[[10,10.0002,.0004,.001],[100,100.0004,.0004,.001],[200,200.0013,.0004,.001]],RES=null;
