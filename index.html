@@ -119,6 +119,11 @@ body:not(.admin) .adm{display:none!important}
 body.gated{overflow:hidden}
 .wl{display:block;color:#9fd0d8;font-size:.8rem;margin-top:8px}
 #cst dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:0}#cst dt{color:var(--mute);font-size:.8rem}#cst dd{margin:0;font-weight:600}
+body:not(.radm) .radmo{display:none!important}
+.badge{display:inline-block;min-width:20px;padding:0 6px;border-radius:99px;background:var(--bad);color:#fff;font-size:.72rem;line-height:20px;text-align:center;margin-left:6px}.badge:empty{display:none}
+.uhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.gtabs{margin:4px 0 14px}.gtabs button{flex:1}
+.udlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:22px;max-width:560px;width:92%}
 .abar{display:none}body.apage.admin .abar{display:block;background:var(--brand);color:#fff;font-size:.85rem;padding:6px 14px;border-radius:8px;margin:-10px 0 16px}
 </style>
 <script src="config.js"></script>
@@ -134,18 +139,17 @@ body.gated{overflow:hidden}
     <button data-v="plan" aria-current="false">แผนสอบเทียบ</button>
     <button class="adm" data-v="rec" aria-current="false">บันทึกผลสอบเทียบ</button>
     <button data-v="cert" aria-current="false">ใบรับรองสอบเทียบ</button>
-    <div class="ng" id="ngset">ข้อมูล</div>
-    <button data-v="mst" aria-current="false">บริษัท / ผู้รับผิดชอบ</button>
-    <div class="ng adm">ผู้ดูแลระบบ</div>
-    <button class="adm" data-v="usr" aria-current="false">ผู้ดูแลและการเชื่อมต่อ</button>
-    <button class="adm" data-v="data" aria-current="false">นำเข้า / สำรองข้อมูล</button>
+    <div class="ng adm" id="ngset">ตั้งค่าและข้อมูลหลัก</div>
+    <button class="adm" data-v="mst" aria-current="false">ข้อมูลหลัก: บริษัท / ผู้รับผิดชอบ</button>
+    <button class="adm radmo" data-v="usr" aria-current="false">จัดการผู้ใช้งาน <span class="badge" id="navpn"></span></button>
+    <button class="adm radmo" data-v="data" aria-current="false">นำเข้า / สำรองข้อมูล</button>
     <button class="adm" data-v="aud" aria-current="false">ประวัติการแก้ไข</button>
-    <a class="adm" href="line.html">แจ้งเตือนผ่าน LINE</a>
+    <a class="adm radmo" href="line.html">แจ้งเตือนผ่าน LINE</a>
   </nav>
   <div class="who" id="who"></div>
 </aside>
 
-<main><div class="abar">หน้าผู้ดูแลระบบ — เพิ่ม/แก้ไขข้อมูลได้ · การแก้ไขบันทึกขึ้น Google อัตโนมัติ</div>
+<main><div class="abar">หน้าเจ้าหน้าที่ — เพิ่ม/แก้ไขข้อมูลได้ · การแก้ไขบันทึกขึ้น Google อัตโนมัติ</div>
 <!-- Dashboard -->
 <section class="view on" id="dash">
   <h1>ภาพรวมการสอบเทียบ</h1><p class="lead" id="asof"></p><div id="demo" class="box" style="display:none;margin-bottom:16px;border-color:var(--soon);color:var(--soon)">กำลังแสดงข้อมูลตัวอย่าง — ไปที่เมนู “นำเข้า / สำรองข้อมูล” เพื่อนำเข้าทะเบียนจริงจากไฟล์ Excel</div>
@@ -281,16 +285,14 @@ body.gated{overflow:hidden}
 
 <!-- Data -->
 <section class="view" id="usr">
-  <h1>ผู้ดูแลและการเชื่อมต่อ</h1><p class="lead">เพิ่ม/ลบผู้ดูแล เปลี่ยนรหัสผ่าน และดูสถานะการเชื่อมต่อ Google</p>
-  <div class="box" style="margin-bottom:16px"><h2>สถานะการเชื่อมต่อ</h2><div id="cst"></div></div>
-  <div class="box" id="ubox"><h2>รายชื่อผู้ดูแล</h2>
-    <p class="lead" style="margin:0 0 10px;font-size:.88rem">ผู้ดูแลเข้าสู่ระบบแล้วแก้ไขข้อมูลและอัปโหลดใบรับรองได้ · คนอื่นเปิดเว็บได้แบบดูอย่างเดียว</p>
-    <div id="ulist" style="margin-bottom:12px"></div>
-    <div class="fgrid"><div><label for="un">ชื่อผู้ดูแลที่จะเพิ่ม</label><input id="un" autocomplete="off"></div><div><label for="upw">รหัสผ่าน (อย่างน้อย 6 ตัว)</label><input id="upw" type="password" autocomplete="new-password"></div></div>
-    <p style="margin:0 0 14px"><button class="go" id="uadd">+ เพิ่มผู้ดูแล</button></p>
-    <details class="xbox"><summary>เปลี่ยนรหัสผ่านของฉัน</summary><div class="fgrid"><div><label for="umy">รหัสผ่านใหม่</label><input id="umy" type="password" autocomplete="new-password"></div></div><button class="go alt" id="umyok">บันทึกรหัสผ่านใหม่</button></details>
-    <div class="err" id="uerr" role="alert"></div>
-  </div>
+  <div class="uhead"><div><h1>จัดการผู้ใช้งาน</h1><p class="lead">อนุมัติผู้สมัคร กำหนดสิทธิ์ ระงับหรือลบบัญชี · เฉพาะผู้ดูแลระบบ</p></div><div><button class="go alt" id="uaddb">+ เพิ่มผู้ใช้</button> <button class="go" id="uref">รีเฟรช</button></div></div>
+  <div class="kpis" id="ukpi"></div>
+  <div class="tabs" role="tablist"><button role="tab" data-ut="all" aria-selected="true">ผู้ใช้ทั้งหมด</button><button role="tab" data-ut="pending" aria-selected="false">รออนุมัติ <span class="badge" id="upn"></span></button></div>
+  <div class="tools"><input type="search" id="uq" placeholder="ค้นหาชื่อ / ชื่อผู้ใช้ / อีเมล / กลุ่มงาน" aria-label="ค้นหาผู้ใช้"></div>
+  <div class="tw"><table class="rtab"><thead><tr><th>ผู้ใช้</th><th>ชื่อ-สกุล</th><th>สิทธิ์</th><th>กลุ่มงาน</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="utb"></tbody></table></div>
+  <div class="err" id="uerr" role="alert"></div>
+  <p class="lead" style="margin:10px 0 0;font-size:.85rem"><b>ผู้ดูแลระบบ</b> = ทำได้ทุกอย่าง รวมถึงจัดการผู้ใช้ นำเข้า/สำรองข้อมูล · <b>เจ้าหน้าที่</b> = เพิ่ม/แก้ข้อมูลเครื่องมือ แผน ใบรับรอง แบบฟอร์ม · คนที่ไม่ได้เข้าสู่ระบบดูได้อย่างเดียวที่หน้าผู้ชม</p>
+  <div class="box" style="margin-top:16px"><h2>สถานะการเชื่อมต่อ</h2><div id="cst"></div></div>
 </section>
 <section class="view" id="data">
   <h1>นำเข้า / สำรองข้อมูล</h1><p class="lead" id="dlead">ข้อมูลเก็บในเบราว์เซอร์ของเครื่องนี้เท่านั้น ไม่ถูกส่งออกอินเทอร์เน็ต จึงควรดาวน์โหลดไฟล์สำรองเป็นระยะ</p>
@@ -371,15 +373,21 @@ body.gated{overflow:hidden}
 
 <datalist id="dlP"></datalist><datalist id="dlV"></datalist><datalist id="dlK"></datalist>
 <div class="toast" id="toast" role="status"></div>
-<div id="gate" hidden><div class="gcard"><div class="glogo">CalTrack</div><h1>หน้าผู้ดูแลระบบ</h1><p class="lead" style="margin:0 0 6px">สำหรับเพิ่ม/แก้ไขข้อมูล แนบใบรับรอง และตั้งค่า · ถ้าแค่ดูข้อมูล <a id="gview" href="#">ไปหน้าผู้ชม</a></p>
+<div id="gate" hidden><div class="gcard"><div class="glogo">CalTrack</div><h1>ระบบสอบเทียบเครื่องมือ · หน้าเจ้าหน้าที่</h1><p class="lead" style="margin:0 0 6px">เข้าสู่ระบบเพื่อเพิ่ม/แก้ไขข้อมูล · ถ้าแค่ดูข้อมูล <a id="gview" href="#">ไปหน้าผู้ชม</a></p>
  <div class="gst" id="gst"></div>
- <div id="gLogin" hidden><div class="fgrid" style="grid-template-columns:1fr"><div><label for="gln">ชื่อผู้ใช้</label><input id="gln" autocomplete="username"></div><div><label for="glp">รหัสผ่าน</label><input id="glp" type="password" autocomplete="current-password"></div></div>
+ <div class="tabs gtabs" role="tablist"><button role="tab" data-gt="login" aria-selected="true">เข้าสู่ระบบ</button><button role="tab" data-gt="sign" aria-selected="false">สมัครสมาชิก</button></div>
+ <div id="gLogin"><div class="fgrid" style="grid-template-columns:1fr"><div><label for="gln">ชื่อผู้ใช้</label><input id="gln" autocomplete="username" autocapitalize="off"></div><div><label for="glp">รหัสผ่าน</label><input id="glp" type="password" autocomplete="current-password"></div></div>
   <div class="err" id="gle" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="glok" style="width:100%">เข้าสู่ระบบ</button></p>
-  <p class="gsm">ลืมรหัสผ่าน: ให้ผู้ดูแลคนอื่นตั้งใหม่ในหน้า “ผู้ดูแลและการเชื่อมต่อ” · ถ้าไม่มีใครเข้าได้เลย ลบ Script property ADMIN_USERS ใน Apps Script แล้วตั้งใหม่ที่นี่ <button class="lnk" id="gtoset" hidden>ตั้งผู้ดูแลคนแรก</button></p></div>
- <div id="gSetup" hidden><p style="margin:0 0 10px;font-weight:600">ตั้งผู้ดูแลคนแรก (ทำครั้งเดียว)</p><div class="fgrid" style="grid-template-columns:1fr"><div><label for="gsn">ตั้งชื่อผู้ใช้ (เช่น ชื่อเล่น)</label><input id="gsn" autocomplete="username"></div><div><label for="gsp">ตั้งรหัสผ่าน (อย่างน้อย 6 ตัว)</label><input id="gsp" type="password" autocomplete="new-password"></div><div><label for="gsp2">พิมพ์รหัสผ่านอีกครั้ง</label><input id="gsp2" type="password" autocomplete="new-password"></div></div>
-  <div class="err" id="gse" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="gsok" style="width:100%">ตั้งเป็นผู้ดูแลและเข้าสู่ระบบ</button></p>
-  <p class="gsm">ผู้ดูแลคนอื่นเพิ่มภายหลังได้ในหน้า “ผู้ดูแลและการเชื่อมต่อ” · <button class="lnk" id="gtolog">มีบัญชีแล้ว เข้าสู่ระบบ</button></p></div>
+  <p class="gsm">ยังไม่มีบัญชี? <button class="lnk" data-gt="sign">สมัครสมาชิก</button> · ลืมรหัสผ่าน ให้ผู้ดูแลระบบตั้งรหัสใหม่ให้</p></div>
+ <div id="gSign" hidden><p class="gsm" style="margin:0 0 10px">ลงทะเบียนแล้วรอผู้ดูแลระบบอนุมัติ<span id="gfirst"></span></p><div class="fgrid" style="grid-template-columns:1fr"><div><label for="gsn">ชื่อผู้ใช้ * (อังกฤษ/ตัวเลข ไม่มีช่องว่าง)</label><input id="gsn" autocomplete="username" autocapitalize="off" placeholder="เช่น kannika"></div><div><label for="gsf">ชื่อ-สกุล *</label><input id="gsf" placeholder="ชื่อ-นามสกุลภาษาไทย"></div><div><label for="gse2">อีเมล *</label><input id="gse2" type="email" placeholder="email@example.com"></div><div><label for="gsg">กลุ่มงาน</label><select id="gsg"></select></div><div><label for="gsp">รหัสผ่าน * (อย่างน้อย 6 ตัว)</label><input id="gsp" type="password" autocomplete="new-password"></div><div><label for="gsp2">ยืนยันรหัสผ่าน *</label><input id="gsp2" type="password" autocomplete="new-password"></div></div>
+  <div class="err" id="gse" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="gsok" style="width:100%">สมัครสมาชิก</button></p>
+  <p class="gsm">มีบัญชีแล้ว? <button class="lnk" data-gt="login">เข้าสู่ระบบ</button></p></div>
+ <div id="gDone" hidden class="verdict p-ok" style="margin-top:10px">สมัครเรียบร้อยแล้ว — รอผู้ดูแลระบบอนุมัติ แล้วจึงเข้าสู่ระบบได้ <button class="lnk" data-gt="login">กลับไปหน้าเข้าสู่ระบบ</button></div>
 </div></div>
+<dialog id="ud" class="udlg"><h2 id="udt" style="margin:0 0 12px;font-size:1.1rem">แก้ไขผู้ใช้</h2>
+ <div class="fgrid" style="grid-template-columns:1fr 1fr"><div><label for="udn">ชื่อผู้ใช้</label><input id="udn" autocapitalize="off"></div><div><label for="udf">ชื่อ-สกุล</label><input id="udf"></div><div><label for="ude">อีเมล</label><input id="ude" type="email"></div><div><label for="udg">กลุ่มงาน</label><select id="udg"></select></div><div><label for="udr">สิทธิ์</label><select id="udr"><option value="staff">เจ้าหน้าที่</option><option value="admin">ผู้ดูแลระบบ</option></select></div><div><label for="uds">สถานะ</label><select id="uds"><option value="active">ใช้งาน</option><option value="pending">รออนุมัติ</option><option value="disabled">ระงับ</option></select></div><div style="grid-column:1/-1"><label for="udp" id="udpl">ตั้งรหัสผ่านใหม่ (เว้นว่างถ้าไม่เปลี่ยน)</label><input id="udp" type="password" autocomplete="new-password"></div></div>
+ <div class="err" id="ude2" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="udok">บันทึก</button> <button class="go alt" id="udc">ยกเลิก</button></p></dialog>
+<dialog id="mpd" class="udlg" style="max-width:380px"><h2 style="margin:0 0 12px;font-size:1.1rem">เปลี่ยนรหัสผ่านของฉัน</h2><div class="fgrid" style="grid-template-columns:1fr"><div><label for="mp1">รหัสผ่านใหม่ (อย่างน้อย 6 ตัว)</label><input id="mp1" type="password" autocomplete="new-password"></div><div><label for="mp2">ยืนยันรหัสผ่านใหม่</label><input id="mp2" type="password" autocomplete="new-password"></div></div><div class="err" id="mpe" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="mpok">บันทึก</button> <button class="go alt" id="mpc">ยกเลิก</button></p></dialog>
 
 <script>
 const $=s=>document.querySelector(s), TODAY=(()=>{try{const s=JSON.parse(localStorage.getItem('caltrack-v1'));if(s&&s.sample===false)return new Date(new Date().toISOString().slice(0,10))}catch(e){}return new Date('2026-10-02')})();
@@ -406,8 +414,8 @@ const D=[
 const SAVED=(()=>{try{return JSON.parse(localStorage.getItem('caltrack-v1'))}catch(e){return null}})();
 let SAMPLE=!(SAVED&&SAVED.sample===false);
 const API=(window.CALTRACK_API||'').trim(),APAGE=/\/admin\/?$/.test(location.pathname)||/[?&]admin\b/.test(location.search)||location.hash==='#admin',
- SES=(()=>{try{return JSON.parse(localStorage.getItem('caltrack-ses')||sessionStorage.getItem('caltrack-ses'))}catch(e){return null}})(),ADMIN=APAGE&&(!API||!!(SES&&SES.token)),
- AHREF=location.protocol==='file:'?location.pathname+'?admin':'/admin',VHREF=location.protocol==='file:'?location.pathname:'/';
+ SES=(()=>{try{return JSON.parse(localStorage.getItem('caltrack-ses')||sessionStorage.getItem('caltrack-ses'))}catch(e){return null}})(),ADMIN=APAGE&&(!API||!!(SES&&SES.token&&SES.role)),ROLE=!API?'admin':(SES&&SES.role)||'',
+ AHREF=location.protocol==='file:'?location.pathname+'?admin':'/?admin',VHREF=location.protocol==='file:'?location.pathname:'/';
 const sesSet=v=>{try{if(v)localStorage.setItem('caltrack-ses',JSON.stringify(v));else localStorage.removeItem('caltrack-ses');sessionStorage.removeItem('caltrack-ses')}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
 let AUD=SAVED&&Array.isArray(SAVED.A)?SAVED.A:[],REV=SAVED&&SAVED.rev||0,sy=null,EID=null,CEDIT=-1;
@@ -744,38 +752,68 @@ async function push(){try{stat('กำลังบันทึกขึ้น Go
 function who(){const w=$('#who');
  w.innerHTML=!APAGE?`<span>หน้าผู้ชม (ดูอย่างเดียว)</span><a class="wl" href="${AHREF}">ไปหน้าผู้ดูแลระบบ →</a>`
   :!API?`<span>โหมดเครื่องเดียว · ผู้ดูแล</span><a class="wl" href="${VHREF}">เปิดหน้าผู้ชม</a>`
-  :ADMIN?`<span>ผู้ดูแล: <b>${esc(SES.name)}</b></span><button id="lg">ออกจากระบบ</button><a class="wl" href="${VHREF}">เปิดหน้าผู้ชม</a>`:'<span>หน้าผู้ดูแลระบบ</span>';
+  :ADMIN?`<span>${esc(SES.full||SES.name)}<small style="display:block">${ROLE==='admin'?'ผู้ดูแลระบบ':'เจ้าหน้าที่'} · ${esc(SES.name)}</small></span><button id="lg">ออกจากระบบ</button><button id="mypw">เปลี่ยนรหัสผ่าน</button><a class="wl" href="${VHREF}">เปิดหน้าผู้ชม</a>`:'<span>หน้าเจ้าหน้าที่</span>';
  w.insertAdjacentHTML('beforeend','<div id="sy"></div>');const b=$('#lg');if(b)b.onclick=()=>{sesSet(null);location.reload()}}
-document.body.classList.toggle('admin',ADMIN);document.body.classList.toggle('apage',APAGE);who();$('#fp').style.display=API?'':'none';
+document.body.classList.toggle('admin',ADMIN);document.body.classList.toggle('apage',APAGE);document.body.classList.toggle('radm',ADMIN&&ROLE==='admin');who();$('#fp').style.display=API?'':'none';
 $('#fp').onclick=push;
 // ผู้ดูแลคนแรก + จัดการผู้ดูแลจากหน้าเว็บ
-function urow(us,me){$('#ulist').innerHTML=us.map(u=>`<div class="todo" style="cursor:default"><div><b>${esc(u)}</b>${u===me?' <small style="display:inline">(คุณ)</small>':''}</div>${u===me?'':`<button class="go alt sm" data-ud="${esc(u)}">ลบ</button>`}</div>`).join('')||'<p class="lead">ยังไม่มีผู้ดูแล</p>'}
-async function uload(){if(!(API&&ADMIN)){$('#ulist').innerHTML='<p class="lead">ใช้ได้เมื่อเชื่อมต่อ Google แล้ว</p>';return}try{const r=await api('users',{token:SES.token});if(r.ok)urow(r.users,r.me);else $('#uerr').textContent=r.error==='auth'?'หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่':'โหลดรายชื่อผู้ดูแลไม่ได้ (ถ้าเพิ่งอัปเดต Code.gs ต้อง Deploy เวอร์ชันใหม่)'}catch(e){$('#uerr').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'}}
-$('#uadd').onclick=async()=>{const n=$('#un').value.trim(),p=$('#upw').value;$('#uerr').textContent='';if(!n||p.length<6){$('#uerr').textContent='กรอกชื่อ และรหัสผ่านอย่างน้อย 6 ตัวอักษร';return}
- const r=await api('adduser',{token:SES.token,name:n,pass:p});if(r.ok){$('#un').value='';$('#upw').value='';log('เพิ่มผู้ดูแล',n,null,{โดย:SES.name});uload();toast('เพิ่มผู้ดูแล '+n+' แล้ว — แจ้งชื่อ รหัสผ่าน และลิงก์หน้าผู้ดูแล ('+location.origin+'/admin) ให้เจ้าตัว')}else $('#uerr').textContent=r.error||'เพิ่มไม่สำเร็จ'};
-$('#ulist').onclick=async e=>{const b=e.target.closest('[data-ud]');if(!b||!confirm('ลบผู้ดูแล “'+b.dataset.ud+'” ?'))return;const r=await api('deluser',{token:SES.token,name:b.dataset.ud});if(r.ok){log('ลบผู้ดูแล',b.dataset.ud,null,{โดย:SES.name});uload();toast('ลบแล้ว')}else $('#uerr').textContent=r.error||'ลบไม่สำเร็จ'};
-$('#umyok').onclick=async()=>{const p=$('#umy').value;if(p.length<6){$('#uerr').textContent='รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร';return}const r=await api('passwd',{token:SES.token,pass:p});if(r.ok){$('#umy').value='';toast('เปลี่ยนรหัสผ่านแล้ว')}else $('#uerr').textContent=r.error||'เปลี่ยนไม่สำเร็จ'};
+// ---------- จัดการผู้ใช้งาน (ผู้ดูแลระบบ) ----------
+const RL={admin:'ผู้ดูแลระบบ',staff:'เจ้าหน้าที่'},STL={pending:'รออนุมัติ',active:'ใช้งาน',disabled:'ระงับ'},STC={pending:'p-soon',active:'p-ok',disabled:'p-bad'};
+let UL=[],UT='all',UME='',UED=null;
+const gopts=sel=>'<option value="">— ไม่ระบุ —</option>'+GROUPS.map(g=>`<option ${g===sel?'selected':''}>${esc(g)}</option>`).join('');
+$('#gsg').innerHTML=gopts('');
+function ubadge(){const n=UL.filter(u=>u.status==='pending').length;$('#upn').textContent=n||'';$('#navpn').textContent=n||''}
+async function uload(){if(!API){$('#utb').innerHTML='<tr><td colspan="6">โหมดเครื่องเดียว: ยังไม่ได้เชื่อม Google จึงไม่มีระบบผู้ใช้</td></tr>';return}
+ $('#uerr').textContent='';try{const r=await api('users',{token:SES.token});if(r.ok){UL=r.users;UME=r.me;urender();ubadge()}else $('#uerr').textContent=r.error==='auth'?'หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่':(r.error||'โหลดรายชื่อไม่ได้')}catch(e){$('#uerr').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'}}
+function urender(){const q=($('#uq').value||'').trim().toLowerCase(),k=(l,n,c)=>`<div class="k ${c||''}"><span>${l}</span><b>${n}</b></div>`;
+ $('#ukpi').innerHTML=k('ผู้ใช้ทั้งหมด',UL.length)+k('ผู้ดูแลระบบ',UL.filter(u=>u.role==='admin'&&u.status!=='pending').length)+k('เจ้าหน้าที่',UL.filter(u=>u.role==='staff'&&u.status!=='pending').length)+k('รออนุมัติ',UL.filter(u=>u.status==='pending').length,'soon');
+ const rows=UL.filter(u=>(UT==='all'||u.status==='pending')&&(!q||[u.name,u.full,u.email,u.group].join(' ').toLowerCase().includes(q))).sort((a,b)=>(a.status==='pending')-(b.status==='pending')||String(b.created).localeCompare(a.created));
+ $('#utb').innerHTML=rows.map(u=>`<tr><td><div><b>${esc(u.name)}</b>${u.name===UME?' <small style="display:inline">(คุณ)</small>':''}<small>${esc(u.email||'–')}${u.created?' · สมัคร '+fd(u.created):''}</small></div></td><td>${esc(u.full||'–')}</td><td><span class="pill ${u.role==='admin'?'p-soon':'p-out'}">${RL[u.role]||u.role}</span></td><td>${esc(u.group||'–')}</td><td><span class="pill ${STC[u.status]}">${STL[u.status]||u.status}</span></td>
+ <td style="white-space:nowrap">${u.status==='pending'?`<button class="go sm" data-ua="${esc(u.name)}">อนุมัติ</button> <button class="go alt sm" data-ux="${esc(u.name)}">ปฏิเสธ</button>`:`<button class="go alt sm" data-ue="${esc(u.name)}">แก้ไข</button>${u.name===UME?'':` <button class="go alt sm" data-ud="${esc(u.name)}">ลบ</button>`}`}</td></tr>`).join('')||`<tr><td colspan="6">${UT==='pending'?'ไม่มีผู้รออนุมัติ':'ไม่พบผู้ใช้'}</td></tr>`}
+$('#uq').oninput=urender;$('#uref').onclick=uload;
+$('#usr').addEventListener('click',async e=>{const t=e.target.closest('[data-ut]');if(t){UT=t.dataset.ut;$('#usr').querySelectorAll('[data-ut]').forEach(x=>x.setAttribute('aria-selected',x===t));urender();return}
+ const b=e.target.closest('button');if(!b)return;const d=b.dataset;$('#uerr').textContent='';
+ const run=async(a,body,msg)=>{const r=await api(a,{token:SES.token,...body});if(r.ok){toast(msg);await uload()}else $('#uerr').textContent=r.error||'ทำรายการไม่สำเร็จ'};
+ if(d.ua){await run('setuser',{name:d.ua,status:'active',role:'staff'},'อนุมัติ '+d.ua+' แล้ว (สิทธิ์เจ้าหน้าที่ — แก้เป็นผู้ดูแลระบบได้ที่ปุ่มแก้ไข)');log('อนุมัติผู้ใช้',d.ua,null,{โดย:SES.name})}
+ else if(d.ux&&confirm('ปฏิเสธและลบคำขอของ “'+d.ux+'” ?')){await run('deluser',{name:d.ux},'ปฏิเสธแล้ว');log('ปฏิเสธผู้สมัคร',d.ux,null,{โดย:SES.name})}
+ else if(d.ud&&confirm('ลบบัญชี “'+d.ud+'” ? เข้าสู่ระบบไม่ได้อีก')){await run('deluser',{name:d.ud},'ลบบัญชีแล้ว');log('ลบผู้ใช้',d.ud,null,{โดย:SES.name})}
+ else if(d.ue)uedit(UL.find(u=>u.name===d.ue))});
+function uedit(u){UED=u||null;$('#udt').textContent=u?'แก้ไขผู้ใช้ · '+u.name:'เพิ่มผู้ใช้';$('#udn').value=u?u.name:'';$('#udn').readOnly=!!u;$('#udf').value=u?u.full:'';$('#ude').value=u?u.email:'';$('#udg').innerHTML=gopts(u?u.group:'');
+ $('#udr').value=u?u.role:'staff';$('#uds').value=u?u.status:'active';$('#uds').disabled=!u;$('#udp').value='';$('#udpl').textContent=u?'ตั้งรหัสผ่านใหม่ (เว้นว่างถ้าไม่เปลี่ยน)':'รหัสผ่าน (อย่างน้อย 6 ตัว) — แจ้งให้เจ้าตัวเปลี่ยนเองภายหลัง';$('#ude2').textContent='';$('#ud').showModal()}
+$('#uaddb').onclick=()=>uedit(null);$('#udc').onclick=()=>$('#ud').close();
+$('#udok').onclick=async()=>{const f={name:$('#udn').value.trim(),full:$('#udf').value.trim(),email:$('#ude').value.trim(),group:$('#udg').value,role:$('#udr').value,status:$('#uds').value,pass:$('#udp').value};$('#ude2').textContent='';
+ if(f.pass&&f.pass.length<6){$('#ude2').textContent='รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร';return}if(!UED&&!f.pass){$('#ude2').textContent='ตั้งรหัสผ่านให้ผู้ใช้ใหม่';return}
+ const r=await api(UED?'setuser':'adduser',{token:SES.token,...f});if(r.ok){$('#ud').close();log(UED?'แก้ไขผู้ใช้':'เพิ่มผู้ใช้',f.name,null,{สิทธิ์:RL[f.role],สถานะ:STL[f.status],โดย:SES.name});toast('บันทึกแล้ว');uload()}else $('#ude2').textContent=r.error||'บันทึกไม่สำเร็จ'};
 document.querySelector('nav button[data-v=usr]').addEventListener('click',()=>{uload();cstat()});
+if(APAGE&&ADMIN&&ROLE==='admin'&&API)uload();
+// เปลี่ยนรหัสผ่านของตัวเอง
+document.addEventListener('click',e=>{if(e.target.id==='mypw'){$('#mp1').value='';$('#mp2').value='';$('#mpe').textContent='';$('#mpd').showModal()}});
+$('#mpc').onclick=()=>$('#mpd').close();
+$('#mpok').onclick=async()=>{const a=$('#mp1').value;if(a.length<6){$('#mpe').textContent='รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร';return}if(a!==$('#mp2').value){$('#mpe').textContent='รหัสผ่านสองช่องไม่ตรงกัน';return}
+ if(!API){$('#mpe').textContent='โหมดเครื่องเดียวไม่มีรหัสผ่าน';return}const r=await api('passwd',{token:SES.token,pass:a});if(r.ok){$('#mpd').close();toast('เปลี่ยนรหัสผ่านแล้ว')}else $('#mpe').textContent=r.error||'เปลี่ยนไม่สำเร็จ'};
 function cstat(){const e=$('#cst');if(!API){e.innerHTML='<p>โหมดเครื่องเดียว: ข้อมูลอยู่ในเบราว์เซอร์นี้เท่านั้น (ยังไม่ได้ใส่ลิงก์ Apps Script ใน config.js)</p>';return}
- e.innerHTML='<p>กำลังตรวจ…</p>';fetch(API+'?action=get').then(r=>r.json()).then(r=>{e.innerHTML=`<dl><div><dt>Google</dt><dd>เชื่อมต่อแล้ว</dd></div><div><dt>โค้ด Apps Script</dt><dd>${'ver' in r?'เวอร์ชันล่าสุด':'<span style="color:var(--bad)">เวอร์ชันเก่า — ต้อง Deploy ใหม่</span>'}</dd></div><div><dt>ข้อมูลบน Drive</dt><dd>${r.rev?'บันทึกแล้ว '+r.rev+' ครั้ง':'ยังไม่มี — กด “ซิงก์ขึ้น Google ตอนนี้” ในหน้านำเข้า/สำรอง'}</dd></div><div><dt>ผู้ใช้ที่เข้าระบบ</dt><dd>${esc(SES&&SES.name||'–')}</dd></div></dl>`}).catch(()=>e.innerHTML='<p style="color:var(--bad)">เชื่อมต่อ Google ไม่ได้</p>')}
-// ---------- ประตูหน้าผู้ดูแล: ต้องเข้าสู่ระบบก่อนจึงเห็นระบบ ----------
-const GW={nouser:'ไม่มีชื่อผู้ใช้นี้ในระบบ — ตรวจตัวสะกด หรือให้ผู้ดูแลคนอื่นเพิ่มให้',badpass:'รหัสผ่านไม่ถูกต้อง',locked:'กรอกผิดหลายครั้ง ระบบล็อกชื่อนี้ไว้ 10 นาที',nousers:'ยังไม่มีผู้ดูแลในระบบ — ตั้งผู้ดูแลคนแรกด้านล่าง'};
-function gmode(m){$('#gLogin').hidden=m!=='login';$('#gSetup').hidden=m!=='setup';const f=$(m==='setup'?'#gsn':'#gln');if(f)f.focus()}
+ e.innerHTML='<p>กำลังตรวจ…</p>';fetch(API+'?action=get').then(r=>r.json()).then(r=>{e.innerHTML=`<dl><div><dt>Google</dt><dd>เชื่อมต่อแล้ว</dd></div><div><dt>โค้ด Apps Script</dt><dd>${r.ver>=3?'เวอร์ชันล่าสุด':'<span style="color:var(--bad)">เวอร์ชันเก่า — ต้อง Deploy ใหม่</span>'}</dd></div><div><dt>ข้อมูลบน Drive</dt><dd>${r.rev?'บันทึกแล้ว '+r.rev+' ครั้ง':'ยังไม่มี — กด “ซิงก์ขึ้น Google ตอนนี้” ในหน้านำเข้า/สำรอง'}</dd></div></dl>`}).catch(()=>e.innerHTML='<p style="color:var(--bad)">เชื่อมต่อ Google ไม่ได้</p>')}
+
+// ---------- ประตูหน้าเจ้าหน้าที่: เข้าสู่ระบบ / สมัครสมาชิก ----------
+const GW={nouser:'ไม่มีชื่อผู้ใช้นี้ — ตรวจตัวสะกด หรือสมัครสมาชิกก่อน',badpass:'รหัสผ่านไม่ถูกต้อง',locked:'กรอกผิดหลายครั้ง ระบบล็อกชื่อนี้ไว้ 10 นาที',nousers:'ยังไม่มีผู้ใช้ในระบบ — สมัครสมาชิกได้เลย คนแรกจะเป็นผู้ดูแลระบบ',pending:'บัญชีนี้รอผู้ดูแลระบบอนุมัติ',disabled:'บัญชีนี้ถูกระงับ — ติดต่อผู้ดูแลระบบ'};
+function gtab(m){document.querySelectorAll('#gate .gtabs [data-gt]').forEach(b=>b.setAttribute('aria-selected',b.dataset.gt===m));$('#gLogin').hidden=m!=='login';$('#gSign').hidden=m!=='sign';$('#gDone').hidden=true;const f=$(m==='sign'?'#gsn':'#gln');if(f)f.focus()}
 function gstat(t,bad){$('#gst').textContent=t;$('#gst').className='gst'+(bad?' bad':'')}
-if(APAGE&&API&&!ADMIN){$('#gate').hidden=false;document.body.classList.add('gated');gstat('กำลังเชื่อมต่อ Google…');
- fetch(API+'?action=get').then(r=>r.json()).then(r=>{
-  if(!('ver' in r)){gstat('เชื่อมต่อ Google แล้ว แต่โค้ดใน Apps Script ยังเป็นเวอร์ชันเก่า — วาง Code.gs ใหม่ แล้ว Deploy → Manage deployments → ดินสอ → New version',1);gmode('login');return}
-  if(r.needSetup){gstat('เชื่อมต่อ Google แล้ว · ยังไม่มีผู้ดูแล ตั้งผู้ดูแลคนแรกได้เลย');gmode('setup')}else{gstat('เชื่อมต่อ Google แล้ว');gmode('login')}
- }).catch(()=>{gstat('เชื่อมต่อ Google ไม่ได้ — ตรวจลิงก์ใน config.js หรืออินเทอร์เน็ต',1);gmode('login')})}
-$('#glok').onclick=async()=>{const n=$('#gln').value.trim(),p=$('#glp').value;$('#gle').textContent='';if(!n||!p){$('#gle').textContent='กรอกชื่อผู้ใช้และรหัสผ่าน';return}
- $('#glok').disabled=true;try{const r=await api('login',{name:n,pass:p});if(r.ok){sesSet({name:n,token:r.token});location.reload();return}
-  $('#gle').textContent=GW[r.why]||'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';if(r.why==='nousers'){$('#gtoset').hidden=false;gmode('setup')}}catch(e){$('#gle').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'}$('#glok').disabled=false};
-$('#glp').onkeydown=e=>{if(e.key==='Enter')$('#glok').click()};
-$('#gsok').onclick=async()=>{const n=$('#gsn').value.trim(),p=$('#gsp').value;$('#gse').textContent='';
- if(!n){$('#gse').textContent='กรอกชื่อผู้ใช้';return}if(p.length<6){$('#gse').textContent='รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร';return}if(p!==$('#gsp2').value){$('#gse').textContent='รหัสผ่านสองช่องไม่ตรงกัน';return}
- $('#gsok').disabled=true;try{const r=await api('setup',{name:n,pass:p});if(r.ok){sesSet({name:n,token:r.token});location.reload();return}$('#gse').textContent=r.error||'ตั้งค่าไม่สำเร็จ'}catch(e){$('#gse').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ (ถ้าเพิ่งอัปเดต Code.gs ต้อง Deploy เวอร์ชันใหม่ก่อน)'}$('#gsok').disabled=false};
+$('#gate').addEventListener('click',e=>{const b=e.target.closest('[data-gt]');if(b)gtab(b.dataset.gt)});
 $('#gview').href=VHREF;if(API)$('#dlead').textContent='ข้อมูลหลักเก็บใน Google Drive (ซิงก์อัตโนมัติเมื่อแก้ไข) และมีสำเนาในเบราว์เซอร์นี้ · ดาวน์โหลดไฟล์สำรองเก็บไว้เป็นระยะ';
-$('#gtoset').onclick=()=>gmode('setup');$('#gtolog').onclick=()=>gmode('login');
+if(SES&&!SES.role)sesSet(null);
+if(APAGE&&API&&!ADMIN){$('#gate').hidden=false;document.body.classList.add('gated');gstat('กำลังเชื่อมต่อ Google…');gtab('login');
+ fetch(API+'?action=get').then(r=>r.json()).then(r=>{
+  if(!(r.ver>=3)){gstat('เชื่อมต่อ Google แล้ว แต่โค้ดใน Apps Script ยังเป็นเวอร์ชันเก่า — วาง Code.gs ใหม่ แล้ว Deploy → Manage deployments → ดินสอ → New version',1);return}
+  if(r.needSetup){gstat('ยังไม่มีผู้ใช้ในระบบ · คนแรกที่สมัครจะเป็นผู้ดูแลระบบทันที');$('#gfirst').textContent=' · คุณเป็นคนแรก จะได้สิทธิ์ผู้ดูแลระบบทันที';gtab('sign')}else gstat('เชื่อมต่อ Google แล้ว')
+ }).catch(()=>gstat('เชื่อมต่อ Google ไม่ได้ — ตรวจลิงก์ใน config.js หรืออินเทอร์เน็ต',1))}
+const gin=(r,n)=>{sesSet({name:n,token:r.token,role:r.user.role,full:r.user.full});location.reload()};
+$('#glok').onclick=async()=>{const n=$('#gln').value.trim(),p=$('#glp').value;$('#gle').textContent='';if(!n||!p){$('#gle').textContent='กรอกชื่อผู้ใช้และรหัสผ่าน';return}
+ $('#glok').disabled=true;try{const r=await api('login',{name:n,pass:p});if(r.ok)return gin(r,n);$('#gle').textContent=GW[r.why]||'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';if(r.why==='nousers')gtab('sign')}catch(e){$('#gle').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'}$('#glok').disabled=false};
+$('#glp').onkeydown=e=>{if(e.key==='Enter')$('#glok').click()};
+$('#gsok').onclick=async()=>{const f={name:$('#gsn').value.trim(),full:$('#gsf').value.trim(),email:$('#gse2').value.trim(),group:$('#gsg').value,pass:$('#gsp').value},er=t=>$('#gse').textContent=t;er('');
+ if(!/^[A-Za-z0-9._-]{3,30}$/.test(f.name))return er('ชื่อผู้ใช้ใช้ตัวอักษรอังกฤษ ตัวเลข . _ - ยาว 3–30 ตัว ไม่มีช่องว่าง');if(!f.full)return er('กรอกชื่อ-สกุล');
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))return er('อีเมลไม่ถูกต้อง');if(f.pass.length<6)return er('รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร');if(f.pass!==$('#gsp2').value)return er('รหัสผ่านสองช่องไม่ตรงกัน');
+ $('#gsok').disabled=true;try{const r=await api('signup',f);if(r.ok&&r.first)return gin(r,f.name);if(r.ok){$('#gSign').hidden=true;$('#gDone').hidden=false;$('#gln').value=f.name}else er(r.error||'สมัครไม่สำเร็จ')}catch(e){er('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้')}$('#gsok').disabled=false};
 if(API)fetch(API+'?action=get').then(r=>r.json()).then(r=>{
  if(APAGE&&!ADMIN)return;
  if(r&&r.state&&(r.rev>REV||(!ADMIN&&r.rev!==REV))){localStorage.setItem('caltrack-v1',JSON.stringify({...r.state,rev:r.rev,sample:false}));location.reload()}
