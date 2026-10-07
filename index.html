@@ -801,19 +801,20 @@ function gstat(t,bad){$('#gst').textContent=t;$('#gst').className='gst'+(bad?' b
 $('#gate').addEventListener('click',e=>{const b=e.target.closest('[data-gt]');if(b)gtab(b.dataset.gt)});
 $('#gview').href=VHREF;if(API)$('#dlead').textContent='ข้อมูลหลักเก็บใน Google Drive (ซิงก์อัตโนมัติเมื่อแก้ไข) และมีสำเนาในเบราว์เซอร์นี้ · ดาวน์โหลดไฟล์สำรองเก็บไว้เป็นระยะ';
 if(SES&&!SES.role)sesSet(null);
-if(APAGE&&API&&!ADMIN){$('#gate').hidden=false;document.body.classList.add('gated');gstat('กำลังเชื่อมต่อ Google…');gtab('login');
+let GOLD=false;const GNR='ระบบยังไม่พร้อมให้สมัครหรือเข้าสู่ระบบ กรุณาแจ้งผู้ดูแลระบบ';
+if(APAGE&&API&&!ADMIN){$('#gate').hidden=false;document.body.classList.add('gated');gtab('login');
  fetch(API+'?action=get').then(r=>r.json()).then(r=>{
-  if(!(r.ver>=3)){gstat('เชื่อมต่อ Google แล้ว แต่โค้ดใน Apps Script ยังเป็นเวอร์ชันเก่า — วาง Code.gs ใหม่ แล้ว Deploy → Manage deployments → ดินสอ → New version',1);return}
-  if(r.needSetup){gstat('ยังไม่มีผู้ใช้ในระบบ · คนแรกที่สมัครจะเป็นผู้ดูแลระบบทันที');$('#gfirst').textContent=' · คุณเป็นคนแรก จะได้สิทธิ์ผู้ดูแลระบบทันที';gtab('sign')}else gstat('เชื่อมต่อ Google แล้ว')
- }).catch(()=>gstat('เชื่อมต่อ Google ไม่ได้ — ตรวจลิงก์ใน config.js หรืออินเทอร์เน็ต',1))}
+  if(!(r.ver>=3)){GOLD=true;console.warn('CalTrack: โค้ดใน Apps Script ยังเป็นเวอร์ชันเก่า — วาง Code.gs ใหม่ แล้ว Deploy → Manage deployments → ดินสอ → New version');return}
+  if(r.needSetup){gstat('ยังไม่มีผู้ใช้ในระบบ · คนแรกที่สมัครจะได้สิทธิ์ผู้ดูแลระบบทันที');$('#gfirst').textContent=' · คุณเป็นคนแรก จะได้สิทธิ์ผู้ดูแลระบบทันที';gtab('sign')}
+ }).catch(()=>gstat('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ลองใหม่อีกครั้ง',1))}
 const gin=(r,n)=>{sesSet({name:n,token:r.token,role:r.user.role,full:r.user.full});location.reload()};
 $('#glok').onclick=async()=>{const n=$('#gln').value.trim(),p=$('#glp').value;$('#gle').textContent='';if(!n||!p){$('#gle').textContent='กรอกชื่อผู้ใช้และรหัสผ่าน';return}
- $('#glok').disabled=true;try{const r=await api('login',{name:n,pass:p});if(r.ok)return gin(r,n);$('#gle').textContent=GW[r.why]||'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';if(r.why==='nousers')gtab('sign')}catch(e){$('#gle').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'}$('#glok').disabled=false};
+ $('#glok').disabled=true;try{const r=await api('login',{name:n,pass:p});if(r.ok)return gin(r,n);$('#gle').textContent=GOLD?GNR:GW[r.why]||'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';if(r.why==='nousers')gtab('sign')}catch(e){$('#gle').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'}$('#glok').disabled=false};
 $('#glp').onkeydown=e=>{if(e.key==='Enter')$('#glok').click()};
 $('#gsok').onclick=async()=>{const f={name:$('#gsn').value.trim(),full:$('#gsf').value.trim(),email:$('#gse2').value.trim(),group:$('#gsg').value,pass:$('#gsp').value},er=t=>$('#gse').textContent=t;er('');
  if(!/^[A-Za-z0-9._-]{3,30}$/.test(f.name))return er('ชื่อผู้ใช้ใช้ตัวอักษรอังกฤษ ตัวเลข . _ - ยาว 3–30 ตัว ไม่มีช่องว่าง');if(!f.full)return er('กรอกชื่อ-สกุล');
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))return er('อีเมลไม่ถูกต้อง');if(f.pass.length<6)return er('รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร');if(f.pass!==$('#gsp2').value)return er('รหัสผ่านสองช่องไม่ตรงกัน');
- $('#gsok').disabled=true;try{const r=await api('signup',f);if(r.ok&&r.first)return gin(r,f.name);if(r.ok){$('#gSign').hidden=true;$('#gDone').hidden=false;$('#gln').value=f.name}else er(r.error||'สมัครไม่สำเร็จ')}catch(e){er('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้')}$('#gsok').disabled=false};
+ $('#gsok').disabled=true;try{const r=await api('signup',f);if(r.ok&&r.first)return gin(r,f.name);if(r.ok){$('#gSign').hidden=true;$('#gDone').hidden=false;$('#gln').value=f.name}else er(GOLD||r.error==='auth'||r.error==='bad action'?GNR:(r.error||'สมัครไม่สำเร็จ'))}catch(e){er('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้')}$('#gsok').disabled=false};
 if(API)fetch(API+'?action=get').then(r=>r.json()).then(r=>{
  if(APAGE&&!ADMIN)return;
  if(r&&r.state&&(r.rev>REV||(!ADMIN&&r.rev!==REV))){localStorage.setItem('caltrack-v1',JSON.stringify({...r.state,rev:r.rev,sample:false}));location.reload()}
