@@ -9,7 +9,7 @@
     : "";
 
   window.CALTRACK_SUPABASE = PROD ? null : {
-    url: "",  // ← วาง Project URL ระหว่างเครื่องหมายคำพูด เช่น "https://abcdefgh.supabase.co"
-    key: ""   // ← วาง Publishable key (ขึ้นต้น sb_publishable_) หรือ anon public key
+    url: "https://eyylnmvrismymskjfhzi.supabase.co",  // ← วาง Project URL ระหว่างเครื่องหมายคำพูด เช่น "https://abcdefgh.supabase.co"
+    key: "sb_publishable_Lve_nohG0PTNI5FRTbtRVA_qxqgKj57"   // ← วาง Publishable key (ขึ้นต้น sb_publishable_) หรือ anon public key
   };
 })();
