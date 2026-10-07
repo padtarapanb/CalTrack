@@ -55,6 +55,15 @@ const PRESET={
  wb:{t:'B',rows:[[60,58,62],[80,78,82],[100,98,102]]}};
 window.RC=(typeof SAVED!=='undefined'&&SAVED&&Array.isArray(SAVED.RC))?SAVED.RC:[];
 let cur=null,idx=-1;
+// ---------- ขั้นตอนอนุมัติบันทึก: ร่าง → รออนุมัติ → อนุมัติแล้ว / ส่งกลับแก้ไข ----------
+window.FF=(typeof SAVED!=='undefined'&&SAVED&&SAVED.FF&&typeof SAVED.FF==='object')?SAVED.FF:{};
+const ME=()=>typeof SES!=='undefined'&&SES&&SES.name||'ผู้ดูแล(เครื่องนี้)',MEF=()=>typeof SES!=='undefined'&&SES&&(SES.full||SES.name)||'ผู้ดูแล',ISA=()=>typeof ROLE==='undefined'||ROLE==='admin';
+const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7),nowIso=()=>new Date().toISOString();
+RC.forEach(r=>{if(!r.rid)r.rid=newId()});
+const STL_={draft:['ร่าง','p-out'],sub:['รออนุมัติ','p-soon'],ret:['ส่งกลับแก้ไข','p-bad'],ok:['อนุมัติแล้ว','p-ok']};
+const stOf=r=>r.st||'draft',mine=r=>!r.own||r.own===ME();
+const canEdit=r=>ISA()||(['draft','ret'].includes(stOf(r))&&mine(r));
+const dtTH=x=>x?new Date(x).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'}):'';
 const blank=t=>t==='X'?{}:t==='A'?{pt:'',crit:'',tv:'',mv:'',u:''}:t==='B'?{sp:'',param:'',x:'',err:'',u:'',min:'',max:''}:{item:'',val:'',crit:'',res:''};
 const num=v=>{const n=parseFloat(String(v==null?'':v).replace(/,/g,''));return isNaN(n)?null:n};
 const dec=v=>(String(v==null?'':v).split('.')[1]||'').replace(/\D.*/,'').length;
@@ -167,35 +176,66 @@ sec.innerHTML=`<h1>บันทึกผลตามแบบฟอร์มร�
 <h2 style="font-size:1.05rem;margin:0 0 8px">1) หาแบบฟอร์มจากเครื่องมือ</h2>
 <div class="tools"><select id="fiq" aria-label="เลือกเครื่องมือ" style="flex:1;min-width:220px"></select></div><div id="fir" style="margin:8px 0 22px"></div>
 <h2 style="font-size:1.05rem;margin:0 0 8px">2) หรือเลือกแบบฟอร์มจากทะเบียนเอกสาร</h2>
-<div class="tools"><input type="search" id="rq" placeholder="ค้นหารหัสเอกสาร / ชื่อเอกสาร" aria-label="ค้นหาแบบฟอร์ม"> <button class="go adm" id="tnew">+ สร้างแบบฟอร์มใหม่</button></div>
+<div class="tools"><input type="search" id="rq" placeholder="ค้นหารหัสเอกสาร / ชื่อเอกสาร" aria-label="ค้นหาแบบฟอร์ม"> <button class="go adm radmo" id="tnew">+ สร้างแบบฟอร์มใหม่</button></div>
 <div class="tw" style="margin-bottom:22px"><table style="min-width:760px"><thead><tr><th>รหัสเอกสาร</th><th>ชื่อเอกสาร</th><th>Revision</th><th>วันที่อนุมัติ</th><th>สถานะ</th><th>ใช้งาน</th></tr></thead><tbody id="rtb"></tbody></table></div>
 <div class="box det" id="ftb"></div>
-<h2 style="font-size:1.05rem;margin:0 0 8px">3) บันทึกที่กรอกแล้ว</h2>
+<h2 style="font-size:1.05rem;margin:0 0 8px">3) บันทึกที่กรอกแล้ว / ส่งอนุมัติ</h2><div class="tools"><select id="fflt" aria-label="กรองบันทึก"><option value="">ทุกบันทึก</option><option value="sub">รออนุมัติ</option><option value="mine">ของฉัน</option><option value="ok">อนุมัติแล้ว</option></select> <span id="fpn" class="lead" style="font-size:.88rem"></span></div>
 <div class="box det" id="fed"></div>
-<div class="tw"><table><thead><tr><th>เอกสารเลขที่ / Rev</th><th>เครื่องมือ</th><th>วันที่สอบเทียบ</th><th>ผลสรุป</th><th>ส่งออก / จัดการ</th></tr></thead><tbody id="flist"></tbody></table></div><datalist id="dlI"></datalist>`;
+<div class="tw"><table><thead><tr><th>เอกสารเลขที่ / Rev</th><th>เครื่องมือ</th><th>วันที่สอบเทียบ</th><th>ผลสรุป</th><th>สถานะ</th><th>ส่งออก / จัดการ</th></tr></thead><tbody id="flist"></tbody></table></div><datalist id="dlI"></datalist>
+<dialog id="fud" class="udlg"><h2 id="fudt" style="margin:0 0 12px;font-size:1.05rem"></h2><div class="fgrid" style="grid-template-columns:1fr"><div><label for="fudi">เครื่องมือ *</label><select id="fudi"></select></div><div><label for="fudd">วันที่สอบเทียบ / ทวนสอบ *</label><input type="date" id="fudd"></div><div><label for="fudf">ไฟล์ฟอร์มที่กรอกแล้ว * (PDF / รูปสแกน / Word ไม่เกิน 20 MB)</label><input type="file" id="fudf" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx"></div><div><label for="fudn">หมายเหตุ</label><input id="fudn"></div></div><div class="err" id="fude" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="fudok">อัปโหลดและส่งให้อนุมัติ</button> <button class="go alt" id="fudc">ยกเลิก</button></p></dialog>`;
 Q('main').appendChild(sec);
+Q('#fudok').onclick=fupSave;Q('#fudc').onclick=()=>Q('#fud').close();
 const ovPill=o=>o==null?'<span class="pill p-out">ยังไม่ครบ</span>':o?'<span class="pill p-ok">ผ่านทุกรายการ</span>':'<span class="pill p-bad">มีรายการไม่ผ่าน</span>';
-function list(){Q('#flist').innerHTML=RC.map((r,i)=>`<tr><td><b>${E(r.h.doc)}</b> · rev ${E(r.h.rev)}<small style="display:block;color:var(--mute)">${r.type==='X'?E(r.tpl.label)+(r.f.certNo?' · ':''):''}${E(r.f.certNo||'')}</small></td><td>${E(r.f.name||'–')}<small style="display:block;color:var(--mute)">${E(r.f.asset||'')} · ${E(r.f.calco||'')}</small></td><td>${dl(r.f.calDate)||'–'}</td><td>${ovPill(overall(r))}</td><td><button class="go alt sm" data-p="${i}">พิมพ์ / PDF</button> <button class="go alt sm" data-w="${i}">Word</button> <button class="go alt sm adm" data-e="${i}">แก้ไข</button> <button class="go alt sm adm" data-x="${i}">ลบ</button></td></tr>`).join('')||'<tr><td colspan="5">ยังไม่มีบันทึก — เลือกแบบฟอร์มแล้วกด “สร้างบันทึกใหม่”</td></tr>'}
+function list(){const fl=(Q('#fflt')||{}).value||'',np=RC.filter(r=>stOf(r)==='sub').length;if(Q('#fpn'))Q('#fpn').textContent=np?'รออนุมัติ '+np+' ฉบับ':'';
+ const rows=RC.map((r,i)=>[r,i]).filter(([r])=>!fl||(fl==='mine'?r.own===ME():stOf(r)===fl)).sort((a,b)=>(stOf(b[0])==='sub')-(stOf(a[0])==='sub')||b[1]-a[1]);
+ Q('#flist').innerHTML=rows.map(([r,i])=>{const st=stOf(r),L=STL_[st]||STL_.draft,U=r.type==='U',who=st==='ok'&&r.ap?`โดย ${E(r.ap.name||r.ap.by)} ${dtTH(r.ap.at)}`:st==='sub'&&r.sub?`ส่งโดย ${E(r.sub.name||r.sub.by)} ${dtTH(r.sub.at)}`:st==='ret'&&r.rt?`เหตุผล: ${E(r.rt.why)}`:r.own?`โดย ${E(r.ownN||r.own)}`:'';
+  return`<tr><td><b>${E(r.h.doc)}</b> · rev ${E(r.h.rev)}<small style="display:block;color:var(--mute)">${U?'ไฟล์ที่กรอกแล้ว (อัปโหลด)':r.type==='X'?E(r.tpl.label)+(r.f.certNo?' · ':''):''}${U?'':E(r.f.certNo||'')}</small></td><td>${E(r.f.name||'–')}<small style="display:block;color:var(--mute)">${E(r.f.asset||'')}${r.f.calco?' · '+E(r.f.calco):''}</small></td><td>${dl(r.f.calDate)||'–'}</td><td>${U?'–':ovPill(overall(r))}</td><td><span class="pill ${L[1]}">${L[0]}</span><small style="display:block;color:var(--mute)">${who}</small></td>
+  <td style="white-space:nowrap">${U?(r.att&&r.att.link?`<a class="go alt sm" href="${E(r.att.link)}" target="_blank" rel="noopener">ดูไฟล์</a> <a class="go alt sm" href="${E(r.att.dl||r.att.link)}" target="_blank" rel="noopener">ดาวน์โหลด</a>`:`<span class="pill p-out">${E(r.att&&r.att.file||'ไม่มีไฟล์')}</span>`):`<button class="go alt sm" data-p="${i}">พิมพ์ / PDF</button> <button class="go alt sm" data-w="${i}">Word</button>`}
+  ${canEdit(r)?(U?` <button class="go alt sm adm" data-ru="${i}">แทนที่ไฟล์</button>`:` <button class="go alt sm adm" data-e="${i}">แก้ไข</button>`):''}${['draft','ret'].includes(st)&&(mine(r)||ISA())?` <button class="go sm adm" data-s="${i}">ส่งให้อนุมัติ</button>`:''}${st==='sub'&&ISA()?` <button class="go sm adm" data-a="${i}">อนุมัติ</button> <button class="go alt sm adm" data-r="${i}">ส่งกลับแก้ไข</button>`:''}${ISA()||(mine(r)&&['draft','ret'].includes(st))?` <button class="go alt sm adm" data-x="${i}">ลบ</button>`:''}</td></tr>`}).join('')||`<tr><td colspan="6">${fl?'ไม่มีบันทึกในกลุ่มนี้':'ยังไม่มีบันทึก — เลือกแบบฟอร์มแล้วกด “กรอก” หรืออัปโหลดฟอร์มที่กรอกแล้ว'}</td></tr>`}
+function submitR(i){const r=RC[i];if(!r)return;r.st='sub';r.sub={by:ME(),name:MEF(),at:nowIso()};delete r.rt;log('ส่งบันทึกให้อนุมัติ',r.h.doc,null,{เครื่อง:r.f.name});list();toast('ส่งให้ผู้ดูแลระบบอนุมัติแล้ว')}
+Q('#fflt').onchange=list;
 Q('#flist').onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
- if(d.p!==undefined)print(RC[+d.p]);else if(d.w!==undefined)word(RC[+d.w]);else if(d.e!==undefined){idx=+d.e;cur=JSON.parse(JSON.stringify(RC[idx]));draw()}
- else if(d.x!==undefined&&confirm('ลบบันทึกนี้?')){const r=RC.splice(+d.x,1)[0];log('ลบบันทึกแบบฟอร์ม',r.h.doc,{เครื่อง:r.f.name},null);list();toast('ลบแล้ว')}};
+ if(d.s!==undefined)submitR(+d.s);
+ else if(d.ru!==undefined){const r=RC[+d.ru],inp=document.createElement('input');inp.type='file';inp.accept='.pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx';inp.onchange=async()=>{const f=inp.files[0];if(!f)return;toast('กำลังอัปโหลด '+f.name+'…');
+  try{const it=D.find(x=>x.id===r.f.inst)||{};r.att=await window.upFile(f,{fy:fy(r.f.calDate),group:it.scope==='shared'?'เครื่องมือรวม':it.group||'ไม่ระบุกลุ่ม',no:r.h.doc,id:r.f.inst||''});log('แทนที่ไฟล์ฟอร์มที่กรอกแล้ว',r.h.doc,null,{ไฟล์:f.name});list();toast('แทนที่ไฟล์แล้ว — กด “ส่งให้อนุมัติ” อีกครั้ง')}catch(e){alert('อัปโหลดไม่สำเร็จ: '+e.message)}};inp.click()}
+ else if(d.a!==undefined){const r=RC[+d.a];if(!confirm('อนุมัติบันทึก '+r.h.doc+' · '+(r.f.name||'')+' ?'))return;r.st='ok';r.ap={by:ME(),name:MEF(),at:nowIso()};log('อนุมัติบันทึกแบบฟอร์ม',r.h.doc,null,{เครื่อง:r.f.name});list();toast('อนุมัติแล้ว')}
+ else if(d.r!==undefined){const r=RC[+d.r],why=(prompt('เหตุผลที่ส่งกลับให้แก้ไข:')||'').trim();if(!why)return;r.st='ret';r.rt={by:ME(),name:MEF(),at:nowIso(),why};log('ส่งกลับบันทึกให้แก้ไข',r.h.doc,null,{เหตุผล:why});list();toast('ส่งกลับให้ผู้กรอกแก้ไขแล้ว')}
+ else if(d.p!==undefined)print(RC[+d.p]);else if(d.w!==undefined)word(RC[+d.w]);else if(d.e!==undefined){idx=+d.e;cur=JSON.parse(JSON.stringify(RC[idx]));draw()}
+ else if(d.x!==undefined&&confirm(stOf(RC[+d.x])==='ok'?'บันทึกนี้อนุมัติแล้ว — ยืนยันลบ?':'ลบบันทึกนี้?')){const r=RC.splice(+d.x,1)[0];log('ลบบันทึกแบบฟอร์ม',r.h.doc,{เครื่อง:r.f.name},null);list();toast('ลบแล้ว')}};
 // ---------- ทะเบียนเอกสาร + แม่แบบที่สร้างเอง ----------
 function reg(){const q=(Q('#rq').value||'').trim().toLowerCase(),codes=REG.map(r=>r[0]);
- const tb=(doc,i)=>FT.map((T,j)=>[T,j]).filter(([T])=>T.doc===doc).map(([T,j])=>`<div style="margin:2px 0;white-space:nowrap"><button class="go sm adm" data-ut="${j}">กรอก: ${E(T.label||T.title)}</button> <button class="go alt sm adm" data-te="${j}" aria-label="แก้ไขแบบฟอร์ม">แก้ไขแบบ</button></div>`).join('');
+ const tb=(doc,i)=>FT.map((T,j)=>[T,j]).filter(([T])=>T.doc===doc).map(([T,j])=>`<div style="margin:2px 0;white-space:nowrap"><button class="go sm adm" data-ut="${j}">กรอก: ${E(T.label||T.title)}</button> <button class="go alt sm" data-tw="${j}">ฟอร์มเปล่า (Word)</button> <button class="go alt sm adm radmo" data-te="${j}" aria-label="แก้ไขแบบฟอร์ม">แก้ไขแบบ</button></div>`).join('');
  const rows=REG.map((r,i)=>({doc:r[0],name:r[1],rev:r[2],date:r[3],bi:r[4]?i:-1,note:r[5],ri:i}));
  FT.forEach(T=>{if(!codes.includes(T.doc)&&!rows.some(x=>x.doc===T.doc&&x.ft))rows.push({doc:T.doc,name:T.docName||T.title,rev:T.rev,date:T.issue,bi:-1,ft:1,ri:-1})});
  Q('#rtb').innerHTML=rows.filter(r=>!q||(r.doc+' '+r.name+' '+FT.filter(T=>T.doc===r.doc).map(T=>T.label).join(' ')).toLowerCase().includes(q)).map(r=>{const t=tb(r.doc),has=r.bi>=0||t;
   return`<tr><td style="white-space:nowrap"><b>${E(r.doc)}</b></td><td>${E(r.name)}${r.note?`<small style="display:block;color:var(--soon)">${E(r.note)}</small>`:''}</td><td>${E(r.rev)}</td><td style="white-space:nowrap">${E(r.date)||'–'}</td><td>${r.ft?'<span class="pill p-soon">สร้างในระบบ</span>':r.note?'<span class="pill p-soon">ต้องตรวจสอบ</span>':'<span class="pill p-ok">อนุมัติเรียบร้อย</span>'}</td>
-  <td>${r.bi>=0?`<div style="margin:2px 0"><button class="go sm adm" data-g="${r.bi}">กรอกแบบฟอร์ม</button></div>`:''}${t}${has?'':'<span class="pill p-out">ยังไม่มีแบบฟอร์มในระบบ</span> '}<button class="go alt sm adm" data-nt="${r.ri}" data-nd="${E(r.doc)}">+ สร้างแบบฟอร์ม${has?'สำหรับเครื่องอื่น':''}</button></td></tr>`}).join('')||'<tr><td colspan="6">ไม่พบแบบฟอร์ม</td></tr>'}
+  <td>${r.bi>=0?`<div style="margin:2px 0;white-space:nowrap"><button class="go sm adm" data-g="${r.bi}">กรอกแบบฟอร์ม</button> <button class="go alt sm" data-bw="${r.bi}">ฟอร์มเปล่า (Word)</button></div>`:''}${t}${has||FF[r.doc]?'':'<span class="pill p-out">ยังไม่มีแบบฟอร์มในระบบ</span> '}${ffCell(r.doc)}<button class="go alt sm adm radmo" data-nt="${r.ri}" data-nd="${E(r.doc)}">+ สร้างแบบฟอร์ม${has?'สำหรับเครื่องอื่น':''}</button></td></tr>`}).join('')||'<tr><td colspan="6">ไม่พบแบบฟอร์ม</td></tr>'}
+function ffCell(doc){const f=FF[doc];return`<div style="margin:2px 0;display:flex;flex-wrap:wrap;gap:4px">${f?`<a class="go alt sm" href="${E(f.dl||f.link)}" target="_blank" rel="noopener">ดาวน์โหลดไฟล์ฟอร์ม</a> `:''}<button class="go alt sm adm radmo" data-ffu="${E(doc)}">${f?'เปลี่ยนไฟล์ฟอร์ม':'แนบไฟล์ฟอร์มเปล่า'}</button> <button class="go sm adm" data-fup="${E(doc)}">อัปโหลดฟอร์มที่กรอกแล้ว</button></div>`}
 Q('#rq').oninput=reg;
 function useT(j,inst){const T=FT[j];if(!T)return;idx=-1;cur=newRecX(T);const i=inst&&D.find(z=>z.id===inst);if(i)fillFrom(i);Q('#ftb').classList.remove('on');draw()}
 Q('#rtb').onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
  if(d.g!==undefined){const g=REG[+d.g];idx=-1;cur=newRec(g[4],g);draw()}
+ else if(d.bw!==undefined){const g=REG[+d.bw];word(newRec(g[4],g))}else if(d.tw!==undefined)word(newRecX(FT[+d.tw]));
+ else if(d.ffu!==undefined)ffPick(d.ffu);else if(d.fup!==undefined)fupOpen(d.fup);
  else if(d.ut!==undefined)useT(+d.ut);else if(d.te!==undefined)tbOpen(FT[+d.te],+d.te);
  else if(d.nt!==undefined){const g=REG[+d.nt],T=FT.find(x=>x.doc===d.nd);
   const base=g?{doc:g[0],docName:g[1],rev:String(g[2]),issue:g[3]?dl(iso(g[3])):'',title:g[1]}:T?{doc:T.doc,docName:T.docName,rev:T.rev,issue:T.issue,title:T.title}:{};
   tbNew(base.doc==='F 36 05 040'?'heat':base.doc==='F 36 03 025'?'perf':'gen',base)}};
 Q('#tnew').onclick=()=>tbNew('gen',{doc:'',docName:'',rev:'0',issue:'',title:''});
+// ---------- ไฟล์ฟอร์มเปล่า (ผู้ดูแลแนบ) + อัปโหลดฟอร์มที่กรอกแล้ว (ส่งอนุมัติ) ----------
+const docInfo=doc=>{const g=REG.find(r=>r[0]===doc),T=FT.find(x=>x.doc===doc);return g?{doc:g[0],rev:String(g[2]),title:g[1]}:T?{doc:T.doc,rev:T.rev,title:T.docName||T.title}:{doc,rev:'',title:doc}};
+function ffPick(doc){const inp=document.createElement('input');inp.type='file';inp.accept='.doc,.docx,.pdf,.xls,.xlsx';inp.onchange=async()=>{const f=inp.files[0];if(!f)return;toast('กำลังอัปโหลด '+f.name+'…');
+ try{const up=await window.upFile(f,{kind:'form',no:doc,id:'ฟอร์มเปล่า'});FF[doc]={...up,at:nowIso(),by:ME()};log('แนบไฟล์ฟอร์มเปล่า',doc,null,{ไฟล์:f.name});reg();toast('แนบไฟล์ฟอร์มแล้ว — ทุกคนดาวน์โหลดได้')}catch(e){alert('อัปโหลดไม่สำเร็จ: '+e.message)}};inp.click()}
+function fupOpen(doc){const I=docInfo(doc);Q('#fudt').textContent='อัปโหลดฟอร์มที่กรอกแล้ว · '+I.doc+' '+I.title;Q('#fud').dataset.doc=doc;
+ Q('#fudi').innerHTML='<option value="">— เลือกเครื่องมือ —</option>'+D.map(i=>`<option value="${E(i.id)}">${E(i.id)} · ${E(i.name)}</option>`).join('');Q('#fudd').value=new Date().toISOString().slice(0,10);Q('#fudn').value='';Q('#fudf').value='';Q('#fude').textContent='';Q('#fud').showModal()}
+async function fupSave(){const doc=Q('#fud').dataset.doc,I=docInfo(doc),id=Q('#fudi').value,it=D.find(x=>x.id===id),f=Q('#fudf').files[0],d=Q('#fudd').value,er=t=>Q('#fude').textContent=t;
+ if(!it)return er('เลือกเครื่องมือ');if(!d)return er('ใส่วันที่');if(!f)return er('เลือกไฟล์ฟอร์มที่กรอกแล้ว (PDF / รูป / Word)');
+ const b=Q('#fudok');b.disabled=true;er('กำลังอัปโหลด…');
+ try{const fyv=(()=>{const x=new Date(d);return x.getUTCFullYear()+543+(x.getUTCMonth()>=9?1:0)})();
+  const att=await window.upFile(f,{fy:fyv,group:it.scope==='shared'?'เครื่องมือรวม':it.group,no:doc,id});
+  RC.push({type:'U',rid:newId(),h:{doc:I.doc,rev:I.rev,title:I.title},f:{name:it.name,asset:it.id,inst:it.id,calDate:d,note:Q('#fudn').value.trim()},att,own:ME(),ownN:MEF(),st:'sub',sub:{by:ME(),name:MEF(),at:nowIso()}});
+  log('อัปโหลดฟอร์มที่กรอกแล้ว',I.doc,null,{เครื่อง:it.id,ไฟล์:f.name});Q('#fud').close();list();toast('อัปโหลดแล้ว — ส่งให้ผู้ดูแลระบบอนุมัติ');Q('#flist').scrollIntoView({behavior:'smooth',block:'center'})}
+ catch(e){er('อัปโหลดไม่สำเร็จ: '+e.message)}b.disabled=false}
 // ---------- หาแบบฟอร์มจากเครื่องมือ ----------
 function fiq(){const v=Q('#fiq').value;Q('#fiq').innerHTML='<option value="">— เลือกเครื่องมือเพื่อดูว่ามีแบบฟอร์มหรือยัง —</option>'+D.map(i=>`<option value="${E(i.id)}">${E(i.id)} · ${E(i.name)}</option>`).join('');Q('#fiq').value=v;
  Q('#dlI').innerHTML=D.map(i=>`<option value="${E(i.id)} · ${E(i.name)}">`).join('');fir()}
@@ -328,7 +368,7 @@ function draw(){if(cur.type==='X')return drawX();const t=cur.type,f=cur.f,h=cur.
  <details class="xbox"><summary>ส่วนหัวเอกสาร (เลขที่เอกสาร / ผู้จัดทำ / ผู้ทบทวน / ผู้อนุมัติ)</summary><div class="fgrid">
  ${[['doc','เอกสารเลขที่'],['rev','แก้ไขครั้งที่'],['issue','วันที่ประกาศใช้'],['pre','ผู้จัดทำ'],['prePos','ตำแหน่ง ผู้จัดทำ'],['rvw','ผู้ทบทวน'],['rvwPos','ตำแหน่ง ผู้ทบทวน'],['apr','ผู้อนุมัติ (ส่วนหัว)'],['aprPos','ตำแหน่ง ผู้อนุมัติ']].map(([k,l])=>inp(k,l,'','',h[k],`data-h="${k}"`)).join('')}</div></details>
  <div class="err" id="ferr" role="alert"></div>
- <p style="margin:14px 0 0"><button class="go adm" id="fsave">บันทึก</button> <button class="go alt" id="fprevb">ดูตัวอย่างแบบฟอร์ม</button> <button class="go alt" id="fpdf">พิมพ์ / PDF</button> <button class="go alt" id="fword">ดาวน์โหลด Word</button> <button class="go alt" id="fclose">ปิด</button></p>
+ <p style="margin:14px 0 0"><button class="go adm" id="fsave">บันทึกร่าง</button> <button class="go adm" id="fsub">บันทึกและส่งให้อนุมัติ</button> <button class="go alt" id="fprevb">ดูตัวอย่างแบบฟอร์ม</button> <button class="go alt" id="fpdf">พิมพ์ / PDF</button> <button class="go alt" id="fword">ดาวน์โหลด Word</button> <button class="go alt" id="fclose">ปิด</button></p>
  <iframe id="fprev" title="ตัวอย่างแบบฟอร์ม" style="display:none;width:100%;height:760px;border:1px solid var(--line);background:#fff;margin-top:14px"></iframe>`;
  Q('#fed').classList.add('on');upd();Q('#fed').scrollIntoView({behavior:'smooth',block:'nearest'})}
 
@@ -353,16 +393,18 @@ Q('#fed').addEventListener('click',e=>{const b=e.target.closest('button'),d=b?b.
   if(p.name){f.name=f.name||p.name;f.brand=f.brand||p.brand;f.model=f.model||p.model}
   cur.rows=cur.type==='C'?p.rows.map(r=>({item:r[0],val:'',crit:r[1],res:''})):p.rows.flatMap(r=>['การกระจาย','ความร้อน'].map(pm=>({sp:r[0],param:pm,x:'',err:'',u:'',min:r[1],max:r[2]})));draw()}
  else if(b.id==='fclose'){cur=null;Q('#fed').classList.remove('on')}
- else if(b.id==='fsave')save();else if(b.id==='fpdf')print(cur);else if(b.id==='fword')word(cur);
+ else if(b.id==='fsave')save();else if(b.id==='fsub'){if(save())submitR(idx)}else if(b.id==='fpdf')print(cur);else if(b.id==='fword')word(cur);
  else if(b.id==='fprevb'){const fr=Q('#fprev');fr.style.display='block';fr.srcdoc=html(cur);fr.scrollIntoView({behavior:'smooth',block:'nearest'})}});
 
-function save(){const f=cur.f;if(!(f.name||'').trim()){Q('#ferr').textContent='กรอกชื่อเครื่องมือ';return}
+function save(){const f=cur.f;if(!(f.name||'').trim()){Q('#ferr').textContent='กรอกชื่อเครื่องมือ';return false}
+ if(idx>=0&&RC[idx]&&!canEdit(RC[idx])){Q('#ferr').textContent='บันทึกนี้ส่งอนุมัติ/อนุมัติแล้ว แก้ไขไม่ได้ (ให้ผู้ดูแลระบบส่งกลับก่อน)';return false}
+ if(!cur.rid)cur.rid=newId();if(!cur.own){cur.own=ME();cur.ownN=MEF()}if(!cur.st)cur.st='draft';
  Q('#ferr').textContent='';const cl=JSON.parse(JSON.stringify(cur));cl.rows=used(cl).length?used(cl):cl.rows;
  if(idx>=0)RC[idx]=cl;else{RC.push(cl);idx=RC.length-1}
  const k=(f.calco||'').trim();if(k&&!CO.some(c=>c.name===k)){CO.push({name:k,type:'บริษัทสอบเทียบ',phone:'',accr:''});log('เพิ่มบริษัท',k,null,{จาก:'แบบฟอร์ม'})}
  const o=(f.owner||'').trim();if(o&&!PS.some(p=>p.name===o)){PS.push({name:o,group:'',contact:''});log('เพิ่มผู้รับผิดชอบ',o,null,{จาก:'แบบฟอร์ม'})}
  try{if(cur.type==='X')localStorage.setItem('caltrack-frm-X-'+cur.tid,JSON.stringify({sg:f.sg}));else localStorage.setItem('caltrack-frm-'+cur.type,JSON.stringify({h:cur.h,f:{evalN:f.evalN,evalP:f.evalP,apprN:f.apprN,apprP:f.apprP}}))}catch(e){}
- log(idx>=0?'บันทึกแบบฟอร์ม':'บันทึกแบบฟอร์ม',cur.h.doc,null,{เครื่อง:f.name,เลขที่:f.certNo||'–'});rmst();list();toast('บันทึกแล้ว — ส่งออก PDF / Word ได้จากปุ่มด้านล่างหรือในรายการ')}
+ log(idx>=0?'บันทึกแบบฟอร์ม':'บันทึกแบบฟอร์ม',cur.h.doc,null,{เครื่อง:f.name,เลขที่:f.certNo||'–'});rmst();list();toast('บันทึกแล้ว — กด “ส่งให้อนุมัติ” เมื่อพร้อม · ส่งออก PDF / Word ได้จากรายการ');return true}
 
 // ---------- กรอกแบบฟอร์มที่สร้างเอง ----------
 function infoList(T){return[...(T.info||[]).map(k=>FINFO.find(x=>x[0]===k)).filter(Boolean),...(T.extra||[]).map(x=>[x.k,x.l])]}
@@ -385,7 +427,7 @@ function drawX(){const T=cur.tpl,f=cur.f,R=T.rule||{};
  <details class="xbox"><summary>ส่วนหัวเอกสาร (เลขที่เอกสาร / ผู้จัดทำ / ผู้ทบทวน / ผู้อนุมัติ)</summary><div class="fgrid">
  ${[['doc','เอกสารเลขที่'],['rev','แก้ไขครั้งที่'],['issue','วันที่ประกาศใช้'],['pre','ผู้จัดทำ'],['prePos','ตำแหน่ง ผู้จัดทำ'],['rvw','ผู้ทบทวน'],['rvwPos','ตำแหน่ง ผู้ทบทวน'],['apr','ผู้อนุมัติ (ส่วนหัว)'],['aprPos','ตำแหน่ง ผู้อนุมัติ']].map(([k,l])=>inp(k,l,'','',cur.h[k],`data-h="${k}"`)).join('')}</div></details>
  <div class="err" id="ferr" role="alert"></div>
- <p style="margin:14px 0 0"><button class="go adm" id="fsave">บันทึก</button> <button class="go alt" id="fprevb">ดูตัวอย่างแบบฟอร์ม</button> <button class="go alt" id="fpdf">พิมพ์ / PDF</button> <button class="go alt" id="fword">ดาวน์โหลด Word</button> <button class="go alt" id="fclose">ปิด</button></p>
+ <p style="margin:14px 0 0"><button class="go adm" id="fsave">บันทึกร่าง</button> <button class="go adm" id="fsub">บันทึกและส่งให้อนุมัติ</button> <button class="go alt" id="fprevb">ดูตัวอย่างแบบฟอร์ม</button> <button class="go alt" id="fpdf">พิมพ์ / PDF</button> <button class="go alt" id="fword">ดาวน์โหลด Word</button> <button class="go alt" id="fclose">ปิด</button></p>
  <iframe id="fprev" title="ตัวอย่างแบบฟอร์ม" style="display:none;width:100%;height:760px;border:1px solid var(--line);background:#fff;margin-top:14px"></iframe>`;
  Q('#fed').classList.add('on');upd();Q('#fed').scrollIntoView({behavior:'smooth',block:'nearest'})}
 function updX(){const T=cur.tpl,ev=evalX(cur);

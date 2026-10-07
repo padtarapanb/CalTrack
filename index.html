@@ -127,6 +127,7 @@ body:not(.radm) .radmo{display:none!important}
 .uhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
 .gtabs{margin:4px 0 14px}.gtabs button{flex:1}
 .unl{display:flex;flex-wrap:wrap;gap:8px}.unl>span{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 6px 4px 12px;font-size:.88rem}.unl>span.off{opacity:.6}.unl>span.off>i{text-decoration:line-through}.unl i{font-style:normal}.unl button{font-size:.8rem}
+.udlg.cvd{max-width:1100px;width:96%}.cvb{display:grid;grid-template-columns:260px 1fr;gap:16px;margin-top:12px}.cvb dl{margin:0}.cvb dl>div{margin-bottom:8px}.cvb dt{font-size:.8rem;color:var(--mute)}.cvb dd{margin:0}.cvf{min-height:60vh;border:1px solid var(--line);border-radius:8px;background:var(--bg)}.cvf iframe{width:100%;height:70vh;border:0;border-radius:8px}@media(max-width:760px){.cvb{grid-template-columns:1fr}.cvf iframe{height:60vh}}
 .udlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:22px;max-width:560px;width:92%}
 .abar{display:none}body.apage.admin .abar{display:block;background:var(--brand);color:#fff;font-size:.85rem;padding:6px 14px;border-radius:8px;margin:-10px 0 16px}
 </style>
@@ -382,6 +383,9 @@ body:not(.radm) .radmo{display:none!important}
 
 <datalist id="dlP"></datalist><datalist id="dlV"></datalist><datalist id="dlK"></datalist>
 <div class="toast" id="toast" role="status"></div>
+<dialog id="cvd" class="udlg cvd"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><h2 id="cvt" style="margin:0;font-size:1.05rem"></h2><button class="go alt sm" id="cvc" aria-label="ปิด">✕ ปิด</button></div>
+ <div class="cvb"><div id="cvi"></div><div id="cvf" class="cvf"></div></div>
+ <p style="margin:12px 0 0;display:flex;gap:8px;flex-wrap:wrap"><a class="go" id="cvdl" target="_blank" rel="noopener">ดาวน์โหลด PDF</a><a class="go alt" id="cvo" target="_blank" rel="noopener">เปิดในแท็บใหม่</a><button class="go alt adm" id="cve">แก้ไข / แนบไฟล์</button></p></dialog>
 <dialog id="dzd" class="udlg"><h2 id="dzt" style="margin:0 0 8px;font-size:1.1rem;color:var(--bad)"></h2><div id="dzb" style="font-size:.92rem"></div>
  <p style="margin:12px 0 6px"><button class="go alt sm" id="dzbk">ดาวน์โหลดไฟล์สำรองก่อน (.json)</button> <span id="dzbks" style="font-size:.85rem;color:var(--mute)"></span></p>
  <label for="dzi" style="display:block;font-size:.88rem;margin:10px 0 4px">พิมพ์คำว่า <b id="dzp"></b> เพื่อยืนยัน</label><input id="dzi" autocomplete="off" style="width:100%">
@@ -528,7 +532,14 @@ const fy=d=>{const t=new Date(d);return t.getUTCFullYear()+(t.getUTCMonth()>=9?1
 const C=D.filter(i=>i.last).map((i,n)=>({no:'CERT-'+fy(i.last)+'-'+String(n+101).padStart(4,'0'),id:i.id,date:i.last,by:'NIMT',res:'ผ่าน',file:n%3?'seed':null,url:''}));
 C.push({no:'CERT-2567-0388',id:'AB-014',date:'2024-09-25',by:'NIMT',res:'ผ่าน',file:'seed',url:''});
 if(SAVED&&Array.isArray(SAVED.C)){C.length=0;SAVED.C.forEach(c=>C.push({...c,url:''}))}
-const fileBtn=c=>c.link?`<a href="${c.link}" target="_blank" rel="noopener">เปิด</a> · <a href="${c.dl||c.link}" target="_blank" rel="noopener">ดาวน์โหลด PDF</a>`:c.url?`<a href="${c.url}" target="_blank" rel="noopener">เปิดไฟล์</a>`:c.file?'<span class="pill p-ok">แนบแล้ว</span>':'<span class="pill p-soon">ยังไม่แนบไฟล์</span>';
+const fileBtn=c=>c.link||c.url?`<span style="white-space:nowrap"><button class="go sm" data-cv="${C.indexOf(c)}">ดูใบรับรอง</button> ${c.link?`<a class="go alt sm" href="${esc(c.dl||c.link)}" target="_blank" rel="noopener">ดาวน์โหลด</a>`:''}</span>`:c.file&&c.file!=='seed'?'<span class="pill p-soon" title="ไฟล์ถูกแนบไว้ในเครื่องเดิม ยังไม่ได้อยู่ใน Drive">มีชื่อไฟล์ แต่ยังไม่อยู่ใน Drive</span>':c.file?'<span class="pill p-ok">แนบแล้ว</span>':'<span class="pill p-soon">ยังไม่แนบไฟล์</span>';
+const dfid=c=>c.fileId||((String(c.link||'').match(/\/d\/([\w-]+)/)||[])[1]||'');
+function cview(k){const c=C[k];if(!c)return;const i=byId(c.id)||{},id=dfid(c),src=id?'https://drive.google.com/file/d/'+id+'/preview':c.url||'';
+ $('#cvt').textContent=c.no+' · '+c.id+(i.name?' · '+i.name:'');
+ $('#cvi').innerHTML=`<dl><div><dt>วันที่สอบเทียบ</dt><dd>${fd(c.date)}</dd></div><div><dt>ปีงบประมาณ</dt><dd>${fy(c.date)}</dd></div><div><dt>ผู้ให้บริการ</dt><dd>${esc(c.by||'–')}</dd></div><div><dt>ผล</dt><dd>${rp(c.res||'ไม่ระบุ')}</dd></div>${c.u?`<div><dt>U / เกณฑ์</dt><dd>${esc(c.u)} / ±${esc(c.crit||'–')}</dd></div>`:''}${c.disp?`<div><dt>สถานะต่อไป</dt><dd>${esc(c.disp)}</dd></div>`:''}<div><dt>ไฟล์</dt><dd>${esc(c.file&&c.file!=='seed'?c.file:'–')}</dd></div></dl>`;
+ $('#cvf').innerHTML=src?`<iframe src="${esc(src)}" title="ตัวอย่างใบรับรอง" allow="autoplay"></iframe>`:'<p class="lead" style="padding:30px;text-align:center">ยังไม่มีไฟล์ใบรับรองให้ดู'+(ADMIN?' — กด “แก้ไข / แนบไฟล์” เพื่ออัปโหลด PDF':'')+'</p>';
+ $('#cvo').hidden=!(c.link||c.url);$('#cvo').href=c.link||c.url||'#';$('#cvdl').hidden=!c.link;$('#cvdl').href=c.dl||c.link||'#';$('#cve').hidden=!ADMIN;$('#cve').dataset.ce=k;$('#cvd').showModal()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cv]');if(!b||e.target.closest('a,[data-ce]'))return;e.preventDefault();cview(+b.dataset.cv)});
 const rp=r=>`<span class="pill ${r==='ผ่าน'?'p-ok':r==='ไม่ผ่าน'?'p-bad':'p-soon'}">${r}</span>`;
 function certList(id){const r=C.filter(c=>c.id===id).sort((a,b)=>b.date.localeCompare(a.date));
  return r.length?r.map(c=>`<div class="todo"><span>${fd(c.date)} · ${c.no} · ปีงบ ${fy(c.date)}${c.res&&c.res!=='ผ่าน'&&c.res!=='ไม่ระบุ'?' · '+rp(c.res)+(c.disp?' → '+esc(c.disp):''):''}</span>${fileBtn(c)}</div>`).join(''):'<p class="lead">ยังไม่มีใบรับรอง</p>'}
@@ -540,7 +551,7 @@ function fyOpts(sel){const ys=[...new Set([...C.map(c=>fy(c.date)),fy(TODAY)])].
 function rc(){const y=+$('#cy').value,q=$('#cq').value.trim().toLowerCase();
  const rows=C.filter(c=>fy(c.date)===y&&(!q||(c.no+c.id).toLowerCase().includes(q))).sort((a,b)=>b.date.localeCompare(a.date));
  $('#cs').textContent=`ปีงบประมาณ ${y} (1 ต.ค. ${y-544} – 30 ก.ย. ${y}): ${rows.length} ฉบับ · ยังไม่แนบไฟล์ ${rows.filter(c=>!c.file&&!c.url).length} ฉบับ`;
- $('#ct').innerHTML=rows.map(c=>`<tr><td>${fy(c.date)}</td><td><b>${c.no}</b></td><td>${c.id} · ${(D.find(i=>i.id===c.id)||{}).name||''}</td><td>${fd(c.date)}</td><td>${c.by||'–'}</td><td>${rp(c.res)}</td><td>${c.u?'U '+esc(c.u)+' / ±'+esc(c.crit||'–'):'–'}</td><td>${c.disp?esc(c.disp)+(c.corr?'<small style="display:block;color:var(--mute)">ค่าแก้: '+esc(c.corr)+'</small>':''):'–'}</td><td>${fileBtn(c)}</td><td class="adm"><button class="go alt" data-ce="${C.indexOf(c)}">แก้ไข / แนบไฟล์</button></td></tr>`).join('')||'<tr><td colspan="10">ยังไม่มีใบรับรองในปีงบประมาณนี้</td></tr>'}
+ $('#ct').innerHTML=rows.map(c=>`<tr data-cv="${C.indexOf(c)}" style="cursor:pointer" title="คลิกเพื่อดูรายละเอียด"><td>${fy(c.date)}</td><td><b>${c.no}</b></td><td>${c.id} · ${(D.find(i=>i.id===c.id)||{}).name||''}</td><td>${fd(c.date)}</td><td>${c.by||'–'}</td><td>${rp(c.res)}</td><td>${c.u?'U '+esc(c.u)+' / ±'+esc(c.crit||'–'):'–'}</td><td>${c.disp?esc(c.disp)+(c.corr?'<small style="display:block;color:var(--mute)">ค่าแก้: '+esc(c.corr)+'</small>':''):'–'}</td><td>${fileBtn(c)}</td><td class="adm"><button class="go alt" data-ce="${C.indexOf(c)}">แก้ไข / แนบไฟล์</button></td></tr>`).join('')||'<tr><td colspan="10">ยังไม่มีใบรับรองในปีงบประมาณนี้</td></tr>'}
 $('#cy').onchange=rc;$('#cq').oninput=rc;
 function defcrit(){const m=parseFloat((((byId($('#ci').value).x)||{}).mpe||'').replace(/[^\d.]/g,''));if(!isNaN(m))$('#ccr').value=m}
 function cchk(auto){const e=parseFloat($('#cem').value),u=parseFloat($('#cu').value),t=parseFloat($('#ccr').value),h=$('#chk'),n=v=>+v.toPrecision(6);h.textContent='';
@@ -558,6 +569,7 @@ function applyRes(id,d,n,mv){const k=D.findIndex(i=>i.id===id),r=C.find(c=>c.no=
 $('#ccancel').onclick=()=>$('#cf').classList.remove('on');
 $('#cd').onchange=()=>$('#cfy').value=$('#cd').value?fy($('#cd').value):'';
 const b64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f)});
+$('#cvc').onclick=()=>$('#cvd').close();$('#cve').onclick=()=>{$('#cvd').close();const x=document.createElement('span');x.dataset.ce=$('#cve').dataset.ce;$('#ct').onclick({target:x})};
 $('#ct').onclick=e=>{const b=e.target.closest('[data-ce]');if(!b)return;const c=C[+b.dataset.ce];CEDIT=+b.dataset.ce;
  $('#ci').innerHTML=D.map(i=>`<option value="${i.id}">${i.id} · ${i.name}</option>`).join('');$('#ci').value=c.id;$('#cn').value=c.no;$('#cd').value=c.date;$('#cfy').value=fy(c.date);$('#cb').value=c.by||'';$('#cr').value=c.res;$('#cem').value=c.em||'';$('#cu').value=c.u||'';$('#ccr').value=c.crit||'';$('#ccv').value=c.corr||'';$('#cdr').value=c.dref||'';$('#cdp').value=c.disp||'';cchk();
  $('#cf h2').textContent='แก้ไขใบรับรอง / แนบไฟล์';$('#cerr').textContent='';$('#cf').classList.add('on');$('#cf').scrollIntoView({behavior:'smooth',block:'nearest'})};
@@ -570,9 +582,9 @@ $('#csave').onclick=async()=>{const n=$('#cn').value.trim(),d=$('#cd').value,f=$
  if(NEED&&/ใช้งานต่อ/.test(DP)&&!$('#ccv').value.trim()){$('#cerr').textContent='ระบุค่าแก้ที่ต้องคีย์ใช้งาน';return}
  if(NEED&&/NCR/.test(DP)&&!$('#cdr').value.trim()){$('#cerr').textContent='ระบุเลขที่อ้างอิง NCR / CAPA';return}
  const id=$('#ci').value,it=byId(id),rec={no:n,id,date:d,by:$('#cb').value.trim(),res:RS,u:$('#cu').value.trim(),crit:$('#ccr').value.trim(),em:$('#cem').value.trim(),corr:NEED?$('#ccv').value.trim():'',disp:NEED?DP:'',dref:NEED?$('#cdr').value.trim():''},old=CEDIT>=0?C[CEDIT]:null;let up={};
- if(f){if(API){if(f.size>20*1048576){$('#cerr').textContent='ไฟล์ใหญ่เกิน 20 MB';return}
+ if(f){if(FILES){if(f.size>20*1048576){$('#cerr').textContent='ไฟล์ใหญ่เกิน 20 MB';return}
    $('#csave').disabled=true;$('#cerr').textContent='กำลังอัปโหลดขึ้น Google Drive…';
-   try{const r=await api('upload',{token:SES.token,name:f.name,mime:f.type||'application/pdf',data:await b64(f),fy:fy(d),group:it.scope==='shared'?'เครื่องมือรวม':it.group,no:n,id});if(r.error)throw new Error(r.error);up={link:r.link,dl:r.dl,file:f.name,fileId:r.fileId}}
+   try{up=await upFile(f,{fy:fy(d),group:it.scope==='shared'?'เครื่องมือรวม':it.group,no:n,id});$('#cerr').textContent=''}
    catch(err){$('#cerr').textContent='อัปโหลดไม่สำเร็จ: '+err.message;$('#csave').disabled=false;return}
    $('#csave').disabled=false}else up={file:f.name,url:URL.createObjectURL(f)}}
  if(old){const bb={},aa={};['no','id','date','by','res','u','crit','em','corr','disp','dref'].forEach(k=>{if((old[k]||'')!==(rec[k]||'')){bb[k]=old[k];aa[k]=rec[k]}});if(up.file)aa.ไฟล์=up.file;Object.assign(old,rec,up);log('แก้ไขใบรับรอง',n,bb,aa);applyRes(id,d,n,0)}
@@ -677,7 +689,7 @@ function pdocSet(p,el){const d=pdoc(p),k=el.dataset.pd,m=k.match(/^s(\d)([npd])$
 rpl();
 
 // persistence, dashboard, import, backup
-function store(){try{localStorage.setItem('caltrack-v1',JSON.stringify({sample:SAMPLE,rev:REV,D:D.map(({days,s,m,...r})=>r),G:GROUPS,C:C.map(({url,...r})=>r),PL,nid,CO,PS,A:AUD,RC:window.RC||[],FT:window.FT||[],PLD:typeof PLD!=='undefined'?PLD:undefined}))}catch(e){}}
+function store(){try{localStorage.setItem('caltrack-v1',JSON.stringify({sample:SAMPLE,rev:REV,D:D.map(({days,s,m,...r})=>r),G:GROUPS,C:C.map(({url,...r})=>r),PL,nid,CO,PS,A:AUD,RC:window.RC||[],FT:window.FT||[],FF:window.FF||{},PLD:typeof PLD!=='undefined'?PLD:undefined}))}catch(e){}}
 function persist(){store();if(SYNC&&ADMIN){clearTimeout(sy);sy=setTimeout(push,900)}}
 function dash(){const a=D.filter(i=>i.s!=='out'),bad=a.filter(i=>i.s==='bad').length;
  $('#asof').textContent=`ข้อมูล ณ ${fd(TODAY)} · ปีงบประมาณ ${fy(TODAY)}`;
@@ -827,11 +839,20 @@ async function sbUnits(){try{const c=await sb();const{data,error}=await c.from('
 function unrender(){const b=$('#unbox');if(!b)return;b.hidden=!(SBC&&ADMIN&&ROLE==='admin');if(b.hidden||!UNITS)return;
  $('#unl').innerHTML=UNITS.map(u=>`<span class="${u.active?'':'off'}"><i>${esc(u.name)}</i> <button class="lnk" data-unr="${u.id}">แก้ชื่อ</button><button class="lnk" data-unh="${u.id}">${u.active?'ซ่อน':'แสดง'}</button></span>`).join('')||'<p>ยังไม่มีรายชื่อ</p>'}
 async function unsave(q,ok){$('#unerr').textContent='';try{const{data,error}=await q;if(error)throw error;if(!data||!data.length)throw new Error('ไม่มีสิทธิ์แก้ไข');toast(ok);await sbUnits()}catch(e){$('#unerr').textContent=/duplicate|unique/i.test(e.message)?'มีชื่อนี้อยู่แล้ว':sbe(e)}}
+const FILES=SBC?String(window.CALTRACK_FILES||'').trim():API;
+async function gpost(url,body){const c=new AbortController(),t=setTimeout(()=>c.abort(),90000);try{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body),signal:c.signal});const x=await r.text();try{return JSON.parse(x)}catch(e){throw new Error('ที่เก็บไฟล์ตอบกลับผิดรูปแบบ — ตรวจลิงก์ CALTRACK_FILES ใน config.js')}}catch(e){throw new Error(e.name==='AbortError'?'อัปโหลดนานเกินไป ลองใหม่':e.message==='Failed to fetch'?'เชื่อมต่อที่เก็บไฟล์ (Google) ไม่ได้':e.message)}finally{clearTimeout(t)}}
+async function upFile(f,meta){if(!FILES)throw new Error('ยังไม่ได้ตั้งค่าที่เก็บไฟล์ (CALTRACK_FILES ใน config.js)');if(f.size>20*1048576)throw new Error('ไฟล์ใหญ่เกิน 20 MB');
+ const body={action:'upload',name:f.name,mime:f.type||'application/octet-stream',data:await b64(f),...meta};
+ if(SBC){const c=await sb();const{data:{session}}=await c.auth.getSession();if(!session)throw new Error('หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่');body.sb=session.access_token}else body.token=SES&&SES.token;
+ const r=await gpost(FILES,body);if(r.error)throw new Error(r.error==='auth'?'ที่เก็บไฟล์ตรวจสิทธิ์ไม่ผ่าน — ผู้ดูแลระบบต้องใส่ SB_URL / SB_KEY ใน Apps Script แล้ว Deploy ใหม่':r.error);
+ return{link:r.link,dl:r.dl,file:f.name,fileId:r.fileId}}
+window.upFile=upFile;
 async function api(action,body){if(SBC&&SBA[action]){try{return await SBA[action](body||{})}catch(e){const m=(e&&e.message)||'';if(/fetch|network|^net$|load failed/i.test(m))throw new Error('net');return{ok:false,why:'x',error:sbe(e)}}}
  if(!API)throw new Error('net');const c=new AbortController(),t=setTimeout(()=>c.abort(),30000);try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...body}),signal:c.signal});const x=await r.text();try{return JSON.parse(x)}catch(e){throw new Error('notjson')}}catch(e){throw new Error(e.name==='AbortError'?'timeout':e.message||'net')}finally{clearTimeout(t)}}
 function stat(t,bad){const e=$('#sy');if(e){e.textContent=t;e.style.color=bad?'#ff9a92':'#7fa0ab'}}
 async function push(note){try{stat('กำลังบันทึก'+WHERE+'…');const r=await api('save',{token:SES.token,baseRev:REV,state:JSON.parse(localStorage.getItem('caltrack-v1')),note});
  if(r.error==='sample'){stat('ข้อมูลตัวอย่างจะไม่ถูกบันทึกขึ้น'+WHERE,1);return}
+ if(r.error==='approval'){stat('บันทึกไม่สำเร็จ: เฉพาะผู้ดูแลระบบอนุมัติ หรือแก้/ลบบันทึกที่อนุมัติแล้วได้',1);if(confirm('การแก้ไขนี้ต้องเป็นผู้ดูแลระบบ (อนุมัติ หรือแก้/ลบบันทึกที่อนุมัติแล้ว) — โหลดข้อมูลล่าสุดกลับมา?')){snapshot('ก่อนโหลดข้อมูลล่าสุด (ไม่มีสิทธิ์อนุมัติ)');localStorage.removeItem('caltrack-v1');location.reload()}return}
  if(r.error==='conflict'){stat('ข้อมูลขัดแย้ง',1);if(confirm('มีคนอื่นบันทึกข้อมูลไปก่อน ต้องโหลดข้อมูลล่าสุดมาแทน (ข้อมูลในเครื่องนี้จะถูกเก็บเป็นสำเนาไว้ในหน้า นำเข้า/สำรอง) ตกลงไหม?')){snapshot('ก่อนโหลดข้อมูลล่าสุด (บันทึกขัดแย้งกับคนอื่น)');localStorage.removeItem('caltrack-v1');location.reload()}return}
  if(r.error==='auth'){stat('หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่',1);sesSet(null);toast('หมดเวลาเข้าสู่ระบบ (6 ชั่วโมง) — กำลังกลับไปหน้าเข้าสู่ระบบ');setTimeout(()=>location.reload(),1500);return}
  if(r.error)throw new Error(r.error);REV=r.rev;try{const j=JSON.parse(localStorage.getItem('caltrack-v1'));j.rev=REV;localStorage.setItem('caltrack-v1',JSON.stringify(j))}catch(e){store()}stat('บันทึก'+WHERE+'แล้ว'+(r.counts?' · เครื่องมือ '+r.counts['เครื่องมือ']+' · ใบรับรอง '+r.counts['ใบรับรอง']:''));return r}catch(e){stat('บันทึก'+WHERE+'ไม่สำเร็จ ลองใหม่'+(e&&e.message&&e.message!=='0'?' ('+e.message+')':''),1)}}
@@ -840,7 +861,7 @@ function who(){const w=$('#who');
   :!AUTH?`<span>โหมดเครื่องเดียว · ผู้ดูแล</span><a class="wl" href="${VHREF}">เปิดหน้าผู้ชม</a>`
   :ADMIN?`<span>${esc(SES.full||SES.name)}<small style="display:block">${ROLE==='admin'?'ผู้ดูแลระบบ':'เจ้าหน้าที่'} · ${esc(SES.name)}</small></span><button id="lg">ออกจากระบบ</button><button id="mypw">เปลี่ยนรหัสผ่าน</button><a class="wl" href="${VHREF}">เปิดหน้าผู้ชม</a>`:'<span>หน้าเจ้าหน้าที่</span>';
  w.insertAdjacentHTML('beforeend','<div id="sy"></div>');const b=$('#lg');if(b)b.onclick=async()=>{b.disabled=true;if(SBC)try{await(await sb()).auth.signOut()}catch(e){}sesSet(null);location.reload()}}
-if(!API)$('#abar').textContent=SBC?'หน้าเจ้าหน้าที่ — เพิ่ม/แก้ไขข้อมูลได้ · ตอนนี้ข้อมูลเครื่องมือยังเก็บในเบราว์เซอร์เครื่องนี้ ดาวน์โหลดไฟล์สำรองเป็นระยะ':'หน้าเจ้าหน้าที่ — เพิ่ม/แก้ไขข้อมูลได้ · ข้อมูลอยู่ในเบราว์เซอร์นี้';
+if(!API)$('#abar').textContent=SBC?'หน้าเจ้าหน้าที่ — เพิ่ม/แก้ไขข้อมูลได้ · บันทึกออนไลน์อัตโนมัติ ทุกเครื่องเห็นข้อมูลชุดเดียวกัน':'หน้าเจ้าหน้าที่ — เพิ่ม/แก้ไขข้อมูลได้ · ข้อมูลอยู่ในเบราว์เซอร์นี้';
 document.body.classList.toggle('admin',ADMIN);document.body.classList.toggle('apage',APAGE);document.body.classList.toggle('radm',ADMIN&&ROLE==='admin');who();$('#fp').style.display=SYNC?'':'none';if(SBC)$('#fp').textContent='อัปโหลดข้อมูลในเครื่องนี้ขึ้นออนไลน์';
 $('#fp').onclick=async()=>{if(SAMPLE){toast('ข้อมูลตอนนี้เป็นข้อมูลตัวอย่าง — นำเข้า Excel หรือกู้คืนจากไฟล์สำรองก่อน');return}
  const c=cnt(curState());if(!confirm('บันทึกข้อมูลในเครื่องนี้ขึ้น'+WHERE+'\n\n'+c.map(([k,v])=>'• '+k+': '+v).join('\n')+'\n\nตกลงไหม?'))return;
