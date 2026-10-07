@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CalTrack – ระบบสอบเทียบเครื่องมือ (Mockup)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f5;--panel:#fff;--ink:#14262e;--mute:#5f7079;--line:#d9e1e6;--side:#0f2a35;--side-ink:#cfe0e6;--brand:#1b7f8c;--ok:#16794a;--okbg:#e2f3ea;--soon:#a15c00;--soonbg:#fdf0d5;--bad:#b3261e;--badbg:#fbe4e2}
+@media (prefers-color-scheme:dark){:root{--bg:#0d171c;--panel:#142229;--ink:#e7eff2;--mute:#8fa3ac;--line:#25363e;--side:#09151a;--okbg:#14392b;--soonbg:#3c2f12;--badbg:#3f1b18;--ok:#6fd6a3;--soon:#f2c066;--bad:#ff9a92}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",system-ui,sans-serif;line-height:1.5;display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{background:var(--side);color:var(--side-ink);padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}aside nav{flex:1;overflow-y:auto;min-height:0}.ng{font-size:.72rem;letter-spacing:.04em;color:#6f909b;padding:14px 10px 4px;text-transform:uppercase}
+.logo{font-weight:700;font-size:1.2rem;color:#fff;padding:0 10px 4px}
+.logo+small{display:block;padding:0 10px 22px;color:#7fa0ab;font-size:.8rem}
+nav button{display:flex;width:100%;gap:10px;align-items:center;background:none;border:0;color:inherit;font:inherit;padding:10px;border-radius:8px;cursor:pointer;text-align:left}
+nav button[aria-current=true]{background:#1c4452;color:#fff}
+nav button:hover{background:#173744}
+nav a{display:block;color:inherit;text-decoration:none;padding:10px;border-radius:8px}
+nav a:hover{background:#173744}
+.who{padding:12px 10px 0;font-size:.82rem;color:#7fa0ab;border-top:1px solid #1d3d49;margin-top:8px}
+main{padding:28px 32px 56px;min-width:0}
+h1{font-size:1.5rem;margin:0 0 4px}.lead{color:var(--mute);margin:0 0 22px}
+.view{display:none}.view.on{display:block}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.k{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.k span{color:var(--mute);font-size:.85rem}.k b{display:block;font-size:2rem;line-height:1.2;font-variant-numeric:tabular-nums}
+.k.bad b{color:var(--bad)}.k.soon b{color:var(--soon)}.k.ok b{color:var(--ok)}
+.cols{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
+.box h2{font-size:1rem;margin:0 0 12px}
+.todo{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.todo:last-child{border:0}.todo small{display:block;color:var(--mute)}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:600;white-space:nowrap;height:fit-content}
+.p-ok{background:var(--okbg);color:var(--ok)}.p-soon{background:var(--soonbg);color:var(--soon)}.p-bad{background:var(--badbg);color:var(--bad)}
+.bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:8px}
+.bars div{flex:1;text-align:center;font-size:.75rem;color:var(--mute)}
+.bars i{display:block;background:var(--brand);border-radius:4px 4px 0 0;margin-bottom:4px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+input,select{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit}
+input[type=search]{flex:1;min-width:200px}
+.tw{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:620px}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th{color:var(--mute);font-weight:600;font-size:.82rem}
+tbody tr{cursor:pointer}tbody tr:hover{background:color-mix(in srgb,var(--brand) 8%,transparent)}
+tr:last-child td{border:0}
+.det{margin-top:16px;display:none}.det.on{display:block}
+.det dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 14px}
+.det dt{color:var(--mute);font-size:.8rem}.det dd{margin:0;font-weight:600}
+.go{background:var(--brand);color:#fff;border:0;border-radius:8px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer}
+.go.alt{background:none;color:var(--ink);border:1px solid var(--line)}
+button:focus-visible,input:focus-visible,select:focus-visible,tr:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.env{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.env label{font-size:.8rem;color:var(--mute);display:block;margin-bottom:3px}.env input{width:100%}
+td input{width:96px}
+.verdict{margin-top:16px;padding:14px 16px;border-radius:10px;font-weight:600}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:8px;display:none;z-index:9}
+@media(max-width:860px){
+ body{grid-template-columns:1fr}
+ aside{position:static;height:auto;padding:12px}.who{position:static;margin-top:8px}.logo+small{display:none}
+ nav{display:flex;overflow-x:auto;gap:4px}nav button,nav a{white-space:nowrap}
+ main{padding:20px 14px 48px}.kpis{grid-template-columns:1fr 1fr}.cols{grid-template-columns:1fr}
+}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:12px}
+.fgrid label{display:block;font-size:.82rem;font-weight:600;margin-bottom:4px}.fgrid input,.fgrid select{width:100%}.fgrid input[readonly]{background:var(--bg);color:var(--mute)}
+.tg{display:flex;gap:8px;align-items:center}.err{color:var(--bad);font-size:.88rem;margin-top:8px}
+table.wide{min-width:1180px}
+details.xbox{margin:4px 0 14px;border:1px solid var(--line);border-radius:8px;padding:10px 14px}details.xbox summary{cursor:pointer;font-weight:600}details.xbox .fgrid{margin-top:12px}
+a{color:var(--brand)}
+.chips label{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:99px;padding:5px 14px;margin:0 8px 8px 0;cursor:pointer;background:var(--panel)}
+.f2{display:block;font-size:.85rem;font-weight:600;margin:6px 0}
+
+/* ---- v3: หน้าบันทึกผลสอบเทียบ + มือถือ ---- */
+.stp{display:flex;align-items:center;gap:10px;font-weight:700;margin:18px 0 10px}.stp:first-child{margin-top:0}.stp span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--brand);color:#fff;font-size:.85rem}
+.rec2 .env{padding:14px;background:var(--bg);border-radius:10px}.rec2 .tw td input{width:100%;min-width:84px;font-size:1rem}.rec2 .tw td{vertical-align:middle}
+.rec2 .verdict{font-size:1rem}.sticky-act{margin:18px 0 0}
+input,select,button{min-height:40px}
+@media(max-width:860px){
+ .ng{display:none}body{font-size:16px;grid-template-columns:minmax(0,1fr)!important}aside,main{min-width:0;max-width:100vw}aside{padding:10px 12px}nav button,nav a{padding:10px 14px}
+ .tools{flex-direction:column;align-items:stretch}.tools>*{width:100%}
+ .fgrid,.env{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}
+ h1{font-size:1.35rem}.box{padding:14px}
+ table.cardm{min-width:0!important;width:100%}.cardm thead{display:none}.cardm,.cardm tbody,.cardm tr,.cardm td{display:block;width:100%}
+ .cardm tr{border:1px solid var(--line);border-radius:10px;margin:10px;padding:8px 12px;width:auto;background:var(--panel)}
+ .cardm td{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 0!important;border:0!important;text-align:right}
+ .cardm td::before{content:attr(data-label);font-size:.78rem;color:var(--mute);text-align:left;flex:0 0 40%}
+ .cardm td:empty{display:none}
+ .rec2 .tw td input{max-width:60%;text-align:right}
+ .tw{border:0;background:none}
+ .sticky-act{position:sticky;bottom:0;background:linear-gradient(transparent,var(--panel) 30%);padding:14px 0 6px;margin:0}.sticky-act .go{width:100%}
+ #fed .tw table{min-width:0}
+}
+@media print{aside,.tools,.go,select{display:none!important}body{display:block}main{padding:0}}
+.p-out,.p-nodate{background:var(--line);color:var(--mute)}
+body:not(.admin) .adm{display:none!important}
+.who button{background:none;border:1px solid #3b5a68;color:#cfe0e6;border-radius:6px;padding:4px 10px;font:inherit;cursor:pointer;margin-top:6px;display:block}
+#sy{font-size:.75rem;margin-top:4px}
+.cat{font-size:.82rem;color:var(--mute);margin:-4px 0 12px}.sm{padding:5px 10px;font-size:.82rem}
+/* ---- v4: แท็บ ---- */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 0 14px}.tabs button{background:none;border:0;border-bottom:3px solid transparent;font:inherit;color:var(--mute);padding:8px 14px;cursor:pointer;font-weight:600}.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--brand)}
+/* ---- v4: ทะเบียนแบบกระชับ + แบ่งหน้า + แผงรายละเอียด ---- */
+.rcount{color:var(--mute);font-size:.88rem;margin:-6px 0 8px}
+.rtab td{padding:9px 14px;vertical-align:middle}.rtab td small{display:block;color:var(--mute);font-size:.8rem;line-height:1.35}
+.rtab td b{font-weight:600}.rtab .num{color:var(--mute);font-variant-numeric:tabular-nums}
+.pager{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:12px 0 0}.pager button{min-width:40px;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:8px;font:inherit;cursor:pointer;padding:6px 10px}
+.pager button[aria-current=true]{background:var(--brand);border-color:var(--brand);color:#fff}.pager button:disabled{opacity:.4;cursor:default}.pager .sp{flex:1}.pager select{min-height:36px;padding:5px 8px}
+.dscrim{position:fixed;inset:0;background:rgba(10,20,25,.35);display:none;z-index:20}.dscrim.on{display:block}
+.det.drawer{position:fixed;top:0;right:0;bottom:0;width:min(640px,100vw);margin:0;border-radius:0;overflow-y:auto;z-index:21;box-shadow:-8px 0 30px rgba(0,0,0,.18);padding:22px 24px 40px}
+.det.drawer .x{position:sticky;top:0;float:right;background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--ink);font:inherit;cursor:pointer;padding:4px 12px;margin:-6px -8px 0 12px}
+.det.drawer dl{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+@media(max-width:860px){.det.drawer dl{grid-template-columns:1fr 1fr}.cardm.rtab td>div{flex:1;text-align:right}}
+/* ---- v5: หน้าผู้ดูแลแยก ---- */
+#dzd table{border-collapse:collapse;margin:6px 0}#dzd td{padding:3px 10px;border-bottom:1px solid var(--line)}#dzd td:last-child{text-align:right;font-weight:600}
+.dz{border-color:var(--bad)}
+#gdx[hidden],#gDone[hidden]{display:none!important}
+#gate{position:fixed;inset:0;z-index:50;background:var(--bg);display:grid;place-items:center;padding:20px;overflow:auto}#gate[hidden]{display:none}
+.gcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px;width:min(440px,100%);box-shadow:0 10px 40px rgba(0,0,0,.08)}
+.gcard h1{font-size:1.35rem;margin:2px 0 4px}.glogo{font-weight:700;color:var(--brand)}
+.gst{font-size:.88rem;margin:12px 0 14px;padding:10px 12px;border-radius:8px;background:var(--okbg);color:var(--ok)}.gst.bad{background:var(--badbg);color:var(--bad)}.gst:empty{display:none}
+.gsm{font-size:.82rem;color:var(--mute);margin:14px 0 0}.lnk{background:none;border:0;color:var(--brand);text-decoration:underline;cursor:pointer;font:inherit;padding:0;min-height:0}
+body.gated{overflow:hidden}
+.wl{display:block;color:#9fd0d8;font-size:.8rem;margin-top:8px}
+#cst dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:0}#cst dt{color:var(--mute);font-size:.8rem}#cst dd{margin:0;font-weight:600}
+body:not(.radm) .radmo{display:none!important}
+.badge{display:inline-block;min-width:20px;padding:0 6px;border-radius:99px;background:var(--bad);color:#fff;font-size:.72rem;line-height:20px;text-align:center;margin-left:6px}.badge:empty{display:none}
+.uhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.gtabs{margin:4px 0 14px}.gtabs button{flex:1}
+.udlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:22px;max-width:560px;width:92%}
+.abar{display:none}body.apage.admin .abar{display:block;background:var(--brand);color:#fff;font-size:.85rem;padding:6px 14px;border-radius:8px;margin:-10px 0 16px}
+</style>
+<script src="config.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<aside>
+  <div class="logo">CalTrack</div><small>ระบบสอบเทียบเครื่องมือ</small>
+  <nav>
+    <div class="ng">งานประจำ</div>
+    <button data-v="dash" aria-current="true">แดชบอร์ด</button>
+    <button data-v="reg" aria-current="false">ทะเบียนเครื่องมือ</button>
+    <button data-v="plan" aria-current="false">แผนสอบเทียบ</button>
+    <button class="adm" data-v="rec" aria-current="false">บันทึกผลสอบเทียบ</button>
+    <button data-v="cert" aria-current="false">ใบรับรองสอบเทียบ</button>
+    <div class="ng adm" id="ngset">ตั้งค่าและข้อมูลหลัก</div>
+    <button class="adm" data-v="mst" aria-current="false">ข้อมูลหลัก: บริษัท / ผู้รับผิดชอบ</button>
+    <button class="adm radmo" data-v="usr" aria-current="false">จัดการผู้ใช้งาน <span class="badge" id="navpn"></span></button>
+    <button class="adm radmo" data-v="data" aria-current="false">นำเข้า / สำรองข้อมูล</button>
+    <button class="adm" data-v="aud" aria-current="false">ประวัติการแก้ไข</button>
+    <a class="adm radmo" href="line.html">แจ้งเตือนผ่าน LINE</a>
+  </nav>
+  <div class="who" id="who"></div>
+</aside>
+
+<main><div class="abar">หน้าเจ้าหน้าที่ — เพิ่ม/แก้ไขข้อมูลได้ · การแก้ไขบันทึกขึ้น Google อัตโนมัติ</div>
+<!-- Dashboard -->
+<section class="view on" id="dash">
+  <h1>ภาพรวมการสอบเทียบ</h1><p class="lead" id="asof"></p><div id="demo" class="box" style="display:none;margin-bottom:16px;border-color:var(--soon);color:var(--soon)">กำลังแสดงข้อมูลตัวอย่าง — ไปที่เมนู “นำเข้า / สำรองข้อมูล” เพื่อนำเข้าทะเบียนจริงจากไฟล์ Excel</div>
+  <div class="kpis">
+    <div class="k"><span>เครื่องมือทั้งหมด</span><b id="kAll">–</b></div>
+    <div class="k soon"><span>ใกล้ครบกำหนด (30 วัน)</span><b id="kSoon">–</b></div>
+    <div class="k bad"><span>เกินกำหนด</span><b id="kBad">–</b></div>
+    <div class="k ok"><span>ไม่เกินกำหนด (ไม่รวมที่จำหน่าย)</span><b id="kOk">–</b></div>
+  </div>
+  <div class="cols">
+    <div class="box"><h2>ต้องดำเนินการ</h2><div id="todo"></div></div>
+    <div class="box"><h2>ครบกำหนดรายเดือน</h2>
+      <div class="bars" id="bars" role="img" aria-label="กราฟแท่งจำนวนเครื่องมือครบกำหนดรายเดือน">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Registry -->
+<section class="view" id="reg">
+  <h1>ทะเบียนเครื่องมือ</h1><p class="lead">คลิกแถวเพื่อดูรายละเอียด ประวัติสอบเทียบ และแก้ไข</p>
+  <div class="tools">
+    <input type="search" id="q" placeholder="ค้นหาชื่อ / รหัสครุภัณฑ์ / Serial / สถานที่" aria-label="ค้นหา">
+    <select id="gp" aria-label="กรองกลุ่มงาน"></select>
+    <select id="sc" aria-label="กรองประเภท"><option value="">ทุกประเภท</option><option value="lab">เฉพาะ Lab</option><option value="shared">เครื่องมือรวม</option></select>
+    <select id="kt" aria-label="กรองหมวด"><option value="">ทุกหมวด</option><option value="A">หมวด A</option><option value="B">หมวด B</option><option value="C">หมวด C</option><option value="-">ยังไม่จัดหมวด</option></select>
+    <select id="st" aria-label="กรองสถานะ"><option value="">ทุกสถานะ</option><option value="bad">เกินกำหนด</option><option value="soon">ใกล้ครบกำหนด</option><option value="ok">ปกติ</option><option value="out">จำหน่ายแล้ว</option><option value="nodate">ยังไม่ระบุวันที่</option></select>
+    <select id="so" aria-label="เรียงลำดับ"><option value="">เรียงตามลำดับทะเบียน</option><option value="due">ครบกำหนดก่อน</option><option value="name">ชื่อเครื่อง ก–ฮ / A–Z</option></select>
+    <button class="go alt sm" id="qclr">ล้างตัวกรอง</button>
+    <button class="go adm" id="add">+ ขึ้นทะเบียนเครื่องมือ</button>
+  </div>
+  <div class="rcount" id="rcount"></div>
+  <div class="box det" id="form">
+    <h2>ขึ้นทะเบียนเครื่องมือใหม่</h2>
+    <div class="fgrid">
+      <div><label for="fo0">ลำดับ</label><input id="fo0" readonly></div>
+      <div><label for="fn">ชื่อเครื่อง *</label><input id="fn" placeholder="เช่น เครื่องชั่ง 4 ตำแหน่ง"></div>
+      <div><label for="fb">ยี่ห้อ / รุ่น</label><input id="fb" placeholder="เช่น Mettler Toledo / XPR205"></div>
+      <div><label for="fs">Serial No.</label><input id="fs"></div>
+      <div><label for="fa">รหัสครุภัณฑ์ *</label><input id="fa"></div>
+      <div><label for="fl">สถานที่ติดตั้ง</label><input id="fl" placeholder="เช่น ห้อง Chem 1"></div>
+      <div><label for="fg">กลุ่มงาน</label><select id="fg"></select></div>
+      <div><label for="fw">ผู้รับผิดชอบหลัก</label><input id="fw" list="dlP"></div>
+      <div><label for="fw2">ผู้รับผิดชอบสำรอง</label><input id="fw2" list="dlP"></div>
+      <div><label for="fsc">ประเภทเครื่องมือ</label><select id="fsc"><option value="">— เลือก —</option><option value="lab">เฉพาะ Lab (ใช้ในแล็บเดียว)</option><option value="shared">เครื่องมือรวม (ใช้ร่วมหลายแล็บ)</option></select></div>
+      <div><label for="fc">หมวดเครื่องมือ * (ผลต่อการคีย์ค่าแก้)</label><select id="fc"><option value="">— เลือก —</option><option value="A">A · วิกฤต (Critical)</option><option value="B">B · สำคัญ (Major)</option><option value="C">C · ทั่วไป (Indicator)</option></select></div>
+      <div style="grid-column:1/-1" class="cat" id="chint"></div>
+      <div><label for="fv">บริษัทผู้จำหน่าย</label><input id="fv" list="dlV"></div>
+      <div><label for="fk">บริษัทสอบเทียบ</label><input id="fk" list="dlK"></div>
+      <div><label for="fo">สถานะการใช้งาน</label><select id="fo"><option>ใช้งาน</option><option>ส่งซ่อม</option><option>ลดสถานะ</option><option>รอ NCR/CAPA</option><option>จำหน่าย</option></select></div>
+      <div><label for="fL">วันที่สอบเทียบครั้งล่าสุด *</label><input type="date" id="fL"></div>
+      <div><label for="fi">ความถี่สอบเทียบ</label><select id="fi"><option value="6">ทุก 6 เดือน</option><option value="12" selected>ทุก 12 เดือน</option><option value="24">ทุก 24 เดือน</option></select></div>
+      <div><label for="fN">วันที่สอบเทียบครั้งต่อไป (คำนวณให้)</label><input type="date" id="fN" readonly></div>
+      <div style="grid-column:1/-1"><label for="fm">หมายเหตุ</label><input id="fm"></div>
+    </div>
+    <details class="xbox"><summary>ข้อมูลเพิ่มเติมตามมาตรฐาน (ISO/IEC 17025 · 17043 · ISO 15189 · 15190)</summary>
+    <div class="fgrid">
+      <div><label for="xm">ผู้ผลิต (Manufacturer) / ผู้ติดต่อ</label><input id="xm"></div>
+      <div><label for="xr">วันที่รับเข้า / เริ่มใช้งาน</label><input type="date" id="xr"></div>
+      <div><label for="xc">สภาพเมื่อรับ</label><select id="xc"><option>ใหม่</option><option>มือสอง</option><option>ปรับสภาพแล้ว</option></select></div>
+      <div><label for="xg">ช่วงการวัด</label><input id="xg"></div>
+      <div><label for="xs">ความละเอียด</label><input id="xs"></div>
+      <div><label for="xpt">จุดสอบเทียบ (แสดงในแผน)</label><input id="xpt" placeholder="เช่น 10, 50, 100 µl"></div>
+      <div><label for="xe">เกณฑ์การยอมรับ / MPE (แสดงในแผน)</label><input id="xe" placeholder="เช่น ±0.5 °C"></div>
+      <div><label for="xf">ซอฟต์แวร์ / Firmware</label><input id="xf"></div>
+      <div><label for="xp">แผนบำรุงรักษา</label><input id="xp" placeholder="เช่น ทำความสะอาดรายเดือน"></div>
+      <div><label for="xvp">โทร / อีเมล ผู้จำหน่าย</label><input id="xvp"></div>
+      <div><label for="xkp">โทร / อีเมล บริษัทสอบเทียบ</label><input id="xkp"></div>
+      <div><label for="xka">เลขที่รับรอง ISO/IEC 17025 ของบริษัทสอบเทียบ</label><input id="xka"></div>
+      <div><label for="xwc">ช่องทางติดต่อผู้รับผิดชอบ (โทร / LINE)</label><input id="xwc"></div>
+    </div>
+    <div class="tg" style="flex-wrap:wrap;gap:6px 16px;margin-bottom:12px"><label><input type="checkbox" id="xa"> ตรวจรับก่อนใช้งานแล้ว</label><b>มาตรฐาน:</b>
+      <label><input type="checkbox" class="std" value="17025"> 17025</label><label><input type="checkbox" class="std" value="17043"> 17043</label><label><input type="checkbox" class="std" value="15189"> 15189</label><label><input type="checkbox" class="std" value="15190"> 15190</label></div>
+  </details>
+    <div class="tg"><input type="checkbox" id="fy" checked> <label for="fy" style="margin:0;font-weight:400">แจ้งเตือนผ่าน LINE ล่วงหน้า 30 / 14 / 7 วัน</label></div>
+    <div class="err" id="err" role="alert"></div>
+    <p style="margin:14px 0 0"><button class="go" id="save">บันทึกเข้าทะเบียน</button> <button class="go alt" id="cancel">ยกเลิก</button></p>
+  </div>
+  <div class="tw"><table class="rtab"><thead><tr><th style="width:56px">ลำดับ</th><th>เครื่องมือ</th><th>รหัสครุภัณฑ์</th><th>สถานที่ / กลุ่มงาน</th><th>ผู้รับผิดชอบ</th><th>ครบกำหนดครั้งต่อไป</th><th>สถานะ</th></tr></thead><tbody id="tb"></tbody></table></div>
+  <div class="pager" id="pgr"></div>
+  <div class="dscrim" id="dscrim"></div><div class="box det drawer" id="det" role="dialog" aria-modal="true" aria-label="รายละเอียดเครื่องมือ"></div>
+</section>
+
+<!-- Master data -->
+<section class="view" id="mst">
+  <h1>บริษัท / ผู้รับผิดชอบ</h1><p class="lead">ข้อมูลหลักที่ใช้เลือกในทะเบียนเครื่องมือและใบรับรอง (บริษัทจำหน่าย · บริษัทสอบเทียบ · ผู้รับผิดชอบ)</p>
+  <div class="cols">
+    <div class="box"><h2>บริษัท</h2>
+      <div class="fgrid adm" style="grid-template-columns:1fr 1fr">
+        <div><label for="mn">ชื่อบริษัท *</label><input id="mn"></div>
+        <div><label for="mt">ประเภท</label><select id="mt"><option>ผู้จำหน่าย</option><option>บริษัทสอบเทียบ</option><option>ทั้งสองอย่าง</option></select></div>
+        <div><label for="mp">โทร / อีเมล ผู้ติดต่อ</label><input id="mp"></div>
+        <div><label for="ma">เลขที่รับรอง ISO/IEC 17025 (ถ้ามี)</label><input id="ma"></div>
+      </div>
+      <p class="adm" style="margin:0 0 12px"><button class="go" id="mcs">บันทึกบริษัท</button></p>
+      <div class="tw"><table style="min-width:0"><thead><tr><th>บริษัท</th><th>ประเภท</th><th class="adm"></th></tr></thead><tbody id="mco"></tbody></table></div>
+    </div>
+    <div class="box"><h2>ผู้รับผิดชอบ</h2>
+      <div class="fgrid adm" style="grid-template-columns:1fr 1fr">
+        <div><label for="qn">ชื่อ *</label><input id="qn"></div>
+        <div><label for="qg">กลุ่มงาน</label><select id="qg"></select></div>
+        <div style="grid-column:1/-1"><label for="qc">ช่องทางติดต่อ (โทร / LINE)</label><input id="qc"></div>
+      </div>
+      <p class="adm" style="margin:0 0 12px"><button class="go" id="qs">บันทึกผู้รับผิดชอบ</button></p>
+      <div class="tw"><table style="min-width:0"><thead><tr><th>ชื่อ</th><th>เครื่อง</th><th class="adm"></th></tr></thead><tbody id="mps"></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- Calibration record -->
+<section class="view" id="rec">
+  <h1>บันทึกผลสอบเทียบ</h1><p class="lead">กรอกค่าที่อ่านได้ ระบบคำนวณ E ค่าแก้ และตัดสินผ่าน/ไม่ผ่านตามเกณฑ์ยอมรับ แล้วส่งต่อไปบันทึกเป็นใบรับรอง</p>
+  <div class="box rec2">
+    <div class="stp"><span>1</span>เครื่องมือและสภาวะแวดล้อม</div>
+    <div class="env">
+      <div><label for="ri">เครื่องมือ</label><select id="ri"></select></div>
+      <div><label for="ru">หน่วย</label><input id="ru" value="g"></div>
+      <div><label for="t">อุณหภูมิ (°C)</label><input id="t" value="22.4"></div>
+      <div><label for="h">ความชื้น (%RH)</label><input id="h" value="48"></div>
+    </div>
+    <div class="stp"><span>2</span>ผลการวัดแต่ละจุด</div>
+    <div class="tw"><table class="cardm"><thead><tr><th>ค่าอ้างอิง</th><th>เครื่องอ่านได้</th><th>E</th><th>ค่าแก้ (−E)</th><th>U (k=2)</th><th>เกณฑ์ ±</th><th>ผล</th><th></th></tr></thead><tbody id="cal"></tbody></table></div>
+    <p style="margin:10px 0 0"><button class="go alt sm" id="radd">+ เพิ่มจุดสอบเทียบ</button></p>
+    <p class="lead" style="margin:10px 0 0;font-size:.85rem">กฎตัดสิน: |E| + U ≤ เกณฑ์ = ผ่าน · |E| ≤ เกณฑ์ แต่ |E| + U เกิน = ผ่านแบบมีเงื่อนไข · |E| เกินเกณฑ์ = ไม่ผ่าน</p>
+    <div class="stp"><span>3</span>สรุปผล</div>
+    <div class="verdict" id="vd"></div>
+    <p class="sticky-act"><button class="go" id="submit">ไปบันทึกเป็นใบรับรอง</button></p>
+  </div>
+</section>
+<!-- Audit -->
+<section class="view" id="aud"><h1>ประวัติการแก้ไข</h1><p class="lead">บันทึกทุกการเพิ่ม แก้ไข ลบ พร้อมผู้ทำรายการและเวลา เพื่อตรวจสอบย้อนหลัง</p>
+  <div class="tw"><table><thead><tr><th>เวลา</th><th>ผู้ใช้</th><th>การกระทำ</th><th>รหัส / อ้างอิง</th><th>รายละเอียด (ก่อน → หลัง)</th></tr></thead><tbody id="at"></tbody></table></div></section>
+
+<!-- Data -->
+<section class="view" id="usr">
+  <div class="uhead"><div><h1>จัดการผู้ใช้งาน</h1><p class="lead">อนุมัติผู้สมัคร กำหนดสิทธิ์ ระงับหรือลบบัญชี · เฉพาะผู้ดูแลระบบ</p></div><div><button class="go alt" id="uaddb">+ เพิ่มผู้ใช้</button> <button class="go" id="uref">รีเฟรช</button></div></div>
+  <div class="kpis" id="ukpi"></div>
+  <div class="tabs" role="tablist"><button role="tab" data-ut="all" aria-selected="true">ผู้ใช้ทั้งหมด</button><button role="tab" data-ut="pending" aria-selected="false">รออนุมัติ <span class="badge" id="upn"></span></button></div>
+  <div class="tools"><input type="search" id="uq" placeholder="ค้นหาชื่อ / ชื่อผู้ใช้ / อีเมล / กลุ่มงาน" aria-label="ค้นหาผู้ใช้"></div>
+  <div class="tw"><table class="rtab"><thead><tr><th>ผู้ใช้</th><th>ชื่อ-สกุล</th><th>สิทธิ์</th><th>กลุ่ม / ฝ่าย</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="utb"></tbody></table></div>
+  <div class="err" id="uerr" role="alert"></div>
+  <p class="lead" style="margin:10px 0 0;font-size:.85rem"><b>ผู้ดูแลระบบ</b> = ทำได้ทุกอย่าง รวมถึงจัดการผู้ใช้ นำเข้า/สำรองข้อมูล · <b>เจ้าหน้าที่</b> = เพิ่ม/แก้ข้อมูลเครื่องมือ แผน ใบรับรอง แบบฟอร์ม · คนที่ไม่ได้เข้าสู่ระบบดูได้อย่างเดียวที่หน้าผู้ชม</p>
+  <div class="box" style="margin-top:16px"><h2>สถานะการเชื่อมต่อ</h2><div id="cst"></div></div>
+</section>
+<section class="view" id="data">
+  <h1>นำเข้า / สำรองข้อมูล</h1><p class="lead" id="dlead">ข้อมูลเก็บในเบราว์เซอร์ของเครื่องนี้เท่านั้น ไม่ถูกส่งออกอินเทอร์เน็ต จึงควรดาวน์โหลดไฟล์สำรองเป็นระยะ</p>
+  <div class="box" style="margin-bottom:16px"><h2>1) นำเข้าทะเบียนจากไฟล์ Excel (.xlsx)</h2>
+    <p class="lead" style="margin-bottom:10px;font-size:.88rem">อ่านทุกชีตที่มีหัวคอลัมน์ “ชื่อเครื่อง” แปลงวันที่ (รวมปีที่พิมพ์ผิด) รวมแถวซ้ำตามรหัสครุภัณฑ์ และข้ามชีตแบบประเมินผลที่มีคอลัมน์ “ค่าที่วัดได้”</p>
+    <input type="file" id="ifile" accept=".xlsx,.xls" aria-label="เลือกไฟล์ Excel">
+    <div id="ibox" style="display:none;margin-top:14px">
+      <b>เลือกชีตที่จะนำเข้า</b><div class="chips" id="isheets" style="margin-top:8px"></div>
+      <div id="isum" style="font-weight:600;margin:6px 0 10px"></div>
+      <details class="xbox"><summary>รายการที่ควรตรวจสอบ</summary><div id="iwarn" style="font-size:.85rem;margin-top:8px"></div></details>
+      <label style="display:block;margin:10px 0"><input type="checkbox" id="iclr"> ล้างข้อมูลเดิมทั้งหมดก่อนนำเข้า <small style="color:var(--bad)">(ระวัง: ลบข้อมูลที่มีอยู่ ใช้เฉพาะครั้งแรกที่ยังเป็นข้อมูลตัวอย่าง)</small></label>
+      <button class="go" id="igo">นำเข้าข้อมูล</button>
+    </div>
+  </div>
+  <div class="box"><h2>2) สำรอง / กู้คืน</h2>
+    <button class="go" id="bk">ดาวน์โหลดไฟล์สำรอง (.json)</button>
+    <label class="go alt" style="display:inline-block;cursor:pointer">กู้คืนจากไฟล์สำรอง<input type="file" id="rf" accept=".json" style="display:none"></label>
+    <button class="go alt" id="fp">ซิงก์ขึ้น Google ตอนนี้</button>
+    <div id="bkst" style="margin:12px 0 0"></div>
+    <p class="lead" style="margin:10px 0 0;font-size:.85rem" id="bknote">ไฟล์ใบรับรอง (PDF/รูป) ที่อัปโหลดไม่รวมในไฟล์สำรอง และเปิดดูไม่ได้หลังรีเฟรช ระบบเก็บเฉพาะชื่อไฟล์ ต้องใช้ที่เก็บไฟล์จริงเมื่อเปิดใช้งานจริง</p>
+  </div>
+  <div class="box radmo dz" style="margin-top:16px"><h2>Danger Zone</h2><p class="lead" style="margin:0 0 10px;font-size:.88rem">ลบข้อมูลทั้งหมดในเครื่องนี้ ย้อนกลับไม่ได้ · เฉพาะผู้ดูแลระบบ · ต้องดูจำนวนที่จะถูกลบและพิมพ์คำยืนยันก่อน</p><button class="go alt" id="rs" style="border-color:var(--bad);color:var(--bad)">ล้างข้อมูลทั้งหมด…</button></div>
+</section>
+
+<!-- Plans -->
+<section class="view" id="plan">
+  <h1>แผนสอบเทียบ</h1><p class="lead">สร้างแผนรายปีงบประมาณ/รอบ เลือกเครื่องมือตามกลุ่มงาน และตัดเครื่องที่ไม่สอบเทียบรอบนี้ออกพร้อมเหตุผล</p>
+  <div class="tools"><button class="go adm" id="pnew">+ สร้างแผนใหม่</button></div>
+  <div class="box det" id="pb">
+    <h2>สร้างแผนสอบเทียบ</h2>
+    <div class="fgrid">
+      <div><label for="pfy">ปีงบประมาณ</label><select id="pfy"></select></div>
+      <div><label for="prd">รอบ</label><select id="prd"><option>รอบ 1</option><option>รอบ 2</option><option>รอบ BSC / Hood</option><option>รอบพิเศษ</option></select></div>
+      <div><label for="pmo">เดือนที่วางแผน</label><select id="pmo"></select></div>
+      <div style="grid-column:1/-1"><label for="pn">ชื่อแผน</label><input id="pn"></div>
+    </div>
+    <label class="f2">เลือกกลุ่มงาน</label>
+    <div class="chips" id="pgs"></div>
+    <div class="lead" id="ps" style="margin:6px 0 8px;font-weight:600"></div>
+    <div class="tw"><table class="wide"><thead><tr><th>รวมในแผน</th><th>ชื่อเครื่อง</th><th>รหัส</th><th>กลุ่มงาน</th><th>ครบกำหนด</th><th>หมายเหตุ</th><th>เหตุผลที่ตัดออก</th></tr></thead><tbody id="pt"></tbody></table></div>
+    <div class="err" id="perr" role="alert"></div>
+    <p style="margin:14px 0 0"><button class="go" id="psave">บันทึกแผน</button> <button class="go alt" id="pprev">ดูตัวอย่างแบบฟอร์มแผน</button> <button class="go alt" id="pcancel">ยกเลิก</button></p>
+    <iframe id="pbf" title="ตัวอย่างแบบฟอร์มแผน" style="display:none;width:100%;height:600px;border:1px solid var(--line);border-radius:8px;background:#dfe5e9;margin-top:14px"></iframe>
+  </div>
+  <div id="pl"></div>
+  <div class="box det" id="pd"></div>
+</section>
+
+<!-- Certificates -->
+<section class="view" id="cert">
+  <h1>คลังใบรับรองสอบเทียบ</h1><p class="lead">จัดเก็บแยกตามปีงบประมาณ (1 ต.ค. – 30 ก.ย.) ระบบจัดเข้าปีงบประมาณให้อัตโนมัติจากวันที่สอบเทียบ</p>
+  <div class="tools"><select id="cy" aria-label="ปีงบประมาณ"></select><input type="search" id="cq" placeholder="ค้นหาเลขที่ใบรับรอง / รหัสครุภัณฑ์" aria-label="ค้นหาใบรับรอง"><button class="go adm" id="cadd">+ อัปโหลดใบรับรอง</button></div>
+  <div class="box det" id="cf"><h2>อัปโหลดใบรับรองสอบเทียบ</h2>
+    <div class="fgrid">
+      <div><label for="ci">เครื่องมือ *</label><select id="ci"></select></div>
+      <div><label for="cn">เลขที่ใบรับรอง *</label><input id="cn"></div>
+      <div><label for="cd">วันที่สอบเทียบ *</label><input type="date" id="cd"></div>
+      <div><label for="cfy">จัดเก็บในปีงบประมาณ</label><input id="cfy" readonly></div>
+      <div><label for="cb">ผู้ให้บริการสอบเทียบ</label><input id="cb" list="dlK" placeholder="เช่น NIMT"></div>
+      <div><label for="cr">ผลการตัดสิน</label><select id="cr"><option>ผ่าน</option><option>ผ่านแบบมีเงื่อนไข</option><option>ไม่ผ่าน</option><option>ไม่ระบุ</option></select></div>
+      <div><label for="cem">|E| สูงสุดที่พบ</label><input id="cem" inputmode="decimal"></div>
+      <div><label for="cu">ความไม่แน่นอน (U, k=2)</label><input id="cu" inputmode="decimal"></div>
+      <div><label for="ccr">เกณฑ์ยอมรับ ± (MPE)</label><input id="ccr" inputmode="decimal"></div>
+      <div><label for="cfile">ไฟล์ใบรับรอง (PDF / รูป)</label><input type="file" id="cfile" accept=".pdf,image/*"></div>
+    </div>
+    <div class="cat" id="chk"></div>
+    <div class="fgrid" id="dsp" style="display:none">
+      <div style="grid-column:1/-1"><label for="cdp">ผลมีเงื่อนไข/ไม่ผ่าน — เลือกสถานะต่อไป *</label><select id="cdp"></select></div>
+      <div><label for="ccv">ค่าแก้ที่ต้องคีย์ใช้งาน</label><input id="ccv" placeholder="เช่น +0.0003 g ที่ 100 g"></div>
+      <div><label for="cdr">เลขที่อ้างอิง NCR / CAPA / ใบสั่งซ่อม</label><input id="cdr"></div>
+    </div>
+    <div class="err" id="cerr" role="alert"></div>
+    <p style="margin:14px 0 0"><button class="go" id="csave">บันทึก</button> <button class="go alt" id="ccancel">ยกเลิก</button></p>
+  </div>
+  <p class="lead" id="cs" style="margin-bottom:10px"></p>
+  <div class="tw"><table><thead><tr><th>ปีงบประมาณ</th><th>เลขที่ใบรับรอง</th><th>เครื่องมือ</th><th>วันที่สอบเทียบ</th><th>ผู้ให้บริการ</th><th>ผล</th><th>U / เกณฑ์</th><th>สถานะต่อไป</th><th>ไฟล์</th><th class="adm"></th></tr></thead><tbody id="ct"></tbody></table></div>
+</section>
+</main>
+
+
+<datalist id="dlP"></datalist><datalist id="dlV"></datalist><datalist id="dlK"></datalist>
+<div class="toast" id="toast" role="status"></div>
+<dialog id="dzd" class="udlg"><h2 id="dzt" style="margin:0 0 8px;font-size:1.1rem;color:var(--bad)"></h2><div id="dzb" style="font-size:.92rem"></div>
+ <p style="margin:12px 0 6px"><button class="go alt sm" id="dzbk">ดาวน์โหลดไฟล์สำรองก่อน (.json)</button> <span id="dzbks" style="font-size:.85rem;color:var(--mute)"></span></p>
+ <label for="dzi" style="display:block;font-size:.88rem;margin:10px 0 4px">พิมพ์คำว่า <b id="dzp"></b> เพื่อยืนยัน</label><input id="dzi" autocomplete="off" style="width:100%">
+ <p style="margin:14px 0 0"><button class="go" id="dzok" disabled style="background:var(--bad)">ยืนยัน</button> <button class="go alt" id="dzc">ยกเลิก</button></p></dialog>
+<div id="gate" hidden><div class="gcard"><div class="glogo">CalTrack</div><h1>ระบบสอบเทียบเครื่องมือ · หน้าเจ้าหน้าที่</h1><p class="lead" style="margin:0 0 6px">เข้าสู่ระบบเพื่อเพิ่ม/แก้ไขข้อมูล · ถ้าแค่ดูข้อมูล <a id="gview" href="#">ไปหน้าผู้ชม</a></p>
+ <div class="gst" id="gst"></div>
+ <div class="tabs gtabs" role="tablist"><button role="tab" data-gt="login" aria-selected="true">เข้าสู่ระบบ</button><button role="tab" data-gt="sign" aria-selected="false">สมัครสมาชิก</button></div>
+ <div id="gLogin"><div class="fgrid" style="grid-template-columns:1fr"><div><label for="gln">ชื่อผู้ใช้</label><input id="gln" autocomplete="username" autocapitalize="off"></div><div><label for="glp">รหัสผ่าน</label><input id="glp" type="password" autocomplete="current-password"></div></div>
+  <div class="err" id="gle" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="glok" style="width:100%">เข้าสู่ระบบ</button></p>
+  <p class="gsm">ยังไม่มีบัญชี? <button class="lnk" data-gt="sign">สมัครสมาชิก</button> · ลืมรหัสผ่าน ให้ผู้ดูแลระบบตั้งรหัสใหม่ให้</p></div>
+ <div id="gSign" hidden><p class="gsm" style="margin:0 0 10px">ลงทะเบียนแล้วรอผู้ดูแลระบบอนุมัติ<span id="gfirst"></span></p><div class="fgrid" style="grid-template-columns:1fr"><div><label for="gsn">ชื่อผู้ใช้ * (อังกฤษ/ตัวเลข ไม่มีช่องว่าง)</label><input id="gsn" autocomplete="username" autocapitalize="off" placeholder="เช่น kannika"></div><div><label for="gsf">ชื่อ-สกุล *</label><input id="gsf" placeholder="ชื่อ-นามสกุลภาษาไทย"></div><div><label for="gse2">อีเมล *</label><input id="gse2" type="email" placeholder="email@example.com"></div><div><label for="gsg">กลุ่ม / กลุ่มงาน / ฝ่าย</label><select id="gsg"></select><input id="gsgo" hidden placeholder="พิมพ์ชื่อกลุ่มงาน / ฝ่าย" style="margin-top:6px"></div><div><label for="gsp">รหัสผ่าน * (อย่างน้อย 6 ตัว)</label><input id="gsp" type="password" autocomplete="new-password"></div><div><label for="gsp2">ยืนยันรหัสผ่าน *</label><input id="gsp2" type="password" autocomplete="new-password"></div></div>
+  <div class="err" id="gse" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="gsok" style="width:100%">สมัครสมาชิก</button></p>
+  <p class="gsm">มีบัญชีแล้ว? <button class="lnk" data-gt="login">เข้าสู่ระบบ</button></p></div>
+ <p class="gsm" style="margin-top:14px;border-top:1px solid var(--line);padding-top:12px">สำรองข้อมูลที่อยู่ในเบราว์เซอร์นี้ (ไม่ต้องเข้าสู่ระบบ): <button class="lnk" id="gbk">ดาวน์โหลดไฟล์สำรอง (.json)</button> <span id="gbks"></span></p>
+ <details id="gdx" class="xbox" hidden style="margin-top:14px;font-size:.85rem"><summary>รายละเอียดสำหรับผู้ดูแลระบบ</summary><div id="gdxb" style="margin-top:8px"></div></details>
+ <div id="gDone" hidden class="verdict p-ok" style="margin-top:10px">สมัครเรียบร้อยแล้ว — รอผู้ดูแลระบบอนุมัติ แล้วจึงเข้าสู่ระบบได้ <button class="lnk" data-gt="login">กลับไปหน้าเข้าสู่ระบบ</button></div>
+</div></div>
+<dialog id="ud" class="udlg"><h2 id="udt" style="margin:0 0 12px;font-size:1.1rem">แก้ไขผู้ใช้</h2>
+ <div class="fgrid" style="grid-template-columns:1fr 1fr"><div><label for="udn">ชื่อผู้ใช้</label><input id="udn" autocapitalize="off"></div><div><label for="udf">ชื่อ-สกุล</label><input id="udf"></div><div><label for="ude">อีเมล</label><input id="ude" type="email"></div><div><label for="udg">กลุ่ม / กลุ่มงาน / ฝ่าย</label><select id="udg"></select><input id="udgo" hidden placeholder="พิมพ์ชื่อกลุ่มงาน / ฝ่าย" style="margin-top:6px"></div><div><label for="udr">สิทธิ์</label><select id="udr"><option value="staff">เจ้าหน้าที่</option><option value="admin">ผู้ดูแลระบบ</option></select></div><div><label for="uds">สถานะ</label><select id="uds"><option value="active">ใช้งาน</option><option value="pending">รออนุมัติ</option><option value="disabled">ระงับ</option></select></div><div style="grid-column:1/-1"><label for="udp" id="udpl">ตั้งรหัสผ่านใหม่ (เว้นว่างถ้าไม่เปลี่ยน)</label><input id="udp" type="password" autocomplete="new-password"></div></div>
+ <div class="err" id="ude2" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="udok">บันทึก</button> <button class="go alt" id="udc">ยกเลิก</button></p></dialog>
+<dialog id="mpd" class="udlg" style="max-width:380px"><h2 style="margin:0 0 12px;font-size:1.1rem">เปลี่ยนรหัสผ่านของฉัน</h2><div class="fgrid" style="grid-template-columns:1fr"><div><label for="mp1">รหัสผ่านใหม่ (อย่างน้อย 6 ตัว)</label><input id="mp1" type="password" autocomplete="new-password"></div><div><label for="mp2">ยืนยันรหัสผ่านใหม่</label><input id="mp2" type="password" autocomplete="new-password"></div></div><div class="err" id="mpe" role="alert"></div><p style="margin:12px 0 0"><button class="go" id="mpok">บันทึก</button> <button class="go alt" id="mpc">ยกเลิก</button></p></dialog>
+
+<script>
+const $=s=>document.querySelector(s), TODAY=(()=>{try{const s=JSON.parse(localStorage.getItem('caltrack-v1'));if(s&&s.sample===false)return new Date(new Date().toISOString().slice(0,10))}catch(e){}return new Date('2026-10-02')})();
+const GROUPS=['พยาธิ','ยา','อาหารจุล','อาหารเคมี','พิษ','รังสี','กพว.'];
+function mk(o){const days=o.due?Math.round((new Date(o.due)-TODAY)/864e5):NaN;return{...o,days,s:(/จำหน่าย/.test(o.note||'')||o.ops==='จำหน่าย')?'out':!o.due?'nodate':days<0?'bad':days<=30?'soon':'ok',m:o.due&&o.last?Math.round((new Date(o.due)-new Date(o.last))/2629800000):12}}
+const D=[
+['AB-014','เครื่องชั่ง 4 ตำแหน่ง','Mettler Toledo / XPR205','B948213021','207','ยา','2025-09-27','2026-09-27','ผู้รับผิดชอบ ก','เกินกำหนด รอส่งสอบเทียบ'],
+['PH-007','pH meter','Hanna / HI5221','H5221-0877','120','อาหารจุล','2026-04-01','2026-10-01','ผู้รับผิดชอบ ข',''],
+['TH-021','เทอร์โมมิเตอร์ดิจิทัล','Testo / 608-H1','4521897','กพว.','กพว.','2025-10-08','2026-10-08','ผู้รับผิดชอบ ค',''],
+['PP-032','ไมโครปิเปต 100–1000 µL','Eppendorf / Research plus','Q23088','102','พยาธิ','2025-10-14','2026-10-14','ผู้รับผิดชอบ ง','อยู่ในประกัน บริษัทสอบเทียบให้'],
+['SP-003','UV-Vis Spectrophotometer','Shimadzu / UV-1900i','A114551','206','ยา','2025-10-20','2026-10-20','ผู้รับผิดชอบ ก',''],
+['OV-011','ตู้อบลมร้อน','Memmert / UM500','D211.0394','219','พิษ','2025-10-29','2026-10-29','ผู้รับผิดชอบ จ',''],
+['TH-004','เทอร์โมมิเตอร์แก้ว','Liquid-in-glass','T-3391','กพว.','กพว.','2025-10-30','2026-10-30','ผู้รับผิดชอบ ค',''],
+['AB-009','เครื่องชั่ง 2 ตำแหน่ง','Ohaus / PX4202','B72215','207','ยา','2025-12-15','2026-12-15','ผู้รับผิดชอบ ก',''],
+['PP-018','ไมโครปิเปต 10–100 µL','Biohit / Proline Plus','P-5520','118','พยาธิ','2026-02-11','2027-02-11','ผู้รับผิดชอบ ง',''],
+['CF-001','เครื่องปั่นเหวี่ยง','Sartorius / Sigma 1-14','S-155181','118','พยาธิ','2026-06-10','2027-06-10','ผู้รับผิดชอบ ง',''],
+['IN-001','ตู้เพาะเชื้อ','Memmert / IPP410eco','V721.0144','120','อาหารจุล','2026-06-10','2027-06-10','ผู้รับผิดชอบ ข',''],
+['BSC-01','Biosafety Cabinet Class II','ESCO / AC2-4S8-NS','2020-150567','102','พยาธิ','2026-05-26','2027-05-26','ผู้รับผิดชอบ ง',''],
+['BSC-02','Biosafety Cabinet Class II','ESCO / SC2-4A1','2018-131348','219','พิษ','2026-02-27','2027-02-27','ผู้รับผิดชอบ จ','เครื่องเสีย รอซ่อม'],
+['FH-01','ตู้ดูดควัน (Fume hood)','ESCO / EFD-6B8','2023-192356','ห้องเก็บสารเคมี','อาหารเคมี','2026-05-27','2027-05-27','ผู้รับผิดชอบ ฉ',''],
+['RD-01','เครื่องวัดความเข้มแสง','Kepler / KLM-520C','2112-01','รังสี','รังสี','2026-06-01','2026-12-01','ผู้รับผิดชอบ ช','สอบเทียบ 2 ครั้ง/ปี'],
+['AC-01','ตู้เพาะเชื้ออุณหภูมิต่ำ','Sanyo','–','121','อาหารจุล','2025-11-06','2026-11-06','ผู้รับผิดชอบ ข','จำหน่ายแล้ว ไม่ต้องสอบเทียบ']
+].map(a=>mk({id:a[0],name:a[1],brand:a[2],serial:a[3],loc:a[4],group:a[5],last:a[6],due:a[7],own:a[8],note:a[9]}));
+const SAVED=(()=>{try{return JSON.parse(localStorage.getItem('caltrack-v1'))}catch(e){return null}})();
+let SAMPLE=!(SAVED&&SAVED.sample===false);
+const API=(window.CALTRACK_API||'').trim(),APAGE=/\/admin\/?$/.test(location.pathname)||/[?&]admin\b/.test(location.search)||location.hash==='#admin',
+ SES=(()=>{try{return JSON.parse(localStorage.getItem('caltrack-ses')||sessionStorage.getItem('caltrack-ses'))}catch(e){return null}})(),ADMIN=APAGE&&(!API||!!(SES&&SES.token&&SES.role)),ROLE=!API?'admin':(SES&&SES.role)||'',
+ AHREF=location.protocol==='file:'?location.pathname+'?admin':'/?admin',VHREF=location.protocol==='file:'?location.pathname:'/';
+const sesSet=v=>{try{if(v)localStorage.setItem('caltrack-ses',JSON.stringify(v));else localStorage.removeItem('caltrack-ses');sessionStorage.removeItem('caltrack-ses')}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
+let AUD=SAVED&&Array.isArray(SAVED.A)?SAVED.A:[],REV=SAVED&&SAVED.rev||0,sy=null,EID=null,CEDIT=-1;
+if(SAVED&&Array.isArray(SAVED.D)){D.length=0;SAVED.D.forEach(o=>D.push(mk(o)));GROUPS.length=0;(SAVED.G||[]).forEach(g=>GROUPS.push(g))}
+const L={bad:'เกินกำหนด',soon:'ใกล้ครบกำหนด',ok:'ปกติ',out:'จำหน่ายแล้ว',nodate:'ยังไม่ระบุวันที่'};
+const fd=d=>d?new Date(d).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}):'–';
+const pill=i=>`<span class="pill p-${i.s}">${i.s==='bad'?'เกิน '+(-i.days)+' วัน':i.s==='soon'?'อีก '+i.days+' วัน':i.s==='out'?'จำหน่ายแล้ว':i.s==='nodate'?'ยังไม่ระบุวันที่':'ปกติ'}</span>`;
+// ---- หมวด / ประเภท / สถานะการใช้งาน / ข้อมูลหลัก ----
+const CAT={A:{n:'A · วิกฤต (Critical)',k:'p-bad',d:'กระทบค่าที่ใช้ตัดสินผลหรือเกณฑ์ยอมรับโดยตรง (เช่น เครื่องชั่งวิเคราะห์ ไมโครปิเปต ตุ้มน้ำหนักมาตรฐาน) — สอบเทียบกับหน่วยงานที่ได้ ISO/IEC 17025 ต้องมี U และเกณฑ์ยอมรับ และต้องคีย์ค่าแก้ทุกครั้ง'},B:{n:'B · สำคัญ (Major)',k:'p-soon',d:'กระทบผลทางอ้อมหรือสภาวะแวดล้อม (เช่น ตู้อบ ตู้เพาะเชื้อ เทอร์โมมิเตอร์ตู้เย็น) — สอบเทียบตามรอบ ต้องมี U และเกณฑ์ยอมรับ คีย์ค่าแก้เมื่อ |E| เกินเกณฑ์'},C:{n:'C · ทั่วไป (Indicator)',k:'p-ok',d:'ใช้แสดงผลหรือสนับสนุนเท่านั้น ไม่กระทบเกณฑ์ยอมรับ (เช่น นาฬิกาจับเวลา) — ตรวจสอบสภาพ/เทียบเทียบตามรอบ ไม่ต้องคีย์ค่าแก้'}};
+const SC={lab:'เฉพาะ Lab',shared:'เครื่องมือรวม'};
+const DSP={'ใช้งานต่อ (คีย์ค่าแก้)':'ใช้งาน','ส่งซ่อม':'ส่งซ่อม','ลดสถานะ (ตัวบ่งชี้ ไม่ใช้ตัดสินผล)':'ลดสถานะ','จำหน่าย':'จำหน่าย','ดำเนินการตามระบบคุณภาพ (NCR/CAPA)':'รอ NCR/CAPA'};
+$('#cdp').innerHTML='<option value="">— เลือก —</option>'+Object.keys(DSP).map(k=>`<option>${k}</option>`).join('');
+const opill=i=>{const o=i.s==='out'?'จำหน่าย':(i.ops||'ใช้งาน');return`<span class="pill ${o==='ใช้งาน'?'p-ok':o==='จำหน่าย'?'p-out':'p-bad'}">${esc(o)}</span>`};
+const cpill=c=>CAT[c]?`<span class="pill ${CAT[c].k}" title="${esc(CAT[c].d)}">${c}</span>`:'–';
+const fx=()=>({scope:$('#fsc').value,cat:$('#fc').value,own2:$('#fw2').value.trim(),vendor:$('#fv').value.trim(),calco:$('#fk').value.trim(),ops:$('#fo').value});
+function chint(){const c=CAT[$('#fc').value];$('#chint').textContent=c?c.d:'เลือกหมวดเพื่อดูเกณฑ์ — หมวดมีผลต่อการคีย์ค่าแก้และการบังคับกรอก U / เกณฑ์ยอมรับ'}
+$('#fc').onchange=chint;
+let CO=SAVED&&SAVED.CO||[],PS=SAVED&&SAVED.PS||[],MI={co:-1,ps:-1};
+const uq=a=>[...new Set(a.filter(Boolean))],opts=a=>uq(a).map(v=>`<option value="${esc(v)}">`).join('');
+function rmst(){const nm=t=>CO.filter(c=>c.type===t||c.type==='ทั้งสองอย่าง').map(c=>c.name),b=(m,n)=>`<td class="adm"><button class="go alt sm" data-m="${m}" data-e="${n}">แก้ไข</button> <button class="go alt sm" data-m="${m}" data-d="${n}">ลบ</button></td>`,sm=t=>`<small style="display:block;color:var(--mute)">${t}</small>`;
+ $('#mco').innerHTML=CO.map((c,n)=>`<tr><td><b>${esc(c.name)}</b>${sm(esc(c.phone||'')+(c.accr?' · 17025: '+esc(c.accr):''))}</td><td>${esc(c.type)}</td>${b('co',n)}</tr>`).join('')||'<tr><td colspan="3">ยังไม่มีข้อมูล</td></tr>';
+ $('#mps').innerHTML=PS.map((p,n)=>`<tr><td><b>${esc(p.name)}</b>${sm(esc(p.group||'')+(p.contact?' · '+esc(p.contact):''))}</td><td>${D.filter(i=>i.own===p.name||i.own2===p.name).length}</td>${b('ps',n)}</tr>`).join('')||'<tr><td colspan="3">ยังไม่มีข้อมูล</td></tr>';
+ $('#qg').innerHTML='<option value="">—</option>'+GROUPS.map(g=>`<option>${esc(g)}</option>`).join('');
+ $('#dlV').innerHTML=opts(nm('ผู้จำหน่าย'));$('#dlK').innerHTML=opts(nm('บริษัทสอบเทียบ'));$('#dlP').innerHTML=opts([...PS.map(p=>p.name),...D.map(i=>i.own),...D.map(i=>i.own2)])}
+$('#mcs').onclick=()=>{const c={name:$('#mn').value.trim(),type:$('#mt').value,phone:$('#mp').value.trim(),accr:$('#ma').value.trim()};if(!c.name){toast('กรอกชื่อบริษัท');return}
+ if(MI.co>=0){log('แก้ไขบริษัท',c.name,CO[MI.co],c);CO[MI.co]=c}else{if(CO.some(x=>x.name===c.name)){toast('มีบริษัทนี้แล้ว');return}CO.push(c);log('เพิ่มบริษัท',c.name,null,c)}
+ MI.co=-1;['mn','mp','ma'].forEach(k=>$('#'+k).value='');rmst();toast('บันทึกบริษัทแล้ว')};
+$('#qs').onclick=()=>{const c={name:$('#qn').value.trim(),group:$('#qg').value,contact:$('#qc').value.trim()};if(!c.name){toast('กรอกชื่อผู้รับผิดชอบ');return}
+ if(MI.ps>=0){log('แก้ไขผู้รับผิดชอบ',c.name,PS[MI.ps],c);PS[MI.ps]=c}else{if(PS.some(x=>x.name===c.name)){toast('มีชื่อนี้แล้ว');return}PS.push(c);log('เพิ่มผู้รับผิดชอบ',c.name,null,c)}
+ MI.ps=-1;['qn','qc'].forEach(k=>$('#'+k).value='');rmst();toast('บันทึกผู้รับผิดชอบแล้ว')};
+$('#mst').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;const m=b.dataset.m,A=m==='co'?CO:PS;
+ if(b.dataset.d!==undefined){const x=A[+b.dataset.d];if(confirm('ลบ “'+x.name+'” ?')){log(m==='co'?'ลบบริษัท':'ลบผู้รับผิดชอบ',x.name,x,null);A.splice(+b.dataset.d,1);rmst();toast('ลบแล้ว')}}
+ else{const x=A[+b.dataset.e];MI[m]=+b.dataset.e;if(m==='co'){$('#mn').value=x.name;$('#mt').value=x.type;$('#mp').value=x.phone||'';$('#ma').value=x.accr||''}else{$('#qn').value=x.name;$('#qg').value=x.group||'';$('#qc').value=x.contact||''}}};
+rmst();
+
+function toast(t){persist();dash();const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2200)}
+
+// nav
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.v));
+function show(v){if(v==='aud')raud();if(v==='rec')rri();document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id===v));
+ document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.v===v))}
+
+// dashboard
+$('#kBad').textContent=D.filter(i=>i.s==='bad').length+0;
+$('#kSoon').textContent=D.filter(i=>i.s==='soon').length;
+$('#todo').innerHTML=D.filter(i=>i.s==='bad'||i.s==='soon').slice(0,6).map(i=>`<div class="todo" data-id="${i.id}"><div><b>${i.id}</b> ${i.name}<small>${i.loc} · ครบกำหนด ${fd(i.due)}</small></div>${pill(i)}</div>`).join('');
+$('#todo').onclick=e=>{const r=e.target.closest('.todo');if(r){show('reg');open(r.dataset.id)}};
+
+// registry
+$('#gp').innerHTML='<option value="">ทุกกลุ่มงาน</option>'+GROUPS.map(g=>`<option>${g}</option>`).join('');
+$('#fg').innerHTML=GROUPS.map(g=>`<option>${g}</option>`).join('');
+let PG=1,PSZ=15;try{PSZ=+localStorage.getItem('caltrack-psz')||15}catch(e){}
+const dleft=i=>{if(!i.due)return'';const n=Math.round((new Date(i.due)-TODAY)/864e5);return i.s==='out'?'':n<0?`เกิน ${-n} วัน`:n===0?'วันนี้':`อีก ${n} วัน`};
+function render(keep){const q=$('#q').value.trim().toLowerCase(),s=$('#st').value,g=$('#gp').value,sc=$('#sc').value,kt=$('#kt').value,so=$('#so').value;
+ let rows=D.map((i,n)=>[i,n+1]).filter(([i])=>(!s||i.s===s)&&(!g||i.group===g)&&(!sc||i.scope===sc)&&(!kt||(i.cat||'-')===kt)&&(!q||(i.id+i.name+i.serial+i.loc+i.brand+(i.own||'')).toLowerCase().includes(q)));
+ if(so==='due')rows.sort((a,b)=>(a[0].due||'9999').localeCompare(b[0].due||'9999'));else if(so==='name')rows.sort((a,b)=>String(a[0].name).localeCompare(String(b[0].name),'th'));
+ const tot=rows.length,np=PSZ?Math.max(1,Math.ceil(tot/PSZ)):1;if(!keep)PG=1;PG=Math.min(Math.max(1,PG),np);
+ const vis=PSZ?rows.slice((PG-1)*PSZ,PG*PSZ):rows,f=$('#q').value||s||g||sc||kt;
+ $('#rcount').textContent=tot?`พบ ${tot} เครื่อง${f?' (กรองจากทั้งหมด '+D.length+')':''}${PSZ&&tot>PSZ?` · แสดง ${(PG-1)*PSZ+1}–${Math.min(PG*PSZ,tot)}`:''}`:'';
+ $('#tb').innerHTML=vis.map(([i,n])=>`<tr tabindex="0" data-id="${esc(i.id)}"><td class="num">${n}</td><td><div><b>${esc(i.name)}</b>${i.cat?' '+cpill(i.cat):''}<small>${esc([i.brand,i.serial&&'S/N '+i.serial].filter(Boolean).join(' · ')||'–')}</small></div></td><td>${esc(i.id)}</td><td><div>${esc(i.loc||'–')}<small>${esc(i.group||'')}</small></div></td><td><div>${esc(i.own||'–')}${i.own2?'<small>'+esc(i.own2)+'</small>':''}</div></td><td>${fd(i.due)}</td><td>${pill(i)}${i.ops&&i.ops!=='ใช้งาน'&&i.s!=='out'?' '+opill(i):''}</td></tr>`).join('')||'<tr><td colspan="7">ไม่พบเครื่องมือที่ตรงกับเงื่อนไข — กด “ล้างตัวกรอง”</td></tr>';
+ const btn=(p,l,d,c)=>`<button data-pg="${p}" ${d?'disabled':''} ${c?'aria-current="true"':''} aria-label="หน้า ${p}">${l}</button>`;let nums='';
+ if(np>1){const ps=[...new Set([1,PG-2,PG-1,PG,PG+1,PG+2,np])].filter(x=>x>=1&&x<=np).sort((a,b)=>a-b);ps.forEach((x,k)=>{if(k&&x-ps[k-1]>1)nums+='<span>…</span>';nums+=btn(x,x,0,x===PG)})}
+ $('#pgr').innerHTML=(np>1?btn(PG-1,'‹ ก่อนหน้า',PG===1)+nums+btn(PG+1,'ถัดไป ›',PG===np):'')+`<span class="sp"></span><label style="font-size:.85rem;color:var(--mute)">แสดงหน้าละ <select id="psz">${[15,30,50,100,0].map(v=>`<option value="${v}" ${v===PSZ?'selected':''}>${v||'ทั้งหมด'}</option>`).join('')}</select></label>`}
+$('#pgr').onclick=e=>{const b=e.target.closest('[data-pg]');if(!b||b.disabled)return;PG=+b.dataset.pg;render(1);$('#reg .tools').scrollIntoView({behavior:'smooth',block:'start'})};
+$('#pgr').onchange=e=>{if(e.target.id==='psz'){PSZ=+e.target.value;try{localStorage.setItem('caltrack-psz',PSZ)}catch(x){}render()}};
+$('#qclr').onclick=()=>{['q','st','gp','sc','kt','so'].forEach(k=>$('#'+k).value='');render()};
+function dclose(){$('#det').classList.remove('on');$('#dscrim').classList.remove('on')}
+$('#dscrim').onclick=dclose;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#det').classList.contains('on'))dclose()});
+function open(id){const i=D.find(x=>x.id===id),e=$('#det');e.classList.add('on');$('#dscrim').classList.add('on');
+ e.innerHTML=`<button class="x" id="dx" aria-label="ปิด">ปิด ✕</button><h2>${esc(i.name)} · ${esc(i.id)}</h2><dl><div><dt>ยี่ห้อ / รุ่น</dt><dd>${i.brand}</dd></div><div><dt>Serial No.</dt><dd>${i.serial}</dd></div><div><dt>สถานที่ติดตั้ง</dt><dd>${i.loc}</dd></div><div><dt>กลุ่มงาน</dt><dd>${i.group}</dd></div><div><dt>ผู้รับผิดชอบ</dt><dd>${esc(i.own||'–')}${i.own2?' / '+esc(i.own2):''}</dd></div><div><dt>ประเภท</dt><dd>${SC[i.scope]||'–'}</dd></div><div><dt>หมวดเครื่องมือ</dt><dd>${CAT[i.cat]?CAT[i.cat].n:'ยังไม่จัดหมวด'}</dd></div><div><dt>สถานะการใช้งาน</dt><dd>${esc(i.s==='out'?'จำหน่าย':i.ops||'ใช้งาน')}</dd></div><div><dt>ผู้จำหน่าย</dt><dd>${esc(i.vendor||'–')}</dd></div><div><dt>บริษัทสอบเทียบ</dt><dd>${esc(i.calco||(i.x&&i.x.calby)||'–')}${i.x&&(i.x.kp||i.x.ka)?`<small style="display:block;color:var(--mute)">${esc([i.x.kp,i.x.ka&&'ISO 17025: '+i.x.ka].filter(Boolean).join(' · '))}</small>`:''}</dd></div><div><dt>ความถี่</dt><dd>ทุก ${i.m} เดือน</dd></div><div><dt>สอบเทียบล่าสุด</dt><dd>${fd(i.last)}</dd></div><div><dt>ครบกำหนดถัดไป</dt><dd>${fd(i.due)}</dd></div><div><dt>สถานะ</dt><dd>${L[i.s]}</dd></div></dl>
+ ${CAT[i.cat]?`<p class="cat">${CAT[i.cat].d}</p>`:''}${xinfo(i)}<b>ประวัติสอบเทียบ / ใบรับรอง</b>${certList(i.id)}
+ <p style="margin:12px 0 0"><button class="go adm" id="goRec">เริ่มสอบเทียบ</button> <button class="go alt adm" id="ed">แก้ไขข้อมูล</button> <button class="go alt adm" id="rm">ลบ (ลงทะเบียนผิด)</button></p>`;
+ $('#dx').onclick=dclose;$('#goRec').onclick=()=>{dclose();show('rec');$('#ri').value=id};$('#ed').onclick=()=>{dclose();edit(id)};$('#rm').onclick=()=>del(id);e.scrollTop=0;$('#dx').focus()}
+$('#q').oninput=()=>render();['st','gp','sc','kt','so'].forEach(k=>$('#'+k).onchange=()=>render());
+$('#tb').onclick=e=>{const r=e.target.closest('tr[data-id]');if(r)open(r.dataset.id)};
+$('#tb').onkeydown=e=>{if(e.key==='Enter'){const r=e.target.closest('tr[data-id]');if(r)open(r.dataset.id)}};
+// register form
+function nextDue(){const l=$('#fL').value;if(!l){$('#fN').value='';return}const d=new Date(l);d.setMonth(d.getMonth()+ +$('#fi').value);$('#fN').value=d.toISOString().slice(0,10)}
+$('#fL').onchange=nextDue;$('#fi').onchange=nextDue;
+$('#add').onclick=()=>{EID=null;['fsc','fc','fw2','fv','fk'].forEach(k=>$('#'+k).value='');$('#fo').value='ใช้งาน';chint();$('#form h2').textContent='ขึ้นทะเบียนเครื่องมือใหม่';$('#save').textContent='บันทึกเข้าทะเบียน';$('#fo0').value=D.length+1;$('#err').textContent='';$('#form').classList.add('on');$('#fn').focus()};
+$('#cancel').onclick=()=>$('#form').classList.remove('on');
+$('#save').onclick=()=>{const n=$('#fn').value.trim(),a=$('#fa').value.trim(),l=$('#fL').value;
+ if(!n||!a||(!l&&!EID)){$('#err').textContent='กรอกชื่อเครื่อง รหัสครุภัณฑ์ และวันที่สอบเทียบครั้งล่าสุดให้ครบ';return}
+ if(!EID&&!$('#fc').value){$('#err').textContent='เลือกหมวดเครื่องมือ (A/B/C) เพราะมีผลต่อการคีย์ค่าแก้';return}
+ if(D.some(i=>i.id===a&&i.id!==EID)){$('#err').textContent='รหัสครุภัณฑ์ '+a+' มีอยู่ในทะเบียนแล้ว';return}
+ if(EID){saveEdit(a);return}
+ D.push(mk({id:a,name:n,brand:$('#fb').value,serial:$('#fs').value,loc:$('#fl').value||'–',group:$('#fg').value,last:l,due:$('#fN').value,own:$('#fw').value.trim(),note:$('#fm').value,...fx(),x:{maker:$('#xm').value,recv:$('#xr').value,cond:$('#xc').value,range:$('#xg').value,res:$('#xs').value,mpe:$('#xe').value,crit:$('#xe').value,pts:$('#xpt').value,fw:$('#xf').value,pm:$('#xp').value,vp:$('#xvp').value,kp:$('#xkp').value,ka:$('#xka').value,wc:$('#xwc').value,acc:$('#xa').checked,std:[...document.querySelectorAll('.std:checked')].map(c=>c.value)}}));
+ ['fn','fb','fs','fa','fl','fw','fL','fN','fm','xm','xr','xg','xs','xe','xpt','xf','xp','fw2','fv','fk'].forEach(k=>$('#'+k).value='');
+ log('ขึ้นทะเบียนเครื่องมือ',a,null,{name:n});$('#form').classList.remove('on');render();toast('ขึ้นทะเบียนเครื่องมือแล้ว');$('#kSoon').textContent=D.filter(i=>i.s==='soon').length;$('#kBad').textContent=D.filter(i=>i.s==='bad').length};
+render();
+
+// certificates (ปีงบประมาณ: 1 ต.ค. – 30 ก.ย., แสดงเป็น พ.ศ.)
+const fy=d=>{const t=new Date(d);return t.getUTCFullYear()+(t.getUTCMonth()>=9?1:0)+543};
+const C=D.filter(i=>i.last).map((i,n)=>({no:'CERT-'+fy(i.last)+'-'+String(n+101).padStart(4,'0'),id:i.id,date:i.last,by:'NIMT',res:'ผ่าน',file:n%3?'seed':null,url:''}));
+C.push({no:'CERT-2567-0388',id:'AB-014',date:'2024-09-25',by:'NIMT',res:'ผ่าน',file:'seed',url:''});
+if(SAVED&&Array.isArray(SAVED.C)){C.length=0;SAVED.C.forEach(c=>C.push({...c,url:''}))}
+const fileBtn=c=>c.link?`<a href="${c.link}" target="_blank" rel="noopener">เปิด</a> · <a href="${c.dl||c.link}" target="_blank" rel="noopener">ดาวน์โหลด PDF</a>`:c.url?`<a href="${c.url}" target="_blank" rel="noopener">เปิดไฟล์</a>`:c.file?'<span class="pill p-ok">แนบแล้ว</span>':'<span class="pill p-soon">ยังไม่แนบไฟล์</span>';
+const rp=r=>`<span class="pill ${r==='ผ่าน'?'p-ok':r==='ไม่ผ่าน'?'p-bad':'p-soon'}">${r}</span>`;
+function certList(id){const r=C.filter(c=>c.id===id).sort((a,b)=>b.date.localeCompare(a.date));
+ return r.length?r.map(c=>`<div class="todo"><span>${fd(c.date)} · ${c.no} · ปีงบ ${fy(c.date)}${c.res&&c.res!=='ผ่าน'&&c.res!=='ไม่ระบุ'?' · '+rp(c.res)+(c.disp?' → '+esc(c.disp):''):''}</span>${fileBtn(c)}</div>`).join(''):'<p class="lead">ยังไม่มีใบรับรอง</p>'}
+function xinfo(i){const x=i.x;if(!x)return'';
+ const r=[['ผู้ผลิต/ผู้จำหน่าย',x.maker],['เริ่มใช้งาน',x.recv?fd(x.recv):''],['สภาพเมื่อรับ',x.cond],['ช่วงการวัด',x.range],['ความละเอียด',x.res],['เกณฑ์ยอมรับ',x.mpe||x.crit],['Firmware',x.fw],['แผนบำรุงรักษา',x.pm],['ตรวจรับก่อนใช้งาน',x.acc?'แล้ว':'ยังไม่ได้'],['จุดสอบเทียบ',x.pts],['ความถี่',x.freq],['มาตรฐาน',(x.std||[]).join(', ')]].filter(a=>a[1]);
+ return '<dl>'+r.map(a=>`<div><dt>${a[0]}</dt><dd>${a[1]}</dd></div>`).join('')+'</dl>'}
+function fyOpts(sel){const ys=[...new Set([...C.map(c=>fy(c.date)),fy(TODAY)])].sort((a,b)=>b-a);
+ $('#cy').innerHTML=ys.map(y=>`<option value="${y}">ปีงบประมาณ ${y}</option>`).join('');$('#cy').value=sel||(C.length?Math.max(...C.map(c=>fy(c.date))):fy(TODAY))}
+function rc(){const y=+$('#cy').value,q=$('#cq').value.trim().toLowerCase();
+ const rows=C.filter(c=>fy(c.date)===y&&(!q||(c.no+c.id).toLowerCase().includes(q))).sort((a,b)=>b.date.localeCompare(a.date));
+ $('#cs').textContent=`ปีงบประมาณ ${y} (1 ต.ค. ${y-544} – 30 ก.ย. ${y}): ${rows.length} ฉบับ · ยังไม่แนบไฟล์ ${rows.filter(c=>!c.file&&!c.url).length} ฉบับ`;
+ $('#ct').innerHTML=rows.map(c=>`<tr><td>${fy(c.date)}</td><td><b>${c.no}</b></td><td>${c.id} · ${(D.find(i=>i.id===c.id)||{}).name||''}</td><td>${fd(c.date)}</td><td>${c.by||'–'}</td><td>${rp(c.res)}</td><td>${c.u?'U '+esc(c.u)+' / ±'+esc(c.crit||'–'):'–'}</td><td>${c.disp?esc(c.disp)+(c.corr?'<small style="display:block;color:var(--mute)">ค่าแก้: '+esc(c.corr)+'</small>':''):'–'}</td><td>${fileBtn(c)}</td><td class="adm"><button class="go alt" data-ce="${C.indexOf(c)}">แก้ไข / แนบไฟล์</button></td></tr>`).join('')||'<tr><td colspan="10">ยังไม่มีใบรับรองในปีงบประมาณนี้</td></tr>'}
+$('#cy').onchange=rc;$('#cq').oninput=rc;
+function defcrit(){const m=parseFloat((((byId($('#ci').value).x)||{}).mpe||'').replace(/[^\d.]/g,''));if(!isNaN(m))$('#ccr').value=m}
+function cchk(auto){const e=parseFloat($('#cem').value),u=parseFloat($('#cu').value),t=parseFloat($('#ccr').value),h=$('#chk'),n=v=>+v.toPrecision(6);h.textContent='';
+ if(!isNaN(e)&&!isNaN(t)){const uu=isNaN(u)?0:u,sum=Math.abs(e)+uu,r=sum<=t?'ผ่าน':Math.abs(e)<=t?'ผ่านแบบมีเงื่อนไข':'ไม่ผ่าน';h.textContent=`|E| ${n(Math.abs(e))} + U ${n(uu)} = ${n(sum)} ${sum<=t?'≤':'>'} เกณฑ์ ${n(t)} → ระบบแนะนำ: ${r}`;if(auto)$('#cr').value=r}
+ const c=CAT[byId($('#ci').value).cat];if(c)h.textContent+=(h.textContent?' · ':'')+'หมวด '+c.n;
+ $('#dsp').style.display=/มีเงื่อนไข|ไม่ผ่าน/.test($('#cr').value)?'grid':'none'}
+function cform(p){p=p||{};CEDIT=-1;$('#cf h2').textContent='อัปโหลดใบรับรองสอบเทียบ';$('#ci').innerHTML=D.map(i=>`<option value="${esc(i.id)}">${esc(i.id)} · ${esc(i.name)}</option>`).join('');if(p.id)$('#ci').value=p.id;
+ ['cem','cu','ccr','ccv','cdr','cdp'].forEach(k=>$('#'+k).value=p[k]??'');$('#cr').value=p.cr||'ผ่าน';if(!$('#ccr').value)defcrit();cchk();$('#cerr').textContent='';$('#cf').classList.add('on');$('#cn').focus()}
+$('#cadd').onclick=()=>cform();
+['cem','cu','ccr'].forEach(k=>$('#'+k).oninput=()=>cchk(1));$('#cr').onchange=()=>cchk();$('#ci').onchange=()=>{if(!$('#ccr').value)defcrit();cchk(1)};
+function applyRes(id,d,n,mv){const k=D.findIndex(i=>i.id===id),r=C.find(c=>c.no===n);if(k<0||!r||C.some(c=>c.id===id&&c.no!==n&&c.date>d))return;const o=D[k],need=/มีเงื่อนไข|ไม่ผ่าน/.test(r.res),
+ adv=mv&&d>(o.last||'')&&(!need||/ใช้งานต่อ/.test(r.disp||'')),nd=new Date(d);nd.setMonth(nd.getMonth()+(o.m||12));
+ const ops=need?(DSP[r.disp]||o.ops||'ใช้งาน'):(r.res==='ผ่าน'&&o.ops!=='จำหน่าย'?'ใช้งาน':(o.ops||'ใช้งาน'));
+ D[k]=mk({...o,...(adv?{last:d,due:nd.toISOString().slice(0,10)}:{}),ops});if((o.ops||'ใช้งาน')!==ops)log('เปลี่ยนสถานะการใช้งาน',id,{ops:o.ops||'ใช้งาน'},{ops,เหตุ:'ผลสอบเทียบ '+n+' · '+r.res});render()}
+$('#ccancel').onclick=()=>$('#cf').classList.remove('on');
+$('#cd').onchange=()=>$('#cfy').value=$('#cd').value?fy($('#cd').value):'';
+const b64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f)});
+$('#ct').onclick=e=>{const b=e.target.closest('[data-ce]');if(!b)return;const c=C[+b.dataset.ce];CEDIT=+b.dataset.ce;
+ $('#ci').innerHTML=D.map(i=>`<option value="${i.id}">${i.id} · ${i.name}</option>`).join('');$('#ci').value=c.id;$('#cn').value=c.no;$('#cd').value=c.date;$('#cfy').value=fy(c.date);$('#cb').value=c.by||'';$('#cr').value=c.res;$('#cem').value=c.em||'';$('#cu').value=c.u||'';$('#ccr').value=c.crit||'';$('#ccv').value=c.corr||'';$('#cdr').value=c.dref||'';$('#cdp').value=c.disp||'';cchk();
+ $('#cf h2').textContent='แก้ไขใบรับรอง / แนบไฟล์';$('#cerr').textContent='';$('#cf').classList.add('on');$('#cf').scrollIntoView({behavior:'smooth',block:'nearest'})};
+$('#csave').onclick=async()=>{const n=$('#cn').value.trim(),d=$('#cd').value,f=$('#cfile').files[0];
+ if(!n||!d){$('#cerr').textContent='กรอกเลขที่ใบรับรองและวันที่สอบเทียบให้ครบ';return}
+ if(C.some((c,i)=>c.no===n&&i!==CEDIT)){$('#cerr').textContent='เลขที่ใบรับรองนี้มีอยู่แล้ว';return}
+ const RS=$('#cr').value,NEED=/มีเงื่อนไข|ไม่ผ่าน/.test(RS),DP=$('#cdp').value,CT=byId($('#ci').value).cat||'';
+ if(['A','B'].includes(CT)&&(isNaN(parseFloat($('#cu').value))||isNaN(parseFloat($('#ccr').value)))){$('#cerr').textContent='เครื่องมือหมวด A/B ต้องกรอกค่าความไม่แน่นอน (U) และเกณฑ์ยอมรับ';return}
+ if(NEED&&!DP){$('#cerr').textContent='ผลมีเงื่อนไข/ไม่ผ่าน ต้องเลือกสถานะต่อไป (ใช้งานต่อ / ซ่อม / ลดสถานะ / จำหน่าย / ตามระบบคุณภาพ)';return}
+ if(NEED&&/ใช้งานต่อ/.test(DP)&&!$('#ccv').value.trim()){$('#cerr').textContent='ระบุค่าแก้ที่ต้องคีย์ใช้งาน';return}
+ if(NEED&&/NCR/.test(DP)&&!$('#cdr').value.trim()){$('#cerr').textContent='ระบุเลขที่อ้างอิง NCR / CAPA';return}
+ const id=$('#ci').value,it=byId(id),rec={no:n,id,date:d,by:$('#cb').value.trim(),res:RS,u:$('#cu').value.trim(),crit:$('#ccr').value.trim(),em:$('#cem').value.trim(),corr:NEED?$('#ccv').value.trim():'',disp:NEED?DP:'',dref:NEED?$('#cdr').value.trim():''},old=CEDIT>=0?C[CEDIT]:null;let up={};
+ if(f){if(API){if(f.size>20*1048576){$('#cerr').textContent='ไฟล์ใหญ่เกิน 20 MB';return}
+   $('#csave').disabled=true;$('#cerr').textContent='กำลังอัปโหลดขึ้น Google Drive…';
+   try{const r=await api('upload',{token:SES.token,name:f.name,mime:f.type||'application/pdf',data:await b64(f),fy:fy(d),group:it.scope==='shared'?'เครื่องมือรวม':it.group,no:n,id});if(r.error)throw new Error(r.error);up={link:r.link,dl:r.dl,file:f.name,fileId:r.fileId}}
+   catch(err){$('#cerr').textContent='อัปโหลดไม่สำเร็จ: '+err.message;$('#csave').disabled=false;return}
+   $('#csave').disabled=false}else up={file:f.name,url:URL.createObjectURL(f)}}
+ if(old){const bb={},aa={};['no','id','date','by','res','u','crit','em','corr','disp','dref'].forEach(k=>{if((old[k]||'')!==(rec[k]||'')){bb[k]=old[k];aa[k]=rec[k]}});if(up.file)aa.ไฟล์=up.file;Object.assign(old,rec,up);log('แก้ไขใบรับรอง',n,bb,aa);applyRes(id,d,n,0)}
+ else{C.push({...rec,file:null,url:'',...up});log('เพิ่มใบรับรอง',n,null,{เครื่อง:id,ไฟล์:up.file||'–'});
+  applyRes(id,d,n,1)}
+ ['cn','cd','cb','cu','cfy','cfile','cem','ccr','ccv','cdr','cdp'].forEach(k=>$('#'+k).value='');CEDIT=-1;$('#cf').classList.remove('on');fyOpts(fy(d));rc();toast('บันทึกแล้ว — ปีงบประมาณ '+fy(d))};
+fyOpts();rc();
+
+// plans
+const PR=['ยังอยู่ในประกัน / รอบของบริษัท','เครื่องเสีย รอซ่อม','จำหน่ายแล้ว','ไม่ได้ใช้งานรอบนี้','เลื่อนไปรอบถัดไป','อื่น ๆ'];
+const MN=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const opt=a=>a.map(x=>`<option>${x}</option>`).join('');
+let PL=[{id:1,name:'แผนสอบเทียบ ปีงบประมาณ 2569 รอบ 1',fy:2569,round:'รอบ 1',month:'มิ.ย.',items:['CF-001','IN-001','PP-018','AB-009'],skip:[{id:'PP-032',why:PR[0]}]}],PB={},nid=2;
+if(SAVED&&Array.isArray(SAVED.PL)){PL=SAVED.PL;nid=SAVED.nid||PL.length+1}
+const byId=id=>D.find(i=>i.id===id)||{id,name:'(ไม่พบในทะเบียน)',brand:'',serial:'',loc:'',group:'',own:'',last:'',due:''};
+$('#pfy').innerHTML=[fy(TODAY)+1,fy(TODAY),fy(TODAY)-1].map(y=>`<option value="${y}">${y}</option>`).join('');$('#pfy').value=fy(TODAY);
+$('#pmo').innerHTML=opt(MN);
+$('#pgs').innerHTML=`<label><input type="checkbox" id="pall"> ทั้งหมด</label>`+GROUPS.map(g=>`<label><input type="checkbox" class="pg" value="${g}"> ${g}</label>`).join('');
+function autoName(){const n=$('#pn');if(!n._u)n.value=`แผนสอบเทียบ ปีงบประมาณ ${$('#pfy').value} ${$('#prd').value}`}
+$('#pn').oninput=()=>$('#pn')._u=true;$('#pfy').onchange=autoName;$('#prd').onchange=autoName;
+function sel(){return[...document.querySelectorAll('.pg:checked')].map(c=>c.value)}
+function psum(){const l=D.filter(i=>sel().includes(i.group)),n=l.filter(i=>PB[i.id].inc).length;$('#ps').textContent=l.length?`เลือกเข้าแผน ${n} · ตัดออก ${l.length-n} เครื่อง`:'เลือกกลุ่มงานเพื่อดูรายการเครื่องมือ'}
+function bt(){const g=sel(),l=D.filter(i=>g.includes(i.group));
+ l.forEach(i=>{if(!PB[i.id]){const x=/จำหน่าย/.test(i.note)?2:/เสีย/.test(i.note)?1:/ประกัน/.test(i.note)?0:-1;PB[i.id]=x<0?{inc:true,why:PR[3]}:{inc:false,why:PR[x]}}});
+ $('#pt').innerHTML=l.map(i=>{const b=PB[i.id];return`<tr><td><input type="checkbox" class="pi" data-id="${i.id}" ${b.inc?'checked':''} aria-label="รวม ${i.name}"></td><td><b>${i.name}</b></td><td>${i.id}</td><td>${i.group}</td><td>${fd(i.due)}</td><td>${i.note||'–'}</td><td><select class="pw" data-id="${i.id}" ${b.inc?'disabled':''} aria-label="เหตุผล">${PR.map(r=>`<option ${r===b.why?'selected':''}>${r}</option>`).join('')}</select></td></tr>`}).join('')||'<tr><td colspan="7">ยังไม่ได้เลือกกลุ่มงาน</td></tr>';psum()}
+$('#pgs').onchange=e=>{if(e.target.id==='pall')document.querySelectorAll('.pg').forEach(c=>c.checked=e.target.checked);bt()};
+$('#pt').onchange=e=>{const id=e.target.dataset.id;if(e.target.classList.contains('pi')){PB[id].inc=e.target.checked;e.target.closest('tr').querySelector('.pw').disabled=e.target.checked}else PB[id].why=e.target.value;psum()};
+$('#pnew').onclick=()=>{PB={};$('#pn')._u=false;document.querySelectorAll('.pg,#pall').forEach(c=>c.checked=false);$('#perr').textContent='';autoName();bt();$('#pb').classList.add('on');$('#pd').classList.remove('on')};
+$('#pcancel').onclick=()=>$('#pb').classList.remove('on');
+$('#pprev').onclick=()=>{const l=D.filter(i=>sel().includes(i.group)),inc=l.filter(i=>PB[i.id].inc);if(!inc.length){$('#perr').textContent='เลือกกลุ่มงานและเครื่องมือก่อน';return}$('#perr').textContent='';
+ const f=$('#pbf');f.style.display='block';f.srcdoc=planHtml({fy:+$('#pfy').value,name:$('#pn').value,items:inc.map(i=>i.id),doc:PLD});f.scrollIntoView({behavior:'smooth',block:'nearest'})};
+$('#psave').onclick=()=>{const l=D.filter(i=>sel().includes(i.group)),inc=l.filter(i=>PB[i.id].inc),n=$('#pn').value.trim();
+ if(!n||!inc.length){$('#perr').textContent='ตั้งชื่อแผนและเลือกเครื่องมืออย่างน้อย 1 เครื่อง';return}
+ PL.push({id:nid++,doc:JSON.parse(JSON.stringify(PLD)),name:n,fy:+$('#pfy').value,round:$('#prd').value,month:$('#pmo').value,items:inc.map(i=>i.id),skip:l.filter(i=>!PB[i.id].inc).map(i=>({id:i.id,why:PB[i.id].why}))});
+ log('สร้างแผน',n,null,{เครื่อง:inc.length});$('#pb').classList.remove('on');$('#pbf').style.display='none';rpl();opl(nid-1);toast('บันทึกแผนแล้ว — ดูแบบฟอร์มและพิมพ์ได้ด้านล่าง')};
+function rpl(){$('#pl').innerHTML=PL.length?PL.map(p=>`<div class="box" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><b>${p.name}</b><div class="lead" style="margin:0">${p.round} · เดือน ${p.month} · ปีงบประมาณ ${p.fy}</div></div><div><span class="pill p-ok">เข้าแผน ${p.items.length}</span> <span class="pill p-soon">ตัดออก ${p.skip.length}</span></div></div><p style="margin:12px 0 0"><button class="go alt" data-a="open" data-id="${p.id}">เปิดแผน</button> <button class="go alt" data-a="csv" data-id="${p.id}">ส่งออก CSV</button> <button class="go alt adm" data-a="del" data-id="${p.id}">ลบแผน</button></p></div>`).join(''):'<p class="lead">ยังไม่มีแผน กด “สร้างแผนใหม่” เพื่อเริ่ม</p>'}
+$('#pl').onclick=e=>{const b=e.target.closest('button[data-a]');if(!b)return;const p=PL.find(x=>x.id==b.dataset.id);
+ if(b.dataset.a==='open')opl(p.id);else if(b.dataset.a==='csv')pcsv(p);else if(confirm('ลบ “'+p.name+'” ?')){log('ลบแผน',p.name,{เครื่อง:p.items.length},null);PL=PL.filter(x=>x!==p);$('#pd').classList.remove('on');rpl();persist()}};
+function opl(id){const p=PL.find(x=>x.id===id),e=$('#pd');e.classList.add('on');
+ const gs=[...new Set(p.items.map(i=>byId(i).group))].join(', ');
+ e.innerHTML=`<button class="x go alt sm" data-close="1" style="float:right">ปิด ✕</button><h2>${esc(p.name)}</h2><p class="lead">${esc(p.round)} · เดือน ${esc(p.month)} · กลุ่มงาน: ${esc(gs||'–')}</p>
+ <div class="tabs" role="tablist"><button role="tab" data-tab="doc" aria-selected="true">แบบฟอร์มแผน (${esc(pdoc(p).code)})</button><button role="tab" data-tab="list" aria-selected="false">รายการเครื่องมือ / ตัดออก</button></div>
+ <div data-pane="doc"><p style="margin:0 0 10px"><button class="go" data-pp="1">พิมพ์ / บันทึกเป็น PDF</button> <button class="go alt" data-pw="1">ดาวน์โหลด Word</button> <button class="go alt" data-csv="${p.id}">ส่งออก CSV</button></p>
+ ${pdocForm(p)}<iframe id="pdf" title="ตัวอย่างแบบฟอร์มแผนสอบเทียบ" style="width:100%;height:640px;border:1px solid var(--line);border-radius:8px;background:#dfe5e9"></iframe>
+ <p class="lead" style="font-size:.82rem;margin:6px 0 0">ตอนพิมพ์ให้เลือก “บันทึกเป็น PDF” ได้ · ท้ายทุกหน้ามีเลขแบบฟอร์มและ “หน้าที่ X ของ Y” · แนะนำ Chrome / Edge</p></div>
+ <div data-pane="list" hidden>
+ <b>เครื่องมือในแผน (${p.items.length})</b><div class="tw" style="margin:8px 0 16px"><table class="wide"><thead><tr><th>ลำดับ</th><th>ชื่อเครื่อง</th><th>รหัสครุภัณฑ์</th><th>กลุ่มงาน</th><th>สถานที่</th><th>ผู้รับผิดชอบ</th><th>ครบกำหนด</th><th class="adm">เอาออกจากรอบนี้</th></tr></thead><tbody>${p.items.map((id,n)=>{const i=byId(id);return`<tr><td>${n+1}</td><td><b>${i.name}</b></td><td>${i.id}</td><td>${i.group}</td><td>${i.loc}</td><td>${i.own}</td><td>${i.due?fd(i.due):'–'}</td><td class="adm"><select data-rm="${id}" data-p="${p.id}" aria-label="เอาออก"><option value="">เอาออก…</option>${opt(PR)}</select></td></tr>`}).join('')||'<tr><td colspan="8">ไม่มีเครื่องมือในแผน</td></tr>'}</tbody></table></div>
+ <b>ตัดออกจากรอบนี้ (${p.skip.length})</b><div class="tw" style="margin:8px 0 14px"><table><thead><tr><th>ชื่อเครื่อง</th><th>รหัส</th><th>เหตุผล</th><th class="adm"></th></tr></thead><tbody>${p.skip.map(k=>{const i=byId(k.id);return`<tr><td>${i.name}</td><td>${i.id}</td><td>${k.why}</td><td class="adm"><button class="go alt" data-back="${k.id}" data-p="${p.id}">ใส่กลับ</button></td></tr>`}).join('')||'<tr><td colspan="4">ไม่มี</td></tr>'}</tbody></table></div>
+ </div>`;$('#pdf').srcdoc=planHtml(p);e.dataset.p=p.id;e.scrollIntoView({behavior:'smooth',block:'start'})}
+$('#pd').onchange=e=>{const id=e.target.dataset.rm;if(!id||!e.target.value)return;const p=PL.find(x=>x.id==e.target.dataset.p);p.items=p.items.filter(x=>x!==id);p.skip.push({id,why:e.target.value});log('เอาออกจากแผน',id,{แผน:p.name},{เหตุผล:e.target.value});opl(p.id);$('#pd [data-tab=list]').click();rpl();toast('เอาออกจากแผนแล้ว')};
+$('#pd').addEventListener('input',e=>{if(e.target.dataset.pd)pdocSet(PL.find(x=>x.id==$('#pd').dataset.p),e.target)});
+$('#pd').addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-pp],[data-pw],[data-close]');if(!t)return;const p=PL.find(x=>x.id==$('#pd').dataset.p);
+ if(t.dataset.tab){$('#pd').querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',x===t));$('#pd').querySelectorAll('[data-pane]').forEach(x=>x.hidden=x.dataset.pane!==t.dataset.tab)}
+ else if(t.dataset.pp)planPrint(p);else if(t.dataset.pw)planWord(p);else $('#pd').classList.remove('on')});
+$('#pd').onclick=e=>{const b=e.target.closest('[data-back]'),c=e.target.closest('[data-csv]');
+ if(b){const p=PL.find(x=>x.id==b.dataset.p);p.skip=p.skip.filter(k=>k.id!==b.dataset.back);p.items.push(b.dataset.back);log('ใส่กลับเข้าแผน',b.dataset.back,null,{แผน:p.name});opl(p.id);$('#pd [data-tab=list]').click();rpl();toast('ใส่กลับเข้าแผนแล้ว')}
+ if(c)pcsv(PL.find(x=>x.id==c.dataset.csv))};
+function pcsv(p){const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"',row=(i,n,st,w)=>[n,i.name,i.brand,i.serial,i.id,i.loc,i.group,i.own,i.last?fd(i.last):'',i.due?fd(i.due):'',st,w].map(q).join(',');
+ const t=[['ลำดับ','ชื่อเครื่อง','ยี่ห้อ/รุ่น','Serial No.','รหัสครุภัณฑ์','สถานที่ติดตั้ง','กลุ่มงาน','ผู้รับผิดชอบ','วันที่สอบเทียบครั้งล่าสุด','วันที่สอบเทียบครั้งต่อไป','สถานะในแผน','เหตุผลที่ตัดออก'].map(q).join(','),...p.items.map((id,n)=>row(byId(id),n+1,'อยู่ในแผน','')),...p.skip.map((k,n)=>row(byId(k.id),'','ตัดออก',k.why))].join('\r\n');
+ const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\ufeff'+encodeURIComponent(t);a.download=p.name+'.csv';a.click()}
+// ---------- แบบฟอร์มแผนสอบเทียบตามระบบราชการ (0600 FM 0138) ----------
+const PLD0={code:'0600 FM 0138',title:'แผนสอบเทียบเครื่องมือวิทยาศาสตร์',rev:'00',unit:'ศูนย์วิทยาศาสตร์การแพทย์ที่ 2 พิษณุโลก',sort:'',
+ s:[{l:'ผู้จัดทำ',n:'นางสาวกรรณิการ์ สุมาลย์กันต์',p:'นักวิทยาศาสตร์การแพทย์ปฏิบัติการ',d:''},{l:'ผู้ตรวจสอบ',n:'นายอโณทัย ศรีตนไชย',p:'นักวิทยาศาสตร์การแพทย์ชำนาญการพิเศษ',d:''},{l:'ผู้อนุมัติ',n:'นางสาวอมรรัตน์ ทัศนกิจ',p:'ผู้อำนวยการศูนย์วิทยาศาสตร์การแพทย์ที่ 2 พิษณุโลก',d:''}]};
+var PLD=SAVED&&SAVED.PLD||JSON.parse(JSON.stringify(PLD0));
+const pdoc=p=>p.doc||(p.doc=JSON.parse(JSON.stringify(PLD)));
+const fds=d=>{if(!d)return'';const t=new Date(d);return isNaN(t)?'':t.getUTCDate()+' '+MN[t.getUTCMonth()]+(t.getUTCFullYear()+543)};
+const freqT=i=>{const f=String(i.x&&i.x.freq||'').trim();if(f&&!/^\d+$/.test(f))return f;if(f)return'ปีละ '+f+' ครั้ง';return{6:'ปีละ 2 ครั้ง',12:'ปีละ 1 ครั้ง',24:'2 ปี / ครั้ง',36:'3 ปี / ครั้ง'}[i.m]||(i.m?'ทุก '+i.m+' เดือน':'')};
+const cq=s=>String(s).replace(/\\/g,'\\\\').replace(/"/g,'\\"');
+function planHtml(p,w){const d=pdoc(p),e=v=>esc(v==null?'':v);let its=p.items.map(byId);
+ if(d.sort==='group')its=its.map((i,k)=>[i,k]).sort((a,b)=>((GROUPS.indexOf(a[0].group)+1||999)-(GROUPS.indexOf(b[0].group)+1||999))||a[1]-b[1]).map(a=>a[0]);
+ else if(d.sort==='name')its=[...its].sort((a,b)=>String(a.name).localeCompare(String(b.name),'th'));
+ else if(d.sort==='due')its=[...its].sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'));
+ const foot=`${d.code} ${d.title} แก้ไขครั้งที่ ${d.rev}`,F="font-size:9pt;font-family:Sarabun,'TH Sarabun New',Tahoma,sans-serif";
+ const css=`@page{size:A4 landscape;margin:12mm 10mm 16mm;@bottom-left{content:"${cq(foot)}";${F}}@bottom-right{content:"หน้าที่ " counter(page) " ของ " counter(pages);${F}}}
+ ${w?'@page Section1{size:841.9pt 595.3pt;mso-page-orientation:landscape;margin:36pt 28pt 40pt}div.Section1{page:Section1}':''}
+ *{box-sizing:border-box}body{font-family:Sarabun,'TH Sarabun New',Tahoma,sans-serif;font-size:10pt;color:#000;margin:0}
+ h1{font-size:13pt;text-align:center;margin:0}h2{font-size:12pt;text-align:center;margin:2px 0 10px}
+ table.pt{border-collapse:collapse;width:100%}.pt th,.pt td{border:1px solid #000;padding:3px 4px;vertical-align:top;font-size:9.5pt;line-height:1.3}.pt th{text-align:center;vertical-align:middle}
+ thead{display:table-header-group}.pt tr{page-break-inside:avoid}.pt td.c{text-align:center}.pt td.n{white-space:nowrap;text-align:center}
+ table.sg{width:100%;margin-top:30px;page-break-inside:avoid}.sg td{text-align:center;font-size:10pt;line-height:1.75;width:33%;vertical-align:top}
+ .pf{display:none}
+ @media screen{body{background:#dfe5e9;padding:14px}.pg{background:#fff;padding:12mm 10mm;width:297mm;max-width:100%;margin:auto;box-shadow:0 2px 12px rgba(0,0,0,.18)}.pf{display:flex;justify-content:space-between;font-size:9pt;margin-top:22px;color:#333}}`;
+ const W=[4,13,12,7,10,6,6,7,9,8,9,9];
+ const rows=its.map((i,n)=>`<tr><td class="c">${n+1}</td><td>${e(i.name)}</td><td>${e(i.brand)}</td><td class="c">${e(i.serial)}</td><td class="c">${/^ไม่มีรหัส/.test(i.id)?'':e(i.id)}</td><td class="c">${e(i.loc==='–'?'':i.loc)}</td><td class="c">${e(i.group)}</td><td class="n">${e(freqT(i))}</td><td>${e(i.x&&i.x.pts)}</td><td>${e(i.x&&(i.x.crit||i.x.mpe))}</td><td class="n">${fds(i.last)}</td><td class="n">${fds(i.due)}</td></tr>`).join('')||'<tr><td colspan="12" class="c">ไม่มีเครื่องมือในแผน</td></tr>';
+ const sg=`<table class="sg"><tr>${d.s.map(x=>`<td>ลงชื่อ ......................................... ${e(x.l)}<br>(${e(x.n)||'&nbsp;'.repeat(40)})<br>${e(x.p)||'ตำแหน่ง .................................'}<br>${e(x.d)||'......../......../........'}</td>`).join('')}</tr></table>`;
+ return`<!DOCTYPE html><html lang="th" ${w?'xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"':''}><head><meta charset="utf-8"><title>${e(d.title)} ปีงบประมาณ ${e(p.fy)}</title>${w?'<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]-->':'<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">'}<style>${css}</style></head>
+<body><div class="${w?'Section1':'pg'}"><h1>${e(d.title)}</h1><h2>หน่วยงาน : ${e(d.unit)} &nbsp; ปีงบประมาณ พ.ศ.${e(p.fy)}</h2>
+<table class="pt"><colgroup>${W.map(x=>`<col style="width:${x}%">`).join('')}</colgroup><thead><tr><th>ลำดับ</th><th>ชื่อเครื่อง</th><th>ยี่ห้อ/รุ่น</th><th>Serial No.</th><th>รหัสครุภัณฑ์</th><th>สถานที่ติดตั้ง</th><th>กลุ่มงาน</th><th>ความถี่การสอบเทียบ</th><th>จุดสอบเทียบ</th><th>เกณฑ์การยอมรับ</th><th>วันที่สอบเทียบครั้งล่าสุด</th><th>วันที่สอบเทียบครั้งต่อไป</th></tr></thead><tbody>${rows}</tbody></table>${sg}
+${w?`<p style="font-size:9pt;margin-top:18px">${e(foot)}</p>`:`<div class="pf"><span>${e(foot)}</span><span>หน้าที่ 1 ของ … (เลขหน้าจริงจะพิมพ์ที่ท้ายทุกหน้า)</span></div>`}</div></body></html>`}
+function planPrint(p){const w=window.open('','_blank');if(!w){toast('เบราว์เซอร์บล็อกหน้าต่างใหม่ — กรุณาอนุญาต pop-up แล้วลองอีกครั้ง');return}
+ w.document.open();w.document.write(planHtml(p));w.document.close();setTimeout(()=>{w.focus();w.print()},900)}
+function planWord(p){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿',planHtml(p,1)],{type:'application/msword'}));
+ a.download=(p.name||'แผนสอบเทียบ').replace(/[\\/:*?"<>|]/g,'-')+'.doc';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000)}
+function pdocForm(p){const d=pdoc(p),f=(k,l,v,at='')=>`<div><label>${l}</label><input data-pd="${k}" value="${esc(v||'')}" ${at}></div>`;
+ return`<details class="xbox"><summary>ตั้งค่าหัวกระดาษ / ผู้ลงนาม / การเรียงลำดับ</summary><div class="fgrid">${f('code','เลขที่แบบฟอร์ม',d.code)}${f('title','ชื่อแบบฟอร์ม',d.title)}${f('rev','แก้ไขครั้งที่',d.rev)}${f('unit','หน่วยงาน',d.unit)}
+ <div><label>เรียงลำดับในแบบฟอร์ม</label><select data-pd="sort"><option value="" ${!d.sort?'selected':''}>ตามลำดับในแผน</option><option value="group" ${d.sort==='group'?'selected':''}>ตามกลุ่มงาน</option><option value="due" ${d.sort==='due'?'selected':''}>ครบกำหนดก่อน</option><option value="name" ${d.sort==='name'?'selected':''}>ชื่อเครื่อง</option></select></div></div>
+ <div class="fgrid">${d.s.map((x,k)=>f('s'+k+'n',esc(x.l)+' (ชื่อ)',x.n,'list="dlP"')+f('s'+k+'p','ตำแหน่ง',x.p)+f('s'+k+'d','วันที่ลงนาม',x.d,'placeholder="เว้นว่างไว้เขียนด้วยมือได้"')).join('')}</div>
+ <p class="lead" style="margin:0;font-size:.85rem">ค่าที่แก้ที่นี่จะใช้เป็นค่าเริ่มต้นของแผนถัดไปด้วย · จุดสอบเทียบและเกณฑ์มาจากทะเบียนเครื่องมือ (แก้ได้ที่ ทะเบียน → แก้ไขข้อมูล → ข้อมูลเพิ่มเติม)</p></details>`}
+let pdT=null;
+function pdocSet(p,el){const d=pdoc(p),k=el.dataset.pd,m=k.match(/^s(\d)([npd])$/);if(m)d.s[+m[1]][m[2]]=el.value;else d[k]=el.value;
+ PLD=JSON.parse(JSON.stringify(d));clearTimeout(pdT);pdT=setTimeout(()=>{const fr=$('#pdf');if(fr)fr.srcdoc=planHtml(p);persist()},350)}
+rpl();
+
+// persistence, dashboard, import, backup
+function store(){try{localStorage.setItem('caltrack-v1',JSON.stringify({sample:SAMPLE,rev:REV,D:D.map(({days,s,m,...r})=>r),G:GROUPS,C:C.map(({url,...r})=>r),PL,nid,CO,PS,A:AUD,RC:window.RC||[],FT:window.FT||[],PLD:typeof PLD!=='undefined'?PLD:undefined}))}catch(e){}}
+function persist(){store();if(API&&ADMIN){clearTimeout(sy);sy=setTimeout(push,900)}}
+function dash(){const a=D.filter(i=>i.s!=='out'),bad=a.filter(i=>i.s==='bad').length;
+ $('#asof').textContent=`ข้อมูล ณ ${fd(TODAY)} · ปีงบประมาณ ${fy(TODAY)}`;
+ $('#kAll').textContent=D.length;$('#kBad').textContent=bad;$('#kSoon').textContent=a.filter(i=>i.s==='soon').length;
+ $('#kOk').textContent=a.length?(Math.round(1000*(a.length-bad)/a.length)/10)+'%':'–';
+ const cnt=[0,1,2,3,4].map(k=>{const d=new Date(TODAY.getUTCFullYear(),TODAY.getUTCMonth()+k,1),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');return[d,a.filter(i=>i.due&&i.due.slice(0,7)===key).length]}),mx=Math.max(1,...cnt.map(c=>c[1]));
+ $('#bars').innerHTML=cnt.map(([d,n])=>`<div><i style="height:${8+Math.round(n/mx*100)}px"></i>${MN[d.getMonth()]}<br>${n}</div>`).join('');
+ $('#demo').style.display=SAMPLE?'block':'none'}
+const TM={'มค':1,'มกราคม':1,'กพ':2,'กุมภาพันธ์':2,'มีค':3,'มีนาคม':3,'เมย':4,'เมษายน':4,'พค':5,'พฤษภาคม':5,'มิย':6,'มิถุนายน':6,'กค':7,'กรกฎาคม':7,'สค':8,'สิงหาคม':8,'กย':9,'กันยายน':9,'ตค':10,'ตุลาคม':10,'พย':11,'พฤศจิกายน':11,'ธค':12,'ธันวาคม':12};
+const yfix=y=>y>=2400?y-543:y>=1900&&y<2000?y+57:y;
+const cs=v=>v==null?'':String(v).replace(/[\u00a0\t]/g,' ').replace(/[<>]/g,'').replace(/\s+/g,' ').trim();
+function pdate(v){if(v==null||String(v).trim()==='')return null;let y,m,d,warn='',a;
+ if(Object.prototype.toString.call(v)==='[object Date]'){const t=new Date(v.getTime()+12*36e5);y=t.getUTCFullYear();m=t.getUTCMonth()+1;d=t.getUTCDate()}
+ else{const t=String(v).replace(/\u00a0/g,' ').replace(/([ิ-ฺ็-๎])\1+/g,'$1').replace(/\./g,'').trim();
+  if(a=t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)){y=+a[1];m=+a[2];d=+a[3]}
+  else if(a=t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/)){d=+a[1];m=+a[2];y=+a[3]}
+  else if(a=t.match(/(\d{1,2})?\s*([ก-๙]+)\s*(\d{4})/)){m=TM[a[2]];y=+a[3];d=a[1]?+a[1]:1;if(!a[1])warn='ไม่มีวันที่ ใช้วันที่ 1'}
+  else return{bad:cs(v)}}
+ if(!m)return{bad:cs(v)};const y2=yfix(y);if(y2!==y&&y<2400)warn=(warn?warn+'; ':'')+'แก้ปี '+y+' → '+y2;
+ return{iso:`${y2}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`,warn}}
+const HM=[['name',/ชื่อเครื่อง/],['brand',/ยี่ห้อ/],['serial',/serial/i],['id',/รหัสครุภัณฑ์/],['loc',/สถานที่/],['own',/ผู้รับผิดชอบ/],['group',/กลุ่มงาน/],['freq',/ความถี่/],['pts',/จุดสอบเทียบ/],['crit',/เกณฑ์/],['last',/ล่าสุด/],['due',/ต่อไป|ถัดไป/],['cert',/cer|ใบรับรอง/i],['note',/หมายเหตุ/]];
+function parseWB(wb){const out=[];wb.SheetNames.forEach(sn=>{
+ const rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:true,defval:null}),h=rows.findIndex(r=>r.some(c=>/ชื่อเครื่อง/.test(cs(c))));if(h<0)return;
+ const hdr=rows[h].map(cs);if(hdr.some(t=>/ค่าที่วัดได้|ผลการประเมิน/.test(t)))return;
+ const col={};hdr.forEach((t,i)=>{for(const[k,re]of HM)if(!(k in col)&&re.test(t)){col[k]=i;break}});
+ const recs=[];rows.slice(h+1).forEach(r=>{const g=k=>k in col?r[col[k]]:null,name=cs(g('name'));if(!name)return;
+  recs.push({name,brand:cs(g('brand')),serial:cs(g('serial')),id:cs(g('id')).replace(/\s/g,''),loc:cs(g('loc')),own:cs(g('own')),group:cs(g('group')),freq:cs(g('freq')),pts:cs(g('pts')),crit:cs(g('crit')),last:g('last'),due:g('due'),cert:cs(g('cert')),note:cs(g('note'))})});
+ if(recs.length)out.push({sn:cs(sn),recs})});return out}
+function ng(t){t=cs(t).replace(/^กลุ่มงาน|^กลุ่ม/,'').trim();return /^#/.test(t)?'':/^ยา/.test(t)?'ยา':/^พยาธิ/.test(t)?'พยาธิ':/^พิษ/.test(t)?'พิษ':/^รังสี/.test(t)?'รังสี':/^อาหารจุล/.test(t)?'อาหารจุล':/^อาหารเคมี/.test(t)?'อาหารเคมี':t}
+const GK=/^(พยาธิ|ยา|พิษ|รังสี|อาหารจุล|อาหารเคมี|กพว)/,weak=g=>!g||g==='ไม่ระบุกลุ่ม'||g==='อาหาร';
+function ibuild(sel){const map=new Map(),warns=[];let dup=0,noid=0;
+ IM.parsed.filter(p=>sel.includes(p.sn)).sort((a,b)=>(a.sn==='รวม')-(b.sn==='รวม')).forEach(p=>p.recs.forEach(r=>{
+  const L=pdate(r.last),N=pdate(r.due),at=`${p.sn} · ${r.name}`;let note=r.note;
+  [L,N].forEach(v=>{if(!v)return;if(v.bad){if(/จำหน่าย|ยกเลิก/.test(v.bad))note=(note+' '+v.bad).trim();else warns.push(`${at}: อ่านวันที่ไม่ได้ “${v.bad}”`)}else if(v.warn)warns.push(`${at}: ${v.warn}`)});
+  const last=L&&L.iso||'';let due=N&&N.iso||'';
+  if(!due&&last){const n=parseInt((r.freq.match(/\d+/)||[1])[0])||1,d=new Date(last);d.setUTCMonth(d.getUTCMonth()+Math.round(12/n));due=d.toISOString().slice(0,10)}
+  if(due&&(+due.slice(0,4)<2023||+due.slice(0,4)>2030))warns.push(`${at}: วันครบกำหนดผิดปกติ ${due}`);
+  const sg=ng(p.sn),grp=ng(r.group)||(/^กลุ่ม/.test(r.own)?ng(r.own):'')||(GK.test(sg)?sg:'')||'ไม่ระบุกลุ่ม';
+  const key=r.id||(r.serial?'s:'+r.serial:'n:'+[r.name,r.brand,r.loc].join('|')),it=map.get(key);
+  if(it){dup++;if(weak(it.group)&&!weak(grp))it.group=grp;['brand','serial','loc','own','last','due'].forEach(k=>{const v={brand:r.brand,serial:r.serial,loc:r.loc,own:r.own,last,due}[k];if(!it[k]&&v)it[k]=v});if(note&&!it.note.includes(note))it.note=(it.note+' '+note).trim();if(!it.cert&&r.cert)it.cert=r.cert}
+  else{if(!r.id)noid++;map.set(key,{id:r.id||'ไม่มีรหัส-'+String(noid).padStart(3,'0'),name:r.name,brand:r.brand,serial:r.serial,loc:r.loc,group:grp,last,due,own:r.own,note,cert:r.cert,x:{pts:r.pts,crit:r.crit,freq:r.freq}})}}));
+ return{items:[...map.values()],dup,warns,noid}}
+let IM=null;
+$('#ifile').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+ if(!window.XLSX){toast('โหลดตัวอ่าน Excel ไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วลองใหม่');return}
+ try{IM={parsed:parseWB(XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true}))};
+  if(!IM.parsed.length){toast('ไม่พบชีตที่มีหัวคอลัมน์ “ชื่อเครื่อง”');return}
+  $('#isheets').innerHTML=IM.parsed.map(p=>`<label><input type="checkbox" class="isn" value="${p.sn}" checked> ${p.sn} (${p.recs.length})</label>`).join('');$('#ibox').style.display='block';ipv()}catch(err){toast('อ่านไฟล์ไม่สำเร็จ: '+err.message)}};
+function ipv(){const sel=[...document.querySelectorAll('.isn:checked')].map(c=>c.value),r=ibuild(sel);IM.res=r;
+ const tot=IM.parsed.filter(p=>sel.includes(p.sn)).reduce((a,p)=>a+p.recs.length,0);
+ $('#isum').textContent=`พบ ${tot} แถว → นำเข้า ${r.items.length} เครื่อง · รวมแถวซ้ำ ${r.dup} · ไม่มีรหัสครุภัณฑ์ ${r.noid} · ต้องตรวจสอบ ${r.warns.length} รายการ`;
+ $('#iwarn').innerHTML=r.warns.slice(0,60).map(w=>`<div>• ${w}</div>`).join('')+(r.warns.length>60?`<div>… และอีก ${r.warns.length-60} รายการ</div>`:'')||'ไม่มี'}
+$('#isheets').onchange=ipv;
+$('#igo').onclick=async()=>{const r=IM&&IM.res;if(!r||!r.items.length){toast('ไม่มีรายการให้นำเข้า');return}
+ if($('#iclr').checked){if(!SAMPLE){if(ROLE!=='admin'){toast('การล้างข้อมูลเดิมก่อนนำเข้า ใช้ได้เฉพาะผู้ดูแลระบบ');return}
+   if(!await danger({title:'ล้างข้อมูลเดิมทั้งหมดก่อนนำเข้า',phrase:'ลบข้อมูลเดิม',ok:'ลบข้อมูลเดิมแล้วนำเข้า',body:'ข้อมูลต่อไปนี้ในเครื่องนี้จะถูกลบก่อนนำเข้าไฟล์ Excel:'+ctable(cnt(curState()).slice(0,3))+'<p style="margin:6px 0 0">ถ้าไม่ติ๊กช่องนี้ ระบบจะ <b>เพิ่มเฉพาะเครื่องที่ยังไม่มี</b> โดยไม่ลบของเดิม</p>'}))return;
+   snapshot('ก่อนล้างข้อมูลเพื่อนำเข้า Excel');log('ล้างข้อมูลก่อนนำเข้า','-',cnt(curState()).reduce((o,[k,v])=>(o[k]=v,o),{}),null)}
+  D.length=0;C.length=0;PL=[];nid=1;GROUPS.length=0}
+ r.items.forEach(it=>{if(D.some(d=>d.id===it.id))return;D.push(mk(it));if(!GROUPS.includes(it.group))GROUPS.push(it.group);if(it.last)C.push({no:(it.cert?it.cert+' ':'ไม่ระบุเลขที่ ')+'('+it.id+')',id:it.id,date:it.last,by:'',res:'ไม่ระบุ',file:null,url:''})});
+ SAMPLE=false;log('นำเข้า Excel','-',null,{เครื่อง:r.items.length});store();(API&&ADMIN?push():Promise.resolve()).then(()=>location.reload())};
+function dl(name,txt,type){const a=document.createElement('a');a.href='data:'+type+';charset=utf-8,'+encodeURIComponent(txt);a.download=name;a.click()}
+// ---------- Safety: สำรอง / ยืนยันก่อนลบหรือเขียนทับ ----------
+const LBK='caltrack-lastbk',PREV='caltrack-v1-prev';
+const lsg=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lss=(k,v)=>{try{localStorage.setItem(k,v);return true}catch(e){return false}};
+function cnt(st){st=st||{};const n=a=>Array.isArray(a)?a.length:0;return[['เครื่องมือ',n(st.D)],['ใบรับรอง / ประวัติสอบเทียบ',n(st.C)],['แผนสอบเทียบ',n(st.PL)],['บันทึกแบบฟอร์ม / ทวนสอบ',n(st.RC)],['แม่แบบแบบฟอร์ม',n(st.FT)],['บริษัท',n(st.CO)],['ผู้รับผิดชอบ',n(st.PS)],['ประวัติการแก้ไข',n(st.A)]]}
+const curState=()=>{try{return JSON.parse(lsg('caltrack-v1'))||{}}catch(e){return{}}};
+function backupNow(){persist();const t=lsg('caltrack-v1')||'{}';dl('caltrack-backup-'+new Date().toISOString().slice(0,10)+'.json',t,'application/json');lss(LBK,new Date().toISOString());bkst();log('ดาวน์โหลดไฟล์สำรอง','-',null,cnt(JSON.parse(t)).reduce((o,[k,v])=>(o[k]=v,o),{}));return true}
+function snapshot(why){const t=lsg('caltrack-v1');if(!t)return;try{const j=JSON.parse(t);if(j.sample!==false||!Array.isArray(j.D)||!j.D.length)return}catch(e){return}lss(PREV,JSON.stringify({at:new Date().toISOString(),why,data:t}))}
+function bkst(){const e=$('#bkst');if(!e)return;const l=lsg(LBK),d=l?Math.floor((Date.now()-new Date(l))/864e5):null;let pv=null;try{pv=JSON.parse(lsg(PREV))}catch(x){}
+ e.innerHTML=`<div class="verdict ${d==null||d>30?'p-soon':'p-ok'}" style="margin:0">${d==null?'ยังไม่เคยดาวน์โหลดไฟล์สำรองจากเครื่องนี้ — แนะนำให้ดาวน์โหลดตอนนี้':'สำรองล่าสุด '+fd(l)+(d>30?' — เกิน 30 วันแล้ว ควรดาวน์โหลดใหม่':' ('+d+' วันก่อน)')}</div>`+(pv&&pv.data?`<p style="margin:8px 0 0;font-size:.85rem">มีสำเนาอัตโนมัติก่อนข้อมูลในเครื่องนี้ถูกแทนที่ (${new Date(pv.at).toLocaleString('th-TH')} · ${esc(pv.why)}) <button class="go alt sm" id="pvdl">ดาวน์โหลดสำเนานี้</button></p>`:'')}
+document.addEventListener('click',e=>{if(e.target.id==='pvdl'){try{const pv=JSON.parse(lsg(PREV));dl('caltrack-สำเนาก่อนแทนที่-'+pv.at.slice(0,10)+'.json',pv.data,'application/json')}catch(x){}}});
+function danger({title,body,phrase,ok}){return new Promise(res=>{$('#dzt').textContent=title;$('#dzb').innerHTML=body;$('#dzp').textContent=phrase;$('#dzi').value='';$('#dzok').disabled=true;$('#dzok').textContent=ok||'ยืนยัน';$('#dzbks').textContent='';
+ $('#dzi').oninput=()=>{$('#dzok').disabled=$('#dzi').value.trim()!==phrase};$('#dzbk').onclick=()=>{backupNow();$('#dzbks').textContent='ดาวน์โหลดแล้ว ✓'};
+ const done=v=>{$('#dzd').close();res(v)};$('#dzok').onclick=()=>done(true);$('#dzc').onclick=()=>done(false);$('#dzd').oncancel=()=>res(false);$('#dzd').showModal();$('#dzi').focus()})}
+const ctable=(rows,h)=>`<table>${h?`<tr><td></td>${h.map(x=>`<td>${x}</td>`).join('')}</tr>`:''}${rows.map(r=>`<tr>${r.map((c,i)=>`<td>${i?c:esc(c)}</td>`).join('')}</tr>`).join('')}</table>`;
+$('#bk').onclick=backupNow;bkst();
+$('#rf').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const r=new FileReader();r.onload=async()=>{let j;try{j=JSON.parse(r.result);if(!Array.isArray(j.D))throw 0}catch(x){toast('ไฟล์สำรองไม่ถูกต้อง');return}
+ const a=cnt(curState()),b=cnt(j);if(!SAMPLE&&!await danger({title:'กู้คืนจากไฟล์สำรอง: แทนที่ข้อมูลทั้งหมด',phrase:'กู้คืน',ok:'แทนที่ด้วยไฟล์สำรอง',body:'ข้อมูลในเครื่องนี้จะถูก<b>แทนที่ทั้งหมด</b>ด้วยไฟล์ “'+esc(f.name)+'”'+ctable(a.map((x,i)=>[x[0],x[1],b[i][1]]),['ตอนนี้','ในไฟล์'])+(API?'<p style="margin:6px 0 0">และจะถูกบันทึกขึ้น Google แทนข้อมูลเดิมบนเซิร์ฟเวอร์</p>':'')}))return;
+ snapshot('ก่อนกู้คืนจากไฟล์ '+f.name);j.rev=REV;j.sample=false;const lg=Array.isArray(j.A)?j.A:(j.A=[]);lg.push({t:new Date().toISOString(),u:SES&&SES.name||'ผู้ดูแล(เครื่องนี้)',act:'กู้คืนจากไฟล์สำรอง',id:f.name,b:a.reduce((o,[k,v])=>(o[k]=v,o),{}),a:b.reduce((o,[k,v])=>(o[k]=v,o),{})});
+ lss('caltrack-v1',JSON.stringify(j));(API&&ADMIN?push():Promise.resolve()).then(()=>location.reload())};r.readAsText(f)};
+$('#rs').onclick=async()=>{if(ROLE!=='admin'){toast('เฉพาะผู้ดูแลระบบ');return}const a=cnt(curState());
+ if(!await danger({title:'ล้างข้อมูลทั้งหมดในเครื่องนี้',phrase:'ลบทั้งหมด',ok:'ลบทั้งหมด',body:'ข้อมูลต่อไปนี้จะถูกลบออกจากเบราว์เซอร์นี้ และกลับเป็นข้อมูลตัวอย่าง:'+ctable(a)+'<p style="margin:6px 0 0"><b>ย้อนกลับไม่ได้</b> ยกเว้นกู้คืนจากไฟล์สำรอง · ข้อมูลบน Google จะไม่ถูกลบจากปุ่มนี้</p>'}))return;
+ snapshot('ก่อนล้างข้อมูลทั้งหมด');localStorage.removeItem('caltrack-v1');location.reload()};
+dash();
+
+// roles, edit, audit, Google sync
+const S=v=>v==null?'–':typeof v==='object'?JSON.stringify(v):v;
+function log(act,id,b,a){AUD.push({t:new Date().toISOString(),u:SES&&SES.name||'ผู้ดูแล(เครื่องนี้)',act,id,b,a});if(AUD.length>2000)AUD.shift()}
+function raud(){$('#at').innerHTML=[...AUD].reverse().slice(0,300).map(a=>{const ks=[...new Set([...Object.keys(a.b||{}),...Object.keys(a.a||{})])],d=ks.map(k=>`${esc(k)}: ${esc(S(a.b&&a.b[k]))} → ${esc(S(a.a&&a.a[k]))}`).join('<br>');
+ return`<tr><td>${new Date(a.t).toLocaleString('th-TH')}</td><td>${esc(a.u)}</td><td>${esc(a.act)}</td><td>${esc(a.id)}</td><td>${d||'–'}</td></tr>`}).join('')||'<tr><td colspan="5">ยังไม่มีรายการ</td></tr>'}
+function diff(o,n){const b={},a={};['name','brand','serial','loc','group','own','own2','scope','cat','vendor','calco','ops','last','due','note'].forEach(k=>{const d=k==='ops'?'ใช้งาน':'',p=o[k]||d,q=n[k]||d;if(p!==q){b[k]=p;a[k]=q}});if(JSON.stringify(o.x||{})!==JSON.stringify(n.x||{})){b['ข้อมูลเพิ่มเติม']='(เดิม)';a['ข้อมูลเพิ่มเติม']='แก้ไขแล้ว'}return[b,a]}
+function edit(id){const i=D.find(x=>x.id===id),x=i.x||{},set=(k,v)=>$('#'+k).value=v==null?'':v;EID=id;
+ set('fo0','แก้ไข');set('fn',i.name);set('fb',i.brand);set('fs',i.serial);set('fa',i.id);set('fl',i.loc);set('fg',i.group);set('fw',i.own);set('fL',i.last);set('fi',[6,12,24].includes(i.m)?i.m:12);set('fN',i.due);set('fm',i.note);set('fsc',i.scope);set('fc',i.cat);set('fw2',i.own2);set('fv',i.vendor);set('fk',i.calco||x.calby);set('xvp',x.vp);set('xkp',x.kp);set('xka',x.ka);set('xwc',x.wc);set('fo',i.ops||'ใช้งาน');chint();
+ set('xm',x.maker);set('xr',x.recv);set('xc',x.cond||'ใหม่');set('xg',x.range);set('xs',x.res);set('xe',x.mpe||x.crit);set('xpt',x.pts);set('xf',x.fw);set('xp',x.pm);$('#xa').checked=!!x.acc;document.querySelectorAll('.std').forEach(c=>c.checked=(x.std||[]).includes(c.value));
+ $('#form h2').textContent='แก้ไขข้อมูลเครื่องมือ';$('#save').textContent='บันทึกการแก้ไข';$('#err').textContent='';$('#form').classList.add('on');$('#form').scrollIntoView({behavior:'smooth',block:'nearest'})}
+function saveEdit(a){const k=D.findIndex(i=>i.id===EID),o=D[k],
+ x={...(o.x||{}),maker:$('#xm').value,recv:$('#xr').value,cond:$('#xc').value,range:$('#xg').value,res:$('#xs').value,mpe:$('#xe').value,crit:$('#xe').value,pts:$('#xpt').value,fw:$('#xf').value,pm:$('#xp').value,acc:$('#xa').checked,std:[...document.querySelectorAll('.std:checked')].map(c=>c.value)},
+ nw=mk({...o,id:a,name:$('#fn').value.trim(),brand:$('#fb').value,serial:$('#fs').value,loc:$('#fl').value,group:$('#fg').value,own:$('#fw').value.trim(),last:$('#fL').value,due:$('#fN').value||o.due,note:$('#fm').value,...fx(),x}),[b,af]=diff(o,nw);
+ if(!Object.keys(b).length){toast('ไม่มีการเปลี่ยนแปลง');return}
+ if(a!==EID){C.forEach(c=>{if(c.id===EID)c.id=a});PL.forEach(p=>{p.items=p.items.map(i=>i===EID?a:i);p.skip.forEach(s=>{if(s.id===EID)s.id=a})})}
+ D[k]=nw;log('แก้ไขเครื่องมือ',a,b,af);$('#form').classList.remove('on');EID=null;dclose();render(1);toast('บันทึกการแก้ไขแล้ว')}
+function del(id){const o=D.find(i=>i.id===id),why=prompt('ลบ “'+o.name+'” (ลงทะเบียนผิด) — ระบุเหตุผล:');if(!why)return;
+ log('ลบเครื่องมือ',id,{...o,เหตุผล:why},null);D.splice(D.indexOf(o),1);PL.forEach(p=>{p.items=p.items.filter(i=>i!==id);p.skip=p.skip.filter(s=>s.id!==id)});dclose();render();toast('ลบแล้ว (เก็บไว้ในประวัติการแก้ไข)')}
+async function api(action,body){const c=new AbortController(),t=setTimeout(()=>c.abort(),30000);try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...body}),signal:c.signal});const x=await r.text();try{return JSON.parse(x)}catch(e){throw new Error('notjson')}}catch(e){throw new Error(e.name==='AbortError'?'timeout':e.message||'net')}finally{clearTimeout(t)}}
+function stat(t,bad){const e=$('#sy');if(e){e.textContent=t;e.style.color=bad?'#ff9a92':'#7fa0ab'}}
+async function push(){try{stat('กำลังบันทึกขึ้น Google…');const r=await api('save',{token:SES.token,baseRev:REV,state:JSON.parse(localStorage.getItem('caltrack-v1'))});
+ if(r.error==='conflict'){stat('ข้อมูลขัดแย้ง',1);if(confirm('มีผู้ดูแลคนอื่นแก้ไขข้อมูลไปก่อน ต้องโหลดข้อมูลล่าสุด (การแก้ไขล่าสุดบนเครื่องนี้จะหาย) ตกลงไหม?')){localStorage.removeItem('caltrack-v1');location.reload()}return}
+ if(r.error==='auth'){stat('หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่',1);sesSet(null);toast('หมดเวลาเข้าสู่ระบบ (6 ชั่วโมง) — กำลังกลับไปหน้าเข้าสู่ระบบ');setTimeout(()=>location.reload(),1500);return}
+ if(r.error)throw 0;REV=r.rev;store();stat('บันทึกขึ้น Google แล้ว')}catch(e){stat('บันทึกขึ้น Google ไม่สำเร็จ ลองใหม่',1)}}
+function who(){const w=$('#who');
+ w.innerHTML=!APAGE?`<span>หน้าผู้ชม (ดูอย่างเดียว)</span><a class="wl" href="${AHREF}">ไปหน้าผู้ดูแลระบบ →</a>`
+  :!API?`<span>โหมดเครื่องเดียว · ผู้ดูแล</span><a class="wl" href="${VHREF}">เปิดหน้าผู้ชม</a>`
+  :ADMIN?`<span>${esc(SES.full||SES.name)}<small style="display:block">${ROLE==='admin'?'ผู้ดูแลระบบ':'เจ้าหน้าที่'} · ${esc(SES.name)}</small></span><button id="lg">ออกจากระบบ</button><button id="mypw">เปลี่ยนรหัสผ่าน</button><a class="wl" href="${VHREF}">เปิดหน้าผู้ชม</a>`:'<span>หน้าเจ้าหน้าที่</span>';
+ w.insertAdjacentHTML('beforeend','<div id="sy"></div>');const b=$('#lg');if(b)b.onclick=()=>{sesSet(null);location.reload()}}
+document.body.classList.toggle('admin',ADMIN);document.body.classList.toggle('apage',APAGE);document.body.classList.toggle('radm',ADMIN&&ROLE==='admin');who();$('#fp').style.display=API?'':'none';
+$('#fp').onclick=push;
+// ผู้ดูแลคนแรก + จัดการผู้ดูแลจากหน้าเว็บ
+// ---------- จัดการผู้ใช้งาน (ผู้ดูแลระบบ) ----------
+const RL={admin:'ผู้ดูแลระบบ',staff:'เจ้าหน้าที่'},STL={pending:'รออนุมัติ',active:'ใช้งาน',disabled:'ระงับ'},STC={pending:'p-soon',active:'p-ok',disabled:'p-bad'};
+let UL=[],UT='all',UME='',UED=null;
+const gopts=sel=>{const L=[...new Set([...GROUPS,...(sel?[sel]:[])])];return'<option value="">— เลือก —</option>'+L.map(g=>`<option ${g===sel?'selected':''}>${esc(g)}</option>`).join('')+'<option value="__o">อื่น ๆ (พิมพ์เอง)</option>'};
+const gval=(sel,inp)=>sel.value==='__o'?inp.value.trim():sel.value;
+const gwire=(sel,inp)=>{sel.addEventListener('change',()=>{inp.hidden=sel.value!=='__o';if(!inp.hidden)inp.focus()})};
+$('#gsg').innerHTML=gopts('');gwire($('#gsg'),$('#gsgo'));gwire($('#udg'),$('#udgo'));
+function ubadge(){const n=UL.filter(u=>u.status==='pending').length;$('#upn').textContent=n||'';$('#navpn').textContent=n||''}
+async function uload(){if(!API){$('#utb').innerHTML='<tr><td colspan="6">โหมดเครื่องเดียว: ยังไม่ได้เชื่อม Google จึงไม่มีระบบผู้ใช้</td></tr>';return}
+ $('#uerr').textContent='';try{const r=await api('users',{token:SES.token});if(r.ok){UL=r.users;UME=r.me;urender();ubadge()}else $('#uerr').textContent=r.error==='auth'?'หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่':(r.error||'โหลดรายชื่อไม่ได้')}catch(e){$('#uerr').textContent='เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'}}
+function urender(){const q=($('#uq').value||'').trim().toLowerCase(),k=(l,n,c)=>`<div class="k ${c||''}"><span>${l}</span><b>${n}</b></div>`;
+ $('#ukpi').innerHTML=k('ผู้ใช้ทั้งหมด',UL.length)+k('ผู้ดูแลระบบ',UL.filter(u=>u.role==='admin'&&u.status!=='pending').length)+k('เจ้าหน้าที่',UL.filter(u=>u.role==='staff'&&u.status!=='pending').length)+k('รออนุมัติ',UL.filter(u=>u.status==='pending').length,'soon');
+ const rows=UL.filter(u=>(UT==='all'||u.status==='pending')&&(!q||[u.name,u.full,u.email,u.group].join(' ').toLowerCase().includes(q))).sort((a,b)=>(a.status==='pending')-(b.status==='pending')||String(b.created).localeCompare(a.created));
+ $('#utb').innerHTML=rows.map(u=>`<tr><td><div><b>${esc(u.name)}</b>${u.name===UME?' <small style="display:inline">(คุณ)</small>':''}<small>${esc(u.email||'–')}${u.created?' · สมัคร '+fd(u.created):''}</small></div></td><td>${esc(u.full||'–')}</td><td><span class="pill ${u.role==='admin'?'p-soon':'p-out'}">${RL[u.role]||u.role}</span></td><td>${esc(u.group||'–')}</td><td><span class="pill ${STC[u.status]}">${STL[u.status]||u.status}</span></td>
+ <td style="white-space:nowrap">${u.status==='pending'?`<button class="go sm" data-ua="${esc(u.name)}">อนุมัติ</button> <button class="go alt sm" data-ux="${esc(u.name)}">ปฏิเสธ</button>`:`<button class="go alt sm" data-ue="${esc(u.name)}">แก้ไข</button>${u.name===UME?'':` <button class="go alt sm" data-ud="${esc(u.name)}">ลบ</button>`}`}</td></tr>`).join('')||`<tr><td colspan="6">${UT==='pending'?'ไม่มีผู้รออนุมัติ':'ไม่พบผู้ใช้'}</td></tr>`}
+$('#uq').oninput=urender;$('#uref').onclick=uload;
+$('#usr').addEventListener('click',async e=>{const t=e.target.closest('[data-ut]');if(t){UT=t.dataset.ut;$('#usr').querySelectorAll('[data-ut]').forEach(x=>x.setAttribute('aria-selected',x===t));urender();return}
+ const b=e.target.closest('button');if(!b)return;const d=b.dataset;$('#uerr').textContent='';
+ const run=async(a,body,msg)=>{const r=await api(a,{token:SES.token,...body});if(r.ok){toast(msg);await uload()}else $('#uerr').textContent=r.error||'ทำรายการไม่สำเร็จ'};
+ if(d.ua){await run('setuser',{name:d.ua,status:'active',role:'staff'},'อนุมัติ '+d.ua+' แล้ว (สิทธิ์เจ้าหน้าที่ — แก้เป็นผู้ดูแลระบบได้ที่ปุ่มแก้ไข)');log('อนุมัติผู้ใช้',d.ua,null,{โดย:SES.name})}
+ else if(d.ux&&confirm('ปฏิเสธและลบคำขอของ “'+d.ux+'” ?')){await run('deluser',{name:d.ux},'ปฏิเสธแล้ว');log('ปฏิเสธผู้สมัคร',d.ux,null,{โดย:SES.name})}
+ else if(d.ud&&confirm('ลบบัญชี “'+d.ud+'” ? เข้าสู่ระบบไม่ได้อีก')){await run('deluser',{name:d.ud},'ลบบัญชีแล้ว');log('ลบผู้ใช้',d.ud,null,{โดย:SES.name})}
+ else if(d.ue)uedit(UL.find(u=>u.name===d.ue))});
+function uedit(u){UED=u||null;$('#udt').textContent=u?'แก้ไขผู้ใช้ · '+u.name:'เพิ่มผู้ใช้';$('#udn').value=u?u.name:'';$('#udn').readOnly=!!u;$('#udf').value=u?u.full:'';$('#ude').value=u?u.email:'';$('#udg').innerHTML=gopts(u?u.group:'');$('#udgo').hidden=true;$('#udgo').value='';
+ $('#udr').value=u?u.role:'staff';$('#uds').value=u?u.status:'active';$('#uds').disabled=!u;$('#udp').value='';$('#udpl').textContent=u?'ตั้งรหัสผ่านใหม่ (เว้นว่างถ้าไม่เปลี่ยน)':'รหัสผ่าน (อย่างน้อย 6 ตัว) — แจ้งให้เจ้าตัวเปลี่ยนเองภายหลัง';$('#ude2').textContent='';$('#ud').showModal()}
+$('#uaddb').onclick=()=>uedit(null);$('#udc').onclick=()=>$('#ud').close();
+$('#udok').onclick=async()=>{const f={name:$('#udn').value.trim(),full:$('#udf').value.trim(),email:$('#ude').value.trim(),group:gval($('#udg'),$('#udgo')),role:$('#udr').value,status:$('#uds').value,pass:$('#udp').value};$('#ude2').textContent='';
+ if(f.pass&&f.pass.length<6){$('#ude2').textContent='รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร';return}if(!UED&&!f.pass){$('#ude2').textContent='ตั้งรหัสผ่านให้ผู้ใช้ใหม่';return}
+ const r=await api(UED?'setuser':'adduser',{token:SES.token,...f});if(r.ok){$('#ud').close();log(UED?'แก้ไขผู้ใช้':'เพิ่มผู้ใช้',f.name,null,{สิทธิ์:RL[f.role],สถานะ:STL[f.status],โดย:SES.name});toast('บันทึกแล้ว');uload()}else $('#ude2').textContent=r.error||'บันทึกไม่สำเร็จ'};
+document.querySelector('nav button[data-v=usr]').addEventListener('click',()=>{uload();cstat()});
+if(APAGE&&ADMIN&&ROLE==='admin'&&API)uload();
+// เปลี่ยนรหัสผ่านของตัวเอง
+document.addEventListener('click',e=>{if(e.target.id==='mypw'){$('#mp1').value='';$('#mp2').value='';$('#mpe').textContent='';$('#mpd').showModal()}});
+$('#mpc').onclick=()=>$('#mpd').close();
+$('#mpok').onclick=async()=>{const a=$('#mp1').value;if(a.length<6){$('#mpe').textContent='รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร';return}if(a!==$('#mp2').value){$('#mpe').textContent='รหัสผ่านสองช่องไม่ตรงกัน';return}
+ if(!API){$('#mpe').textContent='โหมดเครื่องเดียวไม่มีรหัสผ่าน';return}const r=await api('passwd',{token:SES.token,pass:a});if(r.ok){$('#mpd').close();toast('เปลี่ยนรหัสผ่านแล้ว')}else $('#mpe').textContent=r.error||'เปลี่ยนไม่สำเร็จ'};
+function cstat(){const e=$('#cst');if(!API){e.innerHTML='<p>โหมดเครื่องเดียว: ข้อมูลอยู่ในเบราว์เซอร์นี้เท่านั้น (ยังไม่ได้ใส่ลิงก์ Apps Script ใน config.js)</p>';return}
+ e.innerHTML='<p>กำลังตรวจ…</p>';fetch(API+'?action=get').then(r=>r.json()).then(r=>{e.innerHTML=`<dl><div><dt>Google</dt><dd>เชื่อมต่อแล้ว</dd></div><div><dt>โค้ด Apps Script</dt><dd>${r.ver>=3?'เวอร์ชันล่าสุด':'<span style="color:var(--bad)">เวอร์ชันเก่า — ต้อง Deploy ใหม่</span>'}</dd></div><div><dt>ข้อมูลบน Drive</dt><dd>${r.rev?'บันทึกแล้ว '+r.rev+' ครั้ง':'ยังไม่มี — กด “ซิงก์ขึ้น Google ตอนนี้” ในหน้านำเข้า/สำรอง'}</dd></div></dl>`}).catch(()=>e.innerHTML='<p style="color:var(--bad)">เชื่อมต่อ Google ไม่ได้</p>')}
+
+// ---------- ประตูหน้าเจ้าหน้าที่: เข้าสู่ระบบ / สมัครสมาชิก ----------
+const GW={nouser:'ไม่มีชื่อผู้ใช้นี้ — ตรวจตัวสะกด หรือสมัครสมาชิกก่อน',badpass:'รหัสผ่านไม่ถูกต้อง',locked:'กรอกผิดหลายครั้ง ระบบล็อกชื่อนี้ไว้ 10 นาที',nousers:'ยังไม่มีผู้ใช้ในระบบ — สมัครสมาชิกได้เลย คนแรกจะเป็นผู้ดูแลระบบ',pending:'บัญชีนี้รอผู้ดูแลระบบอนุมัติ',disabled:'บัญชีนี้ถูกระงับ — ติดต่อผู้ดูแลระบบ'};
+function gtab(m){document.querySelectorAll('#gate .gtabs [data-gt]').forEach(b=>b.setAttribute('aria-selected',b.dataset.gt===m));$('#gLogin').hidden=m!=='login';$('#gSign').hidden=m!=='sign';$('#gDone').hidden=true;const f=$(m==='sign'?'#gsn':'#gln');if(f)f.focus()}
+function gstat(t,bad){$('#gst').textContent=t;$('#gst').className='gst'+(bad?' bad':'')}
+$('#gate').addEventListener('click',e=>{const b=e.target.closest('[data-gt]');if(b)gtab(b.dataset.gt)});
+$('#gview').href=VHREF;$('#gbk').onclick=()=>{backupNow();const c=cnt(curState());$('#gbks').textContent='✓ ดาวน์โหลดแล้ว ('+c[0][1]+' เครื่อง, '+c[1][1]+' ใบรับรอง'+(SAMPLE?' — เป็นข้อมูลตัวอย่าง ไม่ใช่ข้อมูลจริง':'')+')'};if(API)$('#dlead').textContent='ข้อมูลหลักเก็บใน Google Drive (ซิงก์อัตโนมัติเมื่อแก้ไข) และมีสำเนาในเบราว์เซอร์นี้ · ดาวน์โหลดไฟล์สำรองเก็บไว้เป็นระยะ';
+if(SES&&!SES.role)sesSet(null);
+let GOLD=false,GDOWN=false;const GNR='ระบบยังไม่พร้อมใช้งาน กรุณาแจ้งผู้ดูแลระบบ (ดู “รายละเอียดสำหรับผู้ดูแลระบบ” ด้านล่าง)';
+function gdiag(html){$('#gdx').hidden=false;$('#gdxb').innerHTML=html}
+const GFIX=`<ol style="margin:6px 0 0;padding-left:18px"><li>เปิด script.google.com → โครงการ CalTrack → ปุ่ม <b>Deploy</b> → <b>Manage deployments</b></li><li>ดูว่ามีรายการที่ใช้งานอยู่ (Active) และ <b>Who has access = Anyone (ทุกคน)</b></li><li>คัดลอก <b>Web app URL</b> ในหน้านั้น เทียบกับลิงก์ใน <code>config.js</code> บน GitHub — ถ้าไม่ตรง ให้วางลิงก์ใหม่ใน config.js</li><li>ถ้าเพิ่งวาง Code.gs ใหม่: กดรูปดินสอ → Version = <b>New version</b> → Deploy</li></ol>`;
+if(APAGE&&API&&!ADMIN){$('#gate').hidden=false;document.body.classList.add('gated');gtab('login');
+ fetch(API+'?action=get').then(r=>{if(!r.ok)throw new Error('http '+r.status);return r.json()}).then(r=>{
+  if(!(r.ver>=3)){GOLD=true;gdiag('เซิร์ฟเวอร์ Google ตอบกลับแล้ว แต่ยังรันโค้ดเวอร์ชันเก่า (ยังไม่มีระบบสมัครสมาชิก) — ต้องวาง Code.gs ใหม่และ Deploy เป็น New version'+GFIX);return}
+  if(r.needSetup){gstat('ยังไม่มีผู้ใช้ในระบบ · คนแรกที่สมัครจะได้สิทธิ์ผู้ดูแลระบบทันที');$('#gfirst').textContent=' · คุณเป็นคนแรก จะได้สิทธิ์ผู้ดูแลระบบทันที';gtab('sign')}
+ }).catch(e=>{GDOWN=true;gstat('ตอนนี้ยังเชื่อมต่อเซิร์ฟเวอร์ไม่ได้ จึงยังสมัครหรือเข้าสู่ระบบไม่ได้',1);gdiag('เว็บเรียกลิงก์ Apps Script ใน config.js แล้วไม่ได้คำตอบที่ถูกต้อง ('+esc(e.message||'error')+') — มักเกิดจากการ Deploy ถูกลบ/เปลี่ยนลิงก์ หรือสิทธิ์ไม่ใช่ “Anyone”'+GFIX)})}
+const gbusy=(b,on,t)=>{b.disabled=on;if(on){b.dataset.t=b.textContent;b.textContent=t}else if(b.dataset.t)b.textContent=b.dataset.t};
+const gerr=e=>e.message==='timeout'?'เซิร์ฟเวอร์ไม่ตอบภายใน 30 วินาที ลองใหม่อีกครั้ง':GDOWN||e.message==='notjson'?GNR:'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่';
+const gin=(r,n)=>{sesSet({name:n,token:r.token,role:r.user.role,full:r.user.full});location.reload()};
+$('#glok').onclick=async()=>{const n=$('#gln').value.trim(),p=$('#glp').value;$('#gle').textContent='';if(!n||!p){$('#gle').textContent='กรอกชื่อผู้ใช้และรหัสผ่าน';return}
+ gbusy($('#glok'),1,'กำลังเข้าสู่ระบบ…');try{const r=await api('login',{name:n,pass:p});if(r.ok)return gin(r,n);$('#gle').textContent=GOLD?GNR:GW[r.why]||'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';if(r.why==='nousers')gtab('sign')}catch(e){$('#gle').textContent=gerr(e)}gbusy($('#glok'),0)};
+$('#glp').onkeydown=e=>{if(e.key==='Enter')$('#glok').click()};
+$('#gsok').onclick=async()=>{const f={name:$('#gsn').value.trim(),full:$('#gsf').value.trim(),email:$('#gse2').value.trim(),group:gval($('#gsg'),$('#gsgo')),pass:$('#gsp').value},er=t=>$('#gse').textContent=t;er('');
+ if(!/^[A-Za-z0-9._-]{3,30}$/.test(f.name))return er('ชื่อผู้ใช้ใช้ตัวอักษรอังกฤษ ตัวเลข . _ - ยาว 3–30 ตัว ไม่มีช่องว่าง');if(!f.full)return er('กรอกชื่อ-สกุล');
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))return er('อีเมลไม่ถูกต้อง');if(f.pass.length<6)return er('รหัสผ่านต้องยาวอย่างน้อย 6 ตัวอักษร');if(f.pass!==$('#gsp2').value)return er('รหัสผ่านสองช่องไม่ตรงกัน');
+ gbusy($('#gsok'),1,'กำลังสมัคร…');try{const r=await api('signup',f);if(r.ok&&r.first)return gin(r,f.name);if(r.ok){$('#gSign').hidden=true;$('#gDone').hidden=false;$('#gln').value=f.name}else er(GOLD||r.error==='auth'||r.error==='bad action'?GNR:(r.error||'สมัครไม่สำเร็จ'))}catch(e){er(gerr(e))}gbusy($('#gsok'),0)};
+if(API)fetch(API+'?action=get').then(r=>r.json()).then(r=>{
+ if(APAGE&&!ADMIN)return;
+ if(r&&r.state&&(r.rev>REV||(!ADMIN&&r.rev!==REV))){snapshot('ก่อนโหลดข้อมูลจากเซิร์ฟเวอร์ (rev '+r.rev+')');localStorage.setItem('caltrack-v1',JSON.stringify({...r.state,rev:r.rev,sample:false}));location.reload()}
+ else stat(r&&r.state?'เชื่อมต่อ Google แล้ว':'เชื่อมต่อ Google แล้ว (ยังไม่มีข้อมูลบนเซิร์ฟเวอร์)')}).catch(()=>stat('เชื่อมต่อ Google ไม่ได้ — แสดงข้อมูลในเครื่อง',1));
+
+// calibration
+let RP=[[10,10.0002,.0004,.001],[100,100.0004,.0004,.001],[200,200.0013,.0004,.001]],RES=null;
+const f6=v=>isNaN(v)?'–':String(+v.toFixed(6)),sg=v=>(v>0?'+':'')+f6(v);
+function rri(){const v=$('#ri').value;$('#ri').innerHTML=D.filter(i=>i.s!=='out').map(i=>`<option value="${esc(i.id)}">${esc(i.id)} · ${esc(i.name)}</option>`).join('');if(v)$('#ri').value=v}
+function rrows(){const inp=(k,f,v,l)=>`<td><input data-k="${k}" data-f="${f}" value="${v}" inputmode="decimal" aria-label="${l}"></td>`;
+ $('#cal').innerHTML=RP.map((p,k)=>`<tr>${inp(k,0,p[0],'ค่าอ้างอิง')}${inp(k,1,p[1],'ค่าที่อ่านได้')}<td id="e${k}"></td><td id="c${k}"></td>${inp(k,2,p[2],'U')}${inp(k,3,p[3],'เกณฑ์')}<td id="r${k}"></td><td><button class="go alt sm" data-x="${k}" aria-label="ลบจุดนี้">✕</button></td></tr>`).join('');calc()}
+function calc(){let bad=0,cond=0,mE=0,mU=0,mT=Infinity,cr=[],n=0;
+ RP.forEach((p,k)=>{const[r,v,u,t]=p.map(parseFloat),ok_=![r,v,u,t].some(isNaN),E=v-r;
+  $('#e'+k).textContent=ok_?sg(E):'–';$('#c'+k).textContent=ok_?sg(-E):'–';
+  if(!ok_){$('#r'+k).innerHTML='';return}
+  const ok=Math.abs(E)+u<=t,cd=!ok&&Math.abs(E)<=t;n++;if(!ok)cd?cond++:bad++;mE=Math.max(mE,Math.abs(E));mU=Math.max(mU,u);mT=Math.min(mT,t);cr.push(sg(-E)+' ที่ '+f6(r));
+  $('#r'+k).innerHTML=`<span class="pill ${ok?'p-ok':cd?'p-soon':'p-bad'}">${ok?'ผ่าน':cd?'มีเงื่อนไข':'ไม่ผ่าน'}</span>`});
+ const v=$('#vd'),res=!n?'':bad?'ไม่ผ่าน':cond?'ผ่านแบบมีเงื่อนไข':'ผ่าน';RES=n?{res,mE,mU,mT,cr}:null;
+ v.className='verdict '+(res==='ผ่าน'?'p-ok':res==='ไม่ผ่าน'?'p-bad':'p-soon');
+ v.textContent=!n?'กรอกค่าให้ครบอย่างน้อย 1 จุด':res==='ผ่าน'?'ผลรวม: ผ่าน — บันทึกเป็นใบรับรองเพื่อกำหนดรอบครบกำหนดถัดไป (หลังผู้ตรวจทานอนุมัติ)':`ผลรวม: ${res} — ต้องเลือกสถานะต่อไป (ใช้งานต่อด้วยค่าแก้ / ส่งซ่อม / ลดสถานะ / จำหน่าย / ตามระบบคุณภาพ) และประเมินผลกระทบต่อผลทดสอบย้อนหลัง`}
+$('#cal').oninput=e=>{const t=e.target;if(t.dataset.f){RP[+t.dataset.k][+t.dataset.f]=t.value;calc()}};
+$('#cal').onclick=e=>{const b=e.target.closest('[data-x]');if(b){RP.splice(+b.dataset.x,1);rrows()}};
+$('#radd').onclick=()=>{const l=RP[RP.length-1]||[];RP.push(['','',l[2]??'',l[3]??'']);rrows()};
+$('#ri').onchange=()=>{const m=parseFloat((((byId($('#ri').value).x)||{}).mpe||'').replace(/[^\d.]/g,''));if(!isNaN(m)){RP.forEach(p=>p[3]=m);rrows()}};
+$('#submit').onclick=()=>{if(!RES||!$('#ri').value){toast('เลือกเครื่องมือและกรอกค่าให้ครบ');return}
+ show('cert');cform({id:$('#ri').value,cr:RES.res,cem:f6(RES.mE),cu:f6(RES.mU),ccr:f6(RES.mT),ccv:RES.cr.join('; ')+' '+$('#ru').value})};
+rri();rrows();
+</script>
+<script src="forms.js"></script>
+<script>
+(()=>{const lab=t=>{const th=[...t.querySelectorAll('thead th')].map(x=>x.textContent.trim());t.querySelectorAll('tbody tr').forEach(r=>[...r.children].forEach((c,i)=>{if(!c.dataset.label&&th[i])c.dataset.label=th[i]}))};
+const go=()=>document.querySelectorAll('table').forEach(t=>{if(t.closest('#ftb'))return;if(t.closest('#fed')&&!t.closest('#fed').querySelector('#frows'))return;if(!t.closest('#fed'))t.classList.add('cardm');lab(t)});
+new MutationObserver(go).observe(document.body,{childList:true,subtree:true});go()})();
+</script>
+</body>
+</html>
