@@ -1,4 +1,0 @@
-{
-  "cleanUrls": true,
-  "crons": [{ "path": "/api/notify", "schedule": "0 1 * * *" }]
-}
