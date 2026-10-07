@@ -2,7 +2,7 @@
 // เว็บจริง (caltrack-rmsc2.vercel.app)  = ระบบเดิม (Google) ทำงานเหมือนเดิมทุกอย่าง
 // ลิงก์อื่นทั้งหมด (เว็บทดลองของ Vercel)   = ระบบสมาชิกใหม่ (Supabase) · ไม่เชื่อม Google · ไม่แตะข้อมูลจริง
 (function () {
-  var PROD = location.hostname === "caltrack-rmsc2.vercel.app";
+  var PROD = false;
 
   window.CALTRACK_API = PROD
     ? "https://script.google.com/macros/s/AKfycbyfCs-3aiVyNb2Tm2Rr8ng4pXiCwGeqTrpaSDhAb1qea-WYpv71WG7_edOynB_OsQ05XQ/exec"
