@@ -1,0 +1,5 @@
+{
+  "cleanUrls": true,
+  "rewrites": [{ "source": "/admin", "destination": "/index.html" }],
+  "crons": [{ "path": "/api/notify", "schedule": "0 1 * * *" }]
+}
