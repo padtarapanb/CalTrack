@@ -354,7 +354,7 @@ body.gated .mtop{display:none}
     <p class="lead" style="margin:10px 0 0;font-size:.85rem">กฎตัดสิน: |E| + U ≤ เกณฑ์ = ผ่าน · |E| ≤ เกณฑ์ แต่ |E| + U เกิน = ผ่านแบบมีเงื่อนไข · |E| เกินเกณฑ์ = ไม่ผ่าน</p>
     <div class="stp"><span>3</span>สรุปผล</div>
     <div class="verdict" id="vd"></div>
-    <p class="sticky-act"><button class="go" id="submit">ไปบันทึกเป็นใบรับรอง</button></p>
+    <p class="sticky-act"><button class="go" id="submit">ไปบันทึกเป็นใบรับรอง</button> <button class="go alt" id="r2f" title="เปิดแบบฟอร์มราชการ F 36 05 033 พร้อมข้อมูลเครื่องและผลทุกจุด">ลงแบบฟอร์ม F 36 05 033</button></p>
   </div>
 </section>
 <!-- Audit -->
@@ -1306,6 +1306,7 @@ function calc(){let bad=0,cond=0,mE=0,mU=0,mT=Infinity,cr=[],n=0;
  v.textContent=!n?'กรอกค่าให้ครบอย่างน้อย 1 จุด':res==='ผ่าน'?'ผลรวม: ผ่าน — บันทึกเป็นใบรับรองเพื่อกำหนดรอบครบกำหนดถัดไป (หลังผู้ตรวจทานอนุมัติ)':`ผลรวม: ${res} — ต้องเลือกสถานะต่อไป (ใช้งานต่อด้วยค่าแก้ / ส่งซ่อม / ลดสถานะ / จำหน่าย / ตามระบบคุณภาพ) และประเมินผลกระทบต่อผลทดสอบย้อนหลัง`}
 $('#cal').oninput=e=>{const t=e.target;if(t.dataset.f){RP[+t.dataset.k][+t.dataset.f]=t.value;calc()}};
 $('#cal').onclick=e=>{const b=e.target.closest('[data-x]');if(b){RP.splice(+b.dataset.x,1);rrows()}};
+$('#r2f').onclick=()=>{if(!window.CT_FORMS||!CT_FORMS.fromCal){toast('โหลดแบบฟอร์มไม่สำเร็จ');return}CT_FORMS.fromCal({id:$('#ri').value,unit:$('#ru').value.trim(),rows:RP.filter(p=>p.some(v=>String(v).trim()!==''))})};
 $('#radd').onclick=()=>{const l=RP[RP.length-1]||[];RP.push(['','',l[2]??'',l[3]??'']);rrows()};
 $('#ri').onchange=()=>{const m=parseFloat((((byId($('#ri').value).x)||{}).mpe||'').replace(/[^\d.]/g,''));if(!isNaN(m)){RP.forEach(p=>p[3]=m);rrows()}};
 $('#submit').onclick=()=>{if(!RES||!$('#ri').value){toast('เลือกเครื่องมือและกรอกค่าให้ครบ');return}
