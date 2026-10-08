@@ -148,6 +148,7 @@ tr.picked td{background:color-mix(in srgb,#06c755 9%,transparent)}
 .lnico{color:#06c755;display:inline-flex}.lnico .lnlogo{width:24px;height:24px}
 .mtag{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99px;font-size:.72rem;font-weight:700;vertical-align:middle;border:1px solid currentColor}.mt-ver{color:#2563c9}.mt-pm{color:#7a4fc4}
 .udlg.frd{max-width:880px;width:96%}
+.cdrop{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:0 0 14px;background:var(--bg)}.cdrop label{display:block;margin-bottom:8px;font-size:.9rem}.cdrop input{width:100%}.cread:empty{display:none}.cread{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:.88rem;background:var(--panel)}.cread.ok{background:var(--okbg)}.cread.warn{background:var(--soonbg)}.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--brand);border-radius:50%;animation:sp .8s linear infinite;vertical-align:-1px}@keyframes sp{to{transform:rotate(360deg)}}
 .ptag{display:block;width:fit-content;margin-top:3px;padding:0 7px;border-radius:99px;font-size:.7rem;font-weight:600;background:var(--line);color:var(--mute)}.pt-kru{background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
 small.be{display:block;color:var(--brand);font-size:.8rem;margin-top:3px;font-weight:600}
 .udlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:22px;max-width:560px;width:92%}
@@ -423,6 +424,7 @@ body.gated .mtop{display:none}
   <h1>คลังใบรับรองสอบเทียบ</h1><p class="lead">จัดเก็บแยกตามปีงบประมาณ (1 ต.ค. – 30 ก.ย.) ระบบจัดเข้าปีงบประมาณให้อัตโนมัติจากวันที่สอบเทียบ</p>
   <div class="tools"><select id="cy" aria-label="ปีงบประมาณ"></select><input type="search" id="cq" placeholder="ค้นหาเลขที่ใบรับรอง / รหัสครุภัณฑ์" aria-label="ค้นหาใบรับรอง"><button class="go adm" id="cadd">+ อัปโหลดใบรับรอง</button></div>
   <div class="box det" id="cf"><h2>อัปโหลดใบรับรองสอบเทียบ</h2>
+    <div class="cdrop"><label for="cfile"><b>แนบไฟล์ใบรับรอง (PDF)</b> — ระบบอ่านเลขที่ใบรับรอง วันที่สอบเทียบ บริษัท และเครื่องมือจากไฟล์ แล้วกรอกให้</label><input type="file" id="cfile" accept=".pdf,image/*"><div id="cread" class="cread"></div></div>
     <div class="fgrid">
       <div><label for="ci">เครื่องมือ *</label><select id="ci"></select></div>
       <div><label for="cn">เลขที่ใบรับรอง *</label><input id="cn"></div>
@@ -434,7 +436,6 @@ body.gated .mtop{display:none}
       <div><label for="cem">|E| สูงสุดที่พบ</label><input id="cem" inputmode="decimal"></div>
       <div><label for="cu">ความไม่แน่นอน (U, k=2)</label><input id="cu" inputmode="decimal"></div>
       <div><label for="ccr">เกณฑ์ยอมรับ ± (MPE)</label><input id="ccr" inputmode="decimal"></div>
-      <div><label for="cfile">ไฟล์ใบรับรอง (PDF / รูป)</label><input type="file" id="cfile" accept=".pdf,image/*"></div>
     </div>
     <div class="cat" id="chk"></div>
     <div class="fgrid" id="dsp" style="display:none">
@@ -708,7 +709,7 @@ function cchk(auto){const e=parseFloat($('#cem').value),u=parseFloat($('#cu').va
  if(!isNaN(e)&&!isNaN(t)){const uu=isNaN(u)?0:u,sum=Math.abs(e)+uu,r=sum<=t?'ผ่าน':Math.abs(e)<=t?'ผ่านแบบมีเงื่อนไข':'ไม่ผ่าน';h.textContent=`|E| ${n(Math.abs(e))} + U ${n(uu)} = ${n(sum)} ${sum<=t?'≤':'>'} เกณฑ์ ${n(t)} → ระบบแนะนำ: ${r}`;if(auto)$('#cr').value=r}
  const c=CAT[byId($('#ci').value).cat];if(c)h.textContent+=(h.textContent?' · ':'')+'หมวด '+c.n;
  $('#dsp').style.display=/มีเงื่อนไข|ไม่ผ่าน/.test($('#cr').value)?'grid':'none'}
-function cform(p){p=p||{};CEDIT=-1;$('#ck').value=(byId(p.id)||{}).meth||'cal';$('#cf h2').textContent='อัปโหลดใบรับรองสอบเทียบ';$('#ci').innerHTML=D.map(i=>`<option value="${esc(i.id)}">${esc(i.id)} · ${esc(i.name)}</option>`).join('');if(p.id)$('#ci').value=p.id;
+function cform(p){p=p||{};CEDIT=-1;$('#cfile').value='';$('#cread').innerHTML='';$('#ck').value=(byId(p.id)||{}).meth||'cal';$('#cf h2').textContent='อัปโหลดใบรับรองสอบเทียบ';$('#ci').innerHTML=D.map(i=>`<option value="${esc(i.id)}">${esc(i.id)} · ${esc(i.name)}</option>`).join('');if(p.id)$('#ci').value=p.id;
  ['cem','cu','ccr','ccv','cdr','cdp'].forEach(k=>$('#'+k).value=p[k]??'');$('#cr').value=p.cr||'ผ่าน';if(!$('#ccr').value)defcrit();cchk();$('#cerr').textContent='';$('#cf').classList.add('on');$('#cn').focus()}
 $('#cadd').onclick=()=>cform();
 ['cem','cu','ccr'].forEach(k=>$('#'+k).oninput=()=>cchk(1));$('#cr').onchange=()=>cchk();$('#ci').onchange=()=>{if(!$('#ccr').value)defcrit();cchk(1)};
@@ -718,10 +719,63 @@ function applyRes(id,d,n,mv){const k=D.findIndex(i=>i.id===id),r=C.find(c=>c.no=
  D[k]=mk({...o,...(adv?{last:d,due:nd.toISOString().slice(0,10)}:{}),ops});if((o.ops||'ใช้งาน')!==ops)log('เปลี่ยนสถานะการใช้งาน',id,{ops:o.ops||'ใช้งาน'},{ops,เหตุ:'ผลสอบเทียบ '+n+' · '+r.res});render()}
 $('#ccancel').onclick=()=>$('#cf').classList.remove('on');
 $('#cd').onchange=()=>$('#cfy').value=$('#cd').value?fy($('#cd').value):'';
+// ---------- อ่านข้อมูลจากไฟล์ใบรับรอง PDF แล้วกรอกให้ ----------
+let PDFJS=null;
+function pdfjs(){return PDFJS||(PDFJS=new Promise((ok,no)=>{if(window.pdfjsLib)return ok(window.pdfjsLib);const b='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/',s=document.createElement('script');s.src=b+'pdf.min.js';
+ s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc=b+'pdf.worker.min.js';ok(window.pdfjsLib)};s.onerror=()=>{PDFJS=null;no(new Error('โหลดตัวอ่าน PDF ไม่ได้ ตรวจอินเทอร์เน็ต'))};document.head.appendChild(s)}))}
+async function pdfLines(f){const L=await pdfjs(),d=await L.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise,out=[];
+ for(let n=1;n<=Math.min(d.numPages,3);n++){const tc=await(await d.getPage(n)).getTextContent();let y=null,line='';
+  tc.items.forEach(it=>{if(!('str' in it))return;const yy=Math.round(it.transform[5]);if(y!==null&&Math.abs(yy-y)>2){out.push(line);line=''}y=yy;line+=(line&&!/\s$/.test(line)&&it.str&&!/^\s/.test(it.str)?' ':'')+it.str});out.push(line)}
+ return out.map(s=>s.replace(/\s+/g,' ').trim()).filter(Boolean)}
+const CMON={jan:1,january:1,feb:2,february:2,mar:3,march:3,apr:4,april:4,may:5,jun:6,june:6,jul:7,july:7,aug:8,august:8,sep:9,sept:9,september:9,oct:10,october:10,nov:11,november:11,dec:12,december:12,
+ 'มกราคม':1,'กุมภาพันธ์':2,'มีนาคม':3,'เมษายน':4,'พฤษภาคม':5,'มิถุนายน':6,'กรกฎาคม':7,'สิงหาคม':8,'กันยายน':9,'ตุลาคม':10,'พฤศจิกายน':11,'ธันวาคม':12,'ม.ค.':1,'ก.พ.':2,'มี.ค.':3,'เม.ย.':4,'พ.ค.':5,'มิ.ย.':6,'ก.ค.':7,'ส.ค.':8,'ก.ย.':9,'ต.ค.':10,'พ.ย.':11,'ธ.ค.':12};
+function cdate(s){s=String(s||'').replace(/(\d)(st|nd|rd|th)\b/gi,'$1');let m,d,mo,y;const Y=v=>{v=+v;if(v<100)v+=v>40?2500:2000;return v>2400?v-543:v};
+ if(m=s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/)){y=+m[1];mo=+m[2];d=+m[3]}
+ else if(m=s.match(/(\d{1,2})\s*[-\s]\s*([A-Za-z]{3,9}|[ก-๙\.]{4,12})\.?\s*[-\s,]\s*(\d{2,4})/)){const k=m[2].toLowerCase();mo=CMON[k]||CMON[k.slice(0,3)];d=+m[1];y=Y(m[3])}
+ else if(m=s.match(/([A-Za-z]{3,9})\.?\s+(\d{1,2}),?\s+(\d{4})/)){const k=m[1].toLowerCase();mo=CMON[k]||CMON[k.slice(0,3)];d=+m[2];y=Y(m[3])}
+ else if(m=s.match(/(\d{1,2})[\/\.](\d{1,2})[\/\.](\d{2,4})/)){d=+m[1];mo=+m[2];y=Y(m[3])}
+ if(!d||!mo||!y||mo>12||d>31||y<1990||y>2100)return'';return y+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
+function certParse(lines){const T=lines.join('\n'),r={};let m;
+ const grab=(re,lines2)=>{for(const l of lines2||lines){const x=l.match(re);if(x)return x}return null};
+ if(m=grab(/(?:certificate\s*(?:no|number)|cert\.?\s*no|report\s*(?:no|number)|calibration\s*(?:certificate|report)\s*no|เลขที่ใบรับรอง|ใบรับรองเลขที่|เลขที่รายงาน)\.?\s*[:：#]?\s*([A-Za-z0-9][A-Za-z0-9_\-\/\.]{3,30})/i))r.no=m[1].replace(/[.,;]$/,'');
+ if(!r.no&&(m=T.match(/\b([A-Z]{1,5}[_\-]\d{2}\/\d{2}\/\d{3,6})\b/)))r.no=m[1];
+ if(m=grab(/(?:date\s*of\s*calibration|calibration\s*date|date\s*calibrated|calibrated\s*(?:on|date)|วันที่สอบเทียบ|วันที่ทำการสอบเทียบ|สอบเทียบเมื่อ)\s*[:：]?\s*(.{6,40})/i))r.date=cdate(m[1]);
+ if(!r.date&&(m=grab(/(?:date\s*of\s*(?:issue|report)|issue\s*date|วันที่ออกใบรับรอง)\s*[:：]?\s*(.{6,40})/i)))r.date=cdate(m[1]);
+ if(m=grab(/(?:serial\s*(?:no|number)|s\/n|หมายเลขเครื่อง)\.?\s*[:：]?\s*([A-Za-z0-9][A-Za-z0-9\-\/]{2,30})/i))r.serial=m[1];
+ if(m=grab(/(?:next\s*(?:calibration\s*)?due|due\s*date|recommended\s*(?:re)?calibration)\s*[:：]?\s*(.{6,40})/i))r.next=cdate(m[1]);
+ const co=(typeof CO!=='undefined'?CO:[]).map(c=>c.name).filter(n=>n&&n.length>3).find(n=>T.toLowerCase().includes(n.toLowerCase()));
+ if(co)r.by=co;else{const l=lines.slice(0,25).find(x=>/(co\.?\s*,?\s*ltd|company\s+limited|\blimited\b|บริษัท\s*\S+|calibration\s+(?:center|centre|laboratory|lab)|\binstitute\b|สถาบัน)/i.test(x)&&x.length<=90);if(l)r.by=l.replace(/^(?:issued\s*by|calibrated\s*by|ออกโดย)\s*[:：]?\s*/i,'').trim()}
+ const norm=v=>String(v||'').replace(/[\s\-\/]/g,'').toLowerCase();
+ const byAsset=D.filter(i=>i.id&&i.id.length>=6&&!/^ไม่มีรหัส/.test(i.id)).find(i=>T.includes(i.id));
+ const bySerial=r.serial&&D.find(i=>i.serial&&norm(i.serial)===norm(r.serial))||D.find(i=>i.serial&&String(i.serial).length>=5&&norm(T).includes(norm(i.serial)));
+ const hit=byAsset||bySerial;if(hit){r.id=hit.id;r.how=byAsset?'รหัสครุภัณฑ์':'Serial No.'}
+ return r}
+async function certRead(f){const box=$('#cread');box.className='cread';if(!f){box.innerHTML='';return}
+ if(!/pdf$/i.test(f.type||'')&&!/\.pdf$/i.test(f.name)){box.innerHTML='ไฟล์รูปภาพ — ระบบอ่านอัตโนมัติได้เฉพาะ PDF ที่มีตัวหนังสือ กรอกข้อมูลเอง';return}
+ box.innerHTML='<span class="spin"></span> กำลังอ่านข้อมูลจากไฟล์…';
+ try{const lines=await pdfLines(f);if(lines.join('').replace(/\s/g,'').length<20){box.className='cread warn';box.innerHTML='ไฟล์นี้เป็นภาพสแกน ไม่มีตัวหนังสือให้อ่าน — กรอกข้อมูลเอง';return}
+  const r=certParse(lines),it=r.id&&D.find(i=>i.id===r.id),auto=v=>!v||/^CERT-\d{4}-\d{4}$|^ไม่ระบุเลขที่/.test(v)||/\(([^()]+)\)\s*$/.test(v)&&v.trim().endsWith('('+$('#ci').value+')'),ph=auto($('#cn').value),got=[],ask=[];
+  const put=(id,v,l,force)=>{if(!v)return;const e=$('#'+id),cur=e.value;if(cur===v){got.push(`${l}: <b>${esc(v)}</b>`);return}
+   if(force||auto(cur)){e.value=v;e.dispatchEvent(new Event('change'));got.push(`${l}: <b>${esc(id==='cd'?fd(v):v)}</b>`)}else ask.push(`${l}: <b>${esc(id==='cd'?fd(v):v)}</b> <button class="lnk2" data-cput="${id}" data-v="${esc(v)}">ใช้ค่านี้</button> <small>(ตอนนี้ ${esc(id==='cd'?fd(cur):cur)})</small>`)};
+  if(it){if(CEDIT<0)put('ci',it.id,'เครื่องมือ',true);else if($('#ci').value!==it.id)ask.push(`เครื่องมือในไฟล์ดูเหมือนเป็น <b>${esc(it.id+' · '+it.name)}</b> (ดูจาก${r.how}) <button class="lnk2" data-cput="ci" data-v="${esc(it.id)}">เปลี่ยนเป็นเครื่องนี้</button>`);else got.push(`เครื่องมือ: <b>${esc(it.id)}</b> ✓`)}
+  const old=$('#cd').value,far=CEDIT>=0&&r.date&&old&&Math.abs(new Date(r.date)-new Date(old))>60*864e5;
+  if(far){window.__CR=r;box.className='cread warn';box.innerHTML=`ไฟล์นี้สอบเทียบวันที่ <b>${fd(r.date)}</b> แต่ใบที่กำลังแก้เป็นรอบ <b>${fd(old)}</b> — น่าจะเป็น<b>รอบใหม่</b> ไม่ควรเขียนทับประวัติเดิม<div style="margin-top:8px"><button class="go sm" data-cnew="1">บันทึกเป็นใบรับรองรอบใหม่</button> <button class="go alt sm" data-cover="1">แก้ใบเดิมนี้แทน</button></div>`;return}
+  put('cn',r.no,'เลขที่ใบรับรอง');put('cd',r.date,'วันที่สอบเทียบ',ph);put('cb',r.by,'ผู้ให้บริการ',ph);
+  const miss=[!r.no&&'เลขที่ใบรับรอง',!r.date&&'วันที่สอบเทียบ',!r.by&&'ผู้ให้บริการ',!it&&'เครื่องมือ'].filter(Boolean);
+  box.className='cread '+(got.length?'ok':'warn');
+  box.innerHTML=(got.length?`<b>อ่านจากไฟล์แล้ว</b> — ${got.join(' · ')}`:'อ่านไฟล์ได้ แต่ไม่พบข้อมูลที่รู้จัก')+(ask.length?`<div style="margin-top:6px">พบค่าที่ต่างจากที่กรอกไว้: ${ask.join('<br>')}</div>`:'')+(miss.length?`<div style="margin-top:4px;color:var(--mute)">หาไม่เจอ: ${miss.join(', ')} — กรอกเอง</div>`:'')+`<div style="margin-top:4px;color:var(--mute);font-size:.8rem">ตรวจความถูกต้องก่อนกดบันทึก</div>`}
+ catch(e){box.className='cread warn';box.innerHTML='อ่านไฟล์ไม่ได้ ('+esc(e.message)+') — กรอกข้อมูลเอง'}}
+$('#cfile').addEventListener('change',e=>certRead(e.target.files[0]));
+$('#cread').addEventListener('click',e=>{const n=e.target.closest('[data-cnew],[data-cover]');if(n){const r=window.__CR||{};
+  if(n.dataset.cnew){CEDIT=-1;$('#cf h2').textContent='อัปโหลดใบรับรองสอบเทียบ (รอบใหม่)';const set=(id,v)=>{if(v){$('#'+id).value=v;$('#'+id).dispatchEvent(new Event('change'))}};set('cn',r.no||'');set('cd',r.date);set('cb',r.by);['cem','cu','ccr','ccv','cdr'].forEach(k=>$('#'+k).value='');$('#cr').value='ผ่าน';
+   $('#cread').className='cread ok';$('#cread').innerHTML=`เปลี่ยนเป็น<b>ใบรับรองรอบใหม่</b>แล้ว — เลขที่ <b>${esc(r.no||'-')}</b> · วันที่ <b>${fd(r.date)}</b> · ${esc(r.by||'')} · ใบเดิมยังอยู่ในประวัติ · ตรวจแล้วกดบันทึก`}
+  else{['cn','cd','cb'].forEach((id,k)=>{const v=[r.no,r.date,r.by][k];if(v){$('#'+id).value=v;$('#'+id).dispatchEvent(new Event('change'))}});$('#cread').className='cread ok';$('#cread').innerHTML='แก้ใบเดิมด้วยข้อมูลจากไฟล์แล้ว — ตรวจแล้วกดบันทึก'}return}
+ const b=e.target.closest('[data-cput]');if(!b)return;const el=$('#'+b.dataset.cput);el.value=b.dataset.v;el.dispatchEvent(new Event('change'));b.closest('div').innerHTML+=' <span style="color:var(--ok)">✓ ใช้แล้ว</span>';b.remove()});
+
 const b64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f)});
 $('#cvc').onclick=()=>$('#cvd').close();$('#cve').onclick=()=>{$('#cvd').close();const x=document.createElement('span');x.dataset.ce=$('#cve').dataset.ce;$('#ct').onclick({target:x})};
 $('#ct').onclick=e=>{const b=e.target.closest('[data-ce]');if(!b)return;const c=C[+b.dataset.ce];CEDIT=+b.dataset.ce;
- $('#ci').innerHTML=D.map(i=>`<option value="${i.id}">${i.id} · ${i.name}</option>`).join('');$('#ci').value=c.id;$('#cn').value=c.no;$('#cd').value=c.date;$('#cfy').value=fy(c.date);$('#cb').value=c.by||'';$('#cr').value=c.res;$('#ck').value=c.kind||'cal';$('#cem').value=c.em||'';$('#cu').value=c.u||'';$('#ccr').value=c.crit||'';$('#ccv').value=c.corr||'';$('#cdr').value=c.dref||'';$('#cdp').value=c.disp||'';cchk();
+ $('#ci').innerHTML=D.map(i=>`<option value="${i.id}">${i.id} · ${i.name}</option>`).join('');$('#ci').value=c.id;$('#cn').value=c.no;$('#cfile').value='';$('#cread').innerHTML='';$('#cd').value=c.date;$('#cfy').value=fy(c.date);$('#cb').value=c.by||'';$('#cr').value=c.res;$('#ck').value=c.kind||'cal';$('#cem').value=c.em||'';$('#cu').value=c.u||'';$('#ccr').value=c.crit||'';$('#ccv').value=c.corr||'';$('#cdr').value=c.dref||'';$('#cdp').value=c.disp||'';cchk();
  $('#cf h2').textContent='แก้ไขใบรับรอง / แนบไฟล์';$('#cerr').textContent='';$('#cf').classList.add('on');$('#cf').scrollIntoView({behavior:'smooth',block:'nearest'})};
 $('#csave').onclick=async()=>{const n=$('#cn').value.trim(),d=$('#cd').value,f=$('#cfile').files[0];
  if(!n||!d){$('#cerr').textContent='กรอกเลขที่ใบรับรองและวันที่สอบเทียบให้ครบ';return}
