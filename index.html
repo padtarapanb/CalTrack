@@ -175,7 +175,7 @@ body:not(.radm) .radmo{display:none!important}
 
 <!-- Registry -->
 <section class="view" id="reg">
-  <h1>ทะเบียนเครื่องมือ</h1><p class="lead">คลิกแถวเพื่อดูรายละเอียด ประวัติสอบเทียบ และแก้ไข</p>
+  <div class="uhead"><h1>ทะเบียนเครื่องมือ</h1><button class="go adm radmo" id="lnO" hidden style="background:#06c755;border-color:#06c755">📣 ส่งรายการเกินกำหนดเข้า LINE</button></div><p class="lead">คลิกแถวเพื่อดูรายละเอียด ประวัติสอบเทียบ และแก้ไข</p>
   <div class="tools">
     <input type="search" id="q" placeholder="ค้นหาชื่อ / รหัสครุภัณฑ์ / Serial / สถานที่" aria-label="ค้นหา">
     <select id="gp" aria-label="กรองกลุ่มงาน"></select>
@@ -262,6 +262,11 @@ body:not(.radm) .radmo{display:none!important}
       <div class="tw"><table style="min-width:0"><thead><tr><th>ชื่อ</th><th>เครื่อง</th><th class="adm"></th></tr></thead><tbody id="mps"></tbody></table></div>
     </div>
   </div>
+  <div class="box adm" style="margin-top:16px"><h2>นำเข้ารายชื่อจาก Excel</h2>
+    <p class="lead" style="font-size:.88rem;margin:0 0 10px">ไฟล์ .xlsx ที่มีคอลัมน์ “ชื่อบริษัท / ประเภท / โทร / ISO 17025” หรือ “ชื่อผู้รับผิดชอบ / กลุ่มงาน / ช่องทางติดต่อ” (แยกชีตหรือชีตเดียวก็ได้) · ชื่อที่มีอยู่แล้วจะไม่ถูกเขียนทับ เติมเฉพาะช่องที่ว่าง</p>
+    <label class="go" style="display:inline-block;cursor:pointer">เลือกไฟล์ Excel<input type="file" id="mxf" accept=".xlsx,.xls,.csv" style="display:none"></label>
+    <button class="go alt" id="mxd">ดึงรายชื่อจากทะเบียนเครื่องมือ</button> <button class="go alt" id="mxt">ดาวน์โหลดไฟล์ตัวอย่าง</button>
+    <div id="mxr" style="margin-top:12px"></div></div>
 </section>
 
 <!-- Calibration record -->
@@ -466,6 +471,47 @@ $('#mcs').onclick=()=>{const c={name:$('#mn').value.trim(),type:$('#mt').value,p
 $('#qs').onclick=()=>{const c={name:$('#qn').value.trim(),group:$('#qg').value,contact:$('#qc').value.trim()};if(!c.name){toast('กรอกชื่อผู้รับผิดชอบ');return}
  if(MI.ps>=0){log('แก้ไขผู้รับผิดชอบ',c.name,PS[MI.ps],c);PS[MI.ps]=c}else{if(PS.some(x=>x.name===c.name)){toast('มีชื่อนี้แล้ว');return}PS.push(c);log('เพิ่มผู้รับผิดชอบ',c.name,null,c)}
  MI.ps=-1;['qn','qc'].forEach(k=>$('#'+k).value='');rmst();toast('บันทึกผู้รับผิดชอบแล้ว')};
+// ---------- นำเข้าบริษัท / ผู้รับผิดชอบ ----------
+let MX=null;const nmz=v=>cs(v).replace(/\s+/g,' ');
+const coType=v=>{v=cs(v);return /สอบเทียบ|cal/i.test(v)&&/จำหน่าย|vendor|sell/i.test(v)||/ทั้ง/.test(v)?'ทั้งสองอย่าง':/สอบเทียบ|cal/i.test(v)?'บริษัทสอบเทียบ':'ผู้จำหน่าย'};
+function mxParse(wb){const co=[],ps=[];
+ wb.SheetNames.forEach(sn=>{const R=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:false,defval:''});
+  const KW=/บริษัท|company|ผู้รับผิดชอบ|ชื่อ|name|ประเภท|โทร|กลุ่ม|ติดต่อ|17025|line|อีเมล/i,sc=r=>r.filter(c=>cs(c)).length>=2?r.filter(c=>KW.test(cs(c))).length:0;
+  let hi=-1,best=0;R.slice(0,15).forEach((r,k)=>{const v=sc(r);if(v>best){best=v;hi=k}});if(hi<0)return;
+  const H=R[hi].map(c=>cs(c)),col=re=>H.findIndex(h=>re.test(h)),isCo=col(/บริษัท|company/i)>=0;
+  if(isCo){const n=col(/บริษัท|company|ชื่อ/i),t=col(/ประเภท|type/i),ph=col(/โทร|อีเมล|e-?mail|ติดต่อ|phone/i),ac=col(/17025|รับรอง|accr/i);
+   R.slice(hi+1).forEach(r=>{const name=nmz(r[n]);if(name)co.push({name,type:t>=0?coType(r[t]):'ผู้จำหน่าย',phone:ph>=0?cs(r[ph]):'',accr:ac>=0?cs(r[ac]):''})})}
+  const pn=col(/ผู้รับผิดชอบ|ชื่อ.?-?.?สกุล|^ชื่อ|name/i);
+  if(pn>=0&&(!isCo||col(/ผู้รับผิดชอบ/)>=0)){const p2=isCo?col(/ผู้รับผิดชอบ/):pn,g=col(/กลุ่ม/),c=col(/ติดต่อ|โทร|line|อีเมล|e-?mail/i);
+   R.slice(hi+1).forEach(r=>{const name=nmz(r[p2]);if(name)ps.push({name,group:g>=0?cs(r[g]):'',contact:c>=0?cs(r[c]):''})})}});
+ return{co,ps}}
+const okPerson=x=>x&&x.length>=4&&!/^(กลุ่ม|ฝ่าย|ห้อง|งาน)/.test(x)&&!GROUPS.includes(x)&&!/^ผู้รับผิดชอบ\s*[ก-ฮ]$/.test(x)&&(/^(นาย|นาง|น\.ส\.|ดร\.|ภก\.|ภญ\.|mr|ms|mrs|dr)/i.test(x)||/\S+\s+\S+/.test(x));
+function mxFromReg(){const co=[],ps=[],gp={};
+ D.forEach(i=>{if(i.vendor)co.push({name:nmz(i.vendor),type:'ผู้จำหน่าย',phone:'',accr:''});const k=i.calco||(i.x&&i.x.calby);if(k)co.push({name:nmz(k),type:'บริษัทสอบเทียบ',phone:'',accr:(i.x&&i.x.ka)||''});
+  [i.own,i.own2].forEach(o=>String(o||'').split(/[,/、]|\s+และ\s+/).map(nmz).filter(okPerson).forEach(n=>{ps.push({name:n,group:'',contact:''});(gp[n]=gp[n]||{})[i.group]=((gp[n]||{})[i.group]||0)+1}))});
+ ps.forEach(p=>{const g=gp[p.name];if(g)p.group=Object.keys(g).sort((a,b)=>g[b]-g[a])[0]||''});return{co,ps}}
+function mxPlan(src){const merge=(A,L,keys)=>{const m=new Map();L.forEach(x=>{const k=x.name.toLowerCase(),o=m.get(k);if(!o)m.set(k,{...x});else{keys.forEach(f=>{if(!o[f]&&x[f])o[f]=x[f]});if(o.type&&x.type&&o.type!==x.type&&f0(o.type,x.type))o.type='ทั้งสองอย่าง'}});
+  const add=[],upd=[],same=[];m.forEach(x=>{const e=A.find(a=>nmz(a.name).toLowerCase()===x.name.toLowerCase());if(!e)add.push(x);else{const f=keys.filter(k=>!e[k]&&x[k]);f.length?upd.push([e,x,f]):same.push(x)}});return{add,upd,same}};
+ const f0=(a,b)=>a!=='ทั้งสองอย่าง'&&b!=='ทั้งสองอย่าง';
+ return{co:merge(CO,src.co,['phone','accr','type']),ps:merge(PS,src.ps,['group','contact'])}}
+function mxShow(src,from){MX=mxPlan(src);const P=MX,li=(a,f)=>a.length?'<ul style="margin:4px 0 0;padding-left:18px;max-height:160px;overflow:auto">'+a.slice(0,200).map(f).join('')+'</ul>':'';
+ const sec=(t,x,fmt)=>`<div style="margin-bottom:10px"><b>${t}</b> · เพิ่มใหม่ ${x.add.length} · เติมข้อมูล ${x.upd.length} · มีอยู่แล้ว ${x.same.length}${li(x.add,v=>'<li>'+fmt(v)+'</li>')}${li(x.upd,([e,v,f])=>'<li>'+esc(e.name)+' <small>(เติม '+f.join(', ')+')</small></li>')}</div>`;
+ const n=P.co.add.length+P.co.upd.length+P.ps.add.length+P.ps.upd.length;
+ $('#mxr').innerHTML=`<div class="verdict ${n?'p-soon':'p-ok'}" style="display:block"><p style="margin:0 0 8px">${esc(from)}</p>${sec('บริษัท',P.co,v=>esc(v.name)+' <small>('+esc(v.type)+')</small>')}${sec('ผู้รับผิดชอบ',P.ps,v=>esc(v.name)+(v.group?' <small>('+esc(v.group)+')</small>':''))}
+  ${n?`<button class="go" id="mxok">ยืนยันนำเข้า ${n} รายการ</button> <button class="go alt" id="mxc">ยกเลิก</button>`:'ไม่มีรายการใหม่ให้นำเข้า'}</div>`;
+ if(n){$('#mxok').onclick=mxApply;$('#mxc').onclick=()=>{MX=null;$('#mxr').innerHTML=''}}}
+function mxApply(){if(!MX)return;const P=MX;let a=0,u=0;
+ P.co.add.forEach(x=>{CO.push(x);a++});P.ps.add.forEach(x=>{PS.push(x);a++});
+ [...P.co.upd,...P.ps.upd].forEach(([e,x,f])=>{f.forEach(k=>e[k]=x[k]);u++});
+ log('นำเข้ารายชื่อบริษัท/ผู้รับผิดชอบ','-',null,{เพิ่ม:a,เติมข้อมูล:u});MX=null;$('#mxr').innerHTML='';rmst();toast('นำเข้าแล้ว: เพิ่ม '+a+' · เติมข้อมูล '+u)}
+$('#mxf').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(!window.XLSX){toast('โหลดตัวอ่าน Excel ไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วลองใหม่');return}
+ try{const src=mxParse(XLSX.read(await f.arrayBuffer(),{type:'array'}));if(!src.co.length&&!src.ps.length){$('#mxr').innerHTML='<p class="err">ไม่พบคอลัมน์ชื่อบริษัทหรือชื่อผู้รับผิดชอบในไฟล์ — ดาวน์โหลดไฟล์ตัวอย่างดูรูปแบบ</p>';return}mxShow(src,'จากไฟล์ '+f.name)}
+ catch(err){$('#mxr').innerHTML='<p class="err">อ่านไฟล์ไม่ได้: '+esc(err.message)+'</p>'}};
+$('#mxd').onclick=()=>mxShow(mxFromReg(),'จากทะเบียนเครื่องมือ '+D.length+' เครื่อง (ผู้รับผิดชอบ / ผู้จำหน่าย / บริษัทสอบเทียบ)');
+$('#mxt').onclick=()=>{if(!window.XLSX){toast('โหลดตัวอ่าน Excel ไม่สำเร็จ');return}const wb=XLSX.utils.book_new();
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['ชื่อบริษัท','ประเภท (ผู้จำหน่าย / บริษัทสอบเทียบ / ทั้งสองอย่าง)','โทร / อีเมล ผู้ติดต่อ','เลขที่รับรอง ISO/IEC 17025'],['บริษัท ตัวอย่าง จำกัด','บริษัทสอบเทียบ','02-000-0000','Calibration 0000']]),'บริษัท');
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['ชื่อผู้รับผิดชอบ','กลุ่มงาน','ช่องทางติดต่อ (โทร / LINE)'],['นางสาวตัวอย่าง ใจดี','พยาธิ','08x-xxx-xxxx']]),'ผู้รับผิดชอบ');
+ XLSX.writeFile(wb,'caltrack-รายชื่อ-ตัวอย่าง.xlsx')};
 $('#mst').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;const m=b.dataset.m,A=m==='co'?CO:PS;
  if(b.dataset.d!==undefined){const x=A[+b.dataset.d];if(confirm('ลบ “'+x.name+'” ?')){log(m==='co'?'ลบบริษัท':'ลบผู้รับผิดชอบ',x.name,x,null);A.splice(+b.dataset.d,1);rmst();toast('ลบแล้ว')}}
  else{const x=A[+b.dataset.e];MI[m]=+b.dataset.e;if(m==='co'){$('#mn').value=x.name;$('#mt').value=x.type;$('#mp').value=x.phone||'';$('#ma').value=x.accr||''}else{$('#qn').value=x.name;$('#qg').value=x.group||'';$('#qc').value=x.contact||''}}};
@@ -507,8 +553,8 @@ $('#dscrim').onclick=dclose;document.addEventListener('keydown',e=>{if(e.key==='
 function open(id){const i=D.find(x=>x.id===id),e=$('#det');e.classList.add('on');$('#dscrim').classList.add('on');
  e.innerHTML=`<button class="x" id="dx" aria-label="ปิด">ปิด ✕</button><h2>${esc(i.name)} · ${esc(i.id)}</h2><dl><div><dt>ยี่ห้อ / รุ่น</dt><dd>${i.brand}</dd></div><div><dt>Serial No.</dt><dd>${i.serial}</dd></div><div><dt>สถานที่ติดตั้ง</dt><dd>${i.loc}</dd></div><div><dt>กลุ่มงาน</dt><dd>${i.group}</dd></div><div><dt>ผู้รับผิดชอบ</dt><dd>${esc(i.own||'–')}${i.own2?' / '+esc(i.own2):''}</dd></div><div><dt>ประเภท</dt><dd>${SC[i.scope]||'–'}</dd></div><div><dt>หมวดเครื่องมือ</dt><dd>${CAT[i.cat]?CAT[i.cat].n:'ยังไม่จัดหมวด'}</dd></div><div><dt>สถานะการใช้งาน</dt><dd>${esc(i.s==='out'?'จำหน่าย':i.ops||'ใช้งาน')}</dd></div><div><dt>ผู้จำหน่าย</dt><dd>${esc(i.vendor||'–')}</dd></div><div><dt>บริษัทสอบเทียบ</dt><dd>${esc(i.calco||(i.x&&i.x.calby)||'–')}${i.x&&(i.x.kp||i.x.ka)?`<small style="display:block;color:var(--mute)">${esc([i.x.kp,i.x.ka&&'ISO 17025: '+i.x.ka].filter(Boolean).join(' · '))}</small>`:''}</dd></div><div><dt>ความถี่</dt><dd>ทุก ${i.m} เดือน</dd></div><div><dt>สอบเทียบล่าสุด</dt><dd>${fd(i.last)}</dd></div><div><dt>ครบกำหนดถัดไป</dt><dd>${fd(i.due)}</dd></div><div><dt>สถานะ</dt><dd>${L[i.s]}</dd></div></dl>
  ${CAT[i.cat]?`<p class="cat">${CAT[i.cat].d}</p>`:''}${xinfo(i)}<b>ประวัติสอบเทียบ / ใบรับรอง</b>${certList(i.id)}
- <p style="margin:12px 0 0"><button class="go adm" id="goRec">เริ่มสอบเทียบ</button> <button class="go alt adm" id="ed">แก้ไขข้อมูล</button> <button class="go alt adm" id="rm">ลบ (ลงทะเบียนผิด)</button></p>`;
- $('#dx').onclick=dclose;$('#goRec').onclick=()=>{dclose();show('rec');$('#ri').value=id};$('#ed').onclick=()=>{dclose();edit(id)};$('#rm').onclick=()=>del(id);e.scrollTop=0;$('#dx').focus()}
+ <p style="margin:12px 0 0">${SBC&&i.due&&i.s!=='out'?`<button class="go adm radmo" id="lnS" style="background:#06c755;border-color:#06c755">📣 แจ้งเตือนเข้า LINE</button> `:''}<button class="go adm" id="goRec">เริ่มสอบเทียบ</button> <button class="go alt adm" id="ed">แก้ไขข้อมูล</button> <button class="go alt adm" id="rm">ลบ (ลงทะเบียนผิด)</button></p>`;
+ $('#dx').onclick=dclose;$('#goRec').onclick=()=>{dclose();show('rec');$('#ri').value=id};$('#ed').onclick=()=>{dclose();edit(id)};$('#rm').onclick=()=>del(id);if($('#lnS'))$('#lnS').onclick=()=>lineSend({ids:[id]},'ส่งแจ้งเตือน “'+i.name+'” ('+L[i.s]+') เข้ากลุ่ม LINE ?',$('#lnS'));e.scrollTop=0;$('#dx').focus()}
 $('#q').oninput=()=>render();['st','gp','sc','kt','so'].forEach(k=>$('#'+k).onchange=()=>render());
 $('#tb').onclick=e=>{const r=e.target.closest('tr[data-id]');if(r)open(r.dataset.id)};
 $('#tb').onkeydown=e=>{if(e.key==='Enter'){const r=e.target.closest('tr[data-id]');if(r)open(r.dataset.id)}};
@@ -847,6 +893,12 @@ async function upFile(f,meta){if(!FILES)throw new Error('ยังไม่ไ�
  const r=await gpost(FILES,body);if(r.error)throw new Error(r.error==='auth'?'ที่เก็บไฟล์ตรวจสิทธิ์ไม่ผ่าน — ผู้ดูแลระบบต้องใส่ SB_URL / SB_KEY ใน Apps Script แล้ว Deploy ใหม่':r.error);
  return{link:r.link,dl:r.dl,file:f.name,fileId:r.fileId}}
 window.upFile=upFile;
+async function lineSend(body,q,btn){if(!confirm(q))return;const t=btn&&btn.textContent;if(btn){btn.disabled=true;btn.textContent='กำลังส่ง…'}
+ try{const c=await sb();const{data:{session}}=await c.auth.getSession();if(!session)throw new Error('หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่');
+  const r=await(await fetch('/api/line-send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,token:session.access_token,by:SES&&(SES.full||SES.name)})})).json();
+  if(r.error)throw new Error(r.error);log('ส่งแจ้งเตือน LINE',(body.ids||['เกินกำหนดทั้งหมด']).join(', '),null,{จำนวน:r.sent});toast('ส่งเข้ากลุ่ม LINE แล้ว ('+r.sent+' รายการ)')}
+ catch(e){alert('ส่ง LINE ไม่สำเร็จ: '+e.message)}finally{if(btn){btn.disabled=false;btn.textContent=t}}}
+if(SBC){$('#lnO').hidden=false;$('#lnO').onclick=()=>{const n=D.filter(i=>i.s==='bad').length;if(!n){toast('ไม่มีเครื่องมือเกินกำหนด');return}lineSend({mode:'overdue'},'ส่งรายการเครื่องมือเกินกำหนด '+n+' รายการ เข้ากลุ่ม LINE ?',$('#lnO'))}}
 async function api(action,body){if(SBC&&SBA[action]){try{return await SBA[action](body||{})}catch(e){const m=(e&&e.message)||'';if(/fetch|network|^net$|load failed/i.test(m))throw new Error('net');return{ok:false,why:'x',error:sbe(e)}}}
  if(!API)throw new Error('net');const c=new AbortController(),t=setTimeout(()=>c.abort(),30000);try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,...body}),signal:c.signal});const x=await r.text();try{return JSON.parse(x)}catch(e){throw new Error('notjson')}}catch(e){throw new Error(e.name==='AbortError'?'timeout':e.message||'net')}finally{clearTimeout(t)}}
 function stat(t,bad){const e=$('#sy');if(e){e.textContent=t;e.style.color=bad?'#ff9a92':'#7fa0ab'}}
