@@ -1,21 +1,27 @@
 // แจ้งเตือนสอบเทียบเข้ากลุ่ม LINE ทุกวัน 08:00 (เวลาไทย) — Vercel Cron เรียก GET /api/notify
 // ตั้ง CRON_SECRET ใน Vercel เพื่อกันคนอื่นเรียกเอง (Vercel จะแนบ Authorization: Bearer ให้ cron อัตโนมัติ)
-// อ่านข้อมูลเครื่องมือจาก Supabase (ค่าใน config.js) · ถ้าไม่มี จะใช้ CALTRACK_API (ระบบเดิม)
-const { equipment, rows: mk, line1, cap, linePush } = require("./_caltrack");
+// ส่งเข้า: กลุ่มหลัก (LINE_GROUP_ID) + ทุกกลุ่มที่เปิด "แจ้งรายวัน" ในหน้าแจ้งเตือน LINE (กลุ่มที่ระบุกลุ่มงาน จะได้เฉพาะเครื่องของกลุ่มงานนั้น)
+// ทุกวัน: เครื่องเกินกำหนด + เครื่องที่จะครบใน 30 / 14 / 7 วันพอดี · วันจันทร์: เพิ่มการ์ดสรุปสถานะ
+const { sbConf, rpc, equipment, rows: mk, buildFlex, linePushTo, siteOf } = require("./_caltrack");
 
 module.exports = async (req, res) => {
-  const { CRON_SECRET: cs, SITE_URL: site } = process.env;
+  const { CRON_SECRET: cs, LINE_GROUP_ID: gid } = process.env;
   if (cs && req.headers.authorization !== `Bearer ${cs}`) return res.status(401).send("unauthorized");
   try {
-    const rows = mk(await equipment(req)), now = new Date(Date.now() + 7 * 36e5);
-    const over = rows.filter((r) => r.days < 0).sort((a, b) => a.days - b.days);
-    const soon = rows.filter((r) => [30, 14, 7].includes(r.days)).sort((a, b) => a.days - b.days);
-    const parts = [];
-    if (now.getUTCDay() === 1) parts.push(`📊 สรุปประจำสัปดาห์\nเครื่องมือ ${rows.length} · เกินกำหนด ${over.length} · ครบกำหนดใน 30 วัน ${rows.filter((r) => r.days >= 0 && r.days <= 30).length}`);
-    if (over.length) parts.push(`🔴 เกินกำหนดสอบเทียบ (${over.length}) — ห้ามใช้งานจนกว่าจะสอบเทียบ\n` + cap(over.map(line1)));
-    if (soon.length) parts.push(`🟡 ใกล้ครบกำหนด (${soon.length})\n` + cap(soon.map(line1)));
-    if (!parts.length) return res.status(200).send("วันนี้ไม่มีรายการแจ้งเตือน");
-    parts.push("ดูทั้งหมด: " + (site || `https://${req.headers["x-forwarded-host"] || req.headers.host}`));
-    res.status(200).send(`LINE push ${await linePush(parts.join("\n\n"))}`);
+    const all0 = mk(await equipment(req)), monday = new Date(Date.now() + 7 * 36e5).getUTCDay() === 1, site = siteOf(req);
+    const targets = gid ? [{ group_id: gid, unit: "", name: "กลุ่มหลัก" }] : [];
+    const c = await sbConf(req);
+    if (c) try { (await rpc(c, "line_targets")).forEach((t) => { if (!targets.some((x) => x.group_id === t.group_id)) targets.push(t); }); } catch (e) {}
+    if (!targets.length) return res.status(200).send("ยังไม่มีกลุ่ม LINE");
+    const log = [];
+    for (const t of targets) {
+      const all = t.unit ? all0.filter((r) => r.group === t.unit) : all0;
+      const items = all.filter((r) => r.days < 0 || [30, 14, 7].includes(r.days));
+      if (!items.length && !monday) { log.push(`${t.name}: ไม่มีรายการ`); continue; }
+      const msg = buildFlex({ kind: monday ? "summary" : "daily", items: monday ? all.filter((r) => r.days <= 30) : items, all, site, unit: t.unit });
+      if (!msg) { log.push(`${t.name}: ไม่มีรายการ`); continue; }
+      try { await linePushTo(t.group_id, [msg]); log.push(`${t.name}: ส่งแล้ว`); } catch (e) { log.push(`${t.name}: ${e.message}`); }
+    }
+    res.status(200).send(log.join("\n"));
   } catch (e) { res.status(200).send("ส่งไม่สำเร็จ: " + e.message); }
 };
