@@ -441,12 +441,12 @@ function draw(){if(cur.type==='X')return drawX();const t=cur.type,f=cur.f,h=cur.
  ${B?'':inp('apprN','ผู้อนุมัติ (ชื่อ)','','dlP',f.apprN,'data-k="apprN"')+inp('apprP','ตำแหน่ง','','',f.apprP,'data-k="apprP"')}</div>
  <details class="xbox"><summary>ส่วนหัวเอกสาร (เลขที่เอกสาร / ผู้จัดทำ / ผู้ทบทวน / ผู้อนุมัติ)</summary><div class="fgrid">
  ${[['doc','เอกสารเลขที่'],['rev','แก้ไขครั้งที่'],['issue','วันที่ประกาศใช้'],['pre','ผู้จัดทำ'],['prePos','ตำแหน่ง ผู้จัดทำ'],['rvw','ผู้ทบทวน'],['rvwPos','ตำแหน่ง ผู้ทบทวน'],['apr','ผู้อนุมัติ (ส่วนหัว)'],['aprPos','ตำแหน่ง ผู้อนุมัติ']].map(([k,l])=>inp(k,l,'','',h[k],`data-h="${k}"`)).join('')}</div></details>
- <div class="err" id="ferr" role="alert"></div>
- <p style="margin:14px 0 0"><button class="go adm" id="fsave">บันทึกร่าง</button> <button class="go adm" id="fsub">บันทึกและส่งให้อนุมัติ</button> <button class="go alt" id="fprevb">ดูตัวอย่างแบบฟอร์ม</button> <button class="go alt" id="fpdf">พิมพ์ / PDF</button> <button class="go alt" id="fword">ดาวน์โหลด Word</button> <button class="go alt" id="fclose">ปิด</button></p>
+ <div id="fwdn"></div><div class="err" id="ferr" role="alert"></div>
+ <p style="margin:14px 0 0"><button class="go adm" id="fsave">บันทึกร่าง</button> <button class="go adm" id="fsub">บันทึกและส่งให้อนุมัติ</button> <button class="go adm" id="fwed" title="แก้ไขหน้าเอกสารได้อิสระเหมือน Microsoft Word">✎ แก้ไขแบบ Word</button> <button class="go alt" id="fprevb">ดูตัวอย่างแบบฟอร์ม</button> <button class="go alt" id="fpdf">พิมพ์ / PDF</button> <button class="go alt" id="fword">ดาวน์โหลด Word</button> <button class="go alt" id="fclose">ปิด</button></p>
  <iframe id="fprev" title="ตัวอย่างแบบฟอร์ม" style="display:none;width:100%;height:760px;border:1px solid var(--line);background:#fff;margin-top:14px"></iframe>`;
  Q('#fed').classList.add('on');upd();Q('#fed').scrollIntoView({behavior:'smooth',block:'nearest'})}
 
-function upd(){const t=cur.type;if(t==='X')updX();else cur.rows.forEach((r,i)=>{const c=calc(t,r),e=Q('#o'+i);if(!e)return;
+function upd(){wdNote();const t=cur.type;if(t==='X')updX();else cur.rows.forEach((r,i)=>{const c=calc(t,r),e=Q('#o'+i);if(!e)return;
  const p=c.ok==null?'':c.ok?'<span class="pill p-ok">ผ่าน</span>':'<span class="pill p-bad">ไม่ผ่าน</span>';
  e.innerHTML=(t==='A'&&c.err!=null?`<small>X=${c.err} · X+U=${c.sum}</small> `:t==='B'&&c.rng?`<small>${c.rng}</small> `:'')+p});
  autoConc();const o=overall(cur);Q('#fov').className='verdict '+(o==null?'p-out':o?'p-ok':'p-bad');
@@ -469,7 +469,7 @@ Q('#fed').addEventListener('click',e=>{const b=e.target.closest('button'),d=b?b.
   if(p.name){f.name=f.name||p.name;f.brand=f.brand||p.brand;f.model=f.model||p.model}
   cur.rows=cur.type==='C'?p.rows.map(r=>({item:r[0],val:'',crit:r[1],res:''})):p.rows.flatMap(r=>['การกระจาย','ความร้อน'].map(pm=>({sp:r[0],param:pm,x:'',err:'',u:'',min:r[1],max:r[2]})));draw()}
  else if(b.id==='fclose'){cur=null;Q('#fed').classList.remove('on')}
- else if(b.id==='fsave')save();else if(b.id==='fsub'){if(save())submitR(idx)}else if(b.id==='fpdf')print(cur);else if(b.id==='fword')word(cur);
+ else if(b.id==='fsave')save();else if(b.id==='fsub'){if(save())submitR(idx)}else if(b.id==='fpdf')print(cur);else if(b.id==='fword')word(cur);else if(b.id==='fwed')wdOpen();else if(b.id==='fwdr'){if(confirm('ล้างการแก้ไขแบบ Word แล้วสร้างเอกสารใหม่จากข้อมูลในช่องกรอก?')){delete cur.doc;delete cur.docF;delete cur.docAt;wdNote();toast('กลับไปใช้ข้อมูลจากช่องกรอกแล้ว — กดบันทึกเพื่อเก็บ')}}
  else if(b.id==='fprevb'){const fr=Q('#fprev');fr.style.display='block';fr.srcdoc=html(cur);fr.scrollIntoView({behavior:'smooth',block:'nearest'})}});
 
 function save(){const f=cur.f;if(!(f.name||'').trim()){Q('#ferr').textContent='กรอกชื่อเครื่องมือ';return false}
@@ -504,8 +504,8 @@ function drawX(){const T=cur.tpl,f=cur.f,R=T.rule||{};
  ${T.sg.map((l,i)=>inp('',E(l)+' (ชื่อ)','','dlP',f.sg[i].n,`data-s="${i}" data-sf="n"`)+inp('','ตำแหน่ง','','',f.sg[i].p,`data-s="${i}" data-sf="p"`)).join('')}</div>
  <details class="xbox"><summary>ส่วนหัวเอกสาร (เลขที่เอกสาร / ผู้จัดทำ / ผู้ทบทวน / ผู้อนุมัติ)</summary><div class="fgrid">
  ${[['doc','เอกสารเลขที่'],['rev','แก้ไขครั้งที่'],['issue','วันที่ประกาศใช้'],['pre','ผู้จัดทำ'],['prePos','ตำแหน่ง ผู้จัดทำ'],['rvw','ผู้ทบทวน'],['rvwPos','ตำแหน่ง ผู้ทบทวน'],['apr','ผู้อนุมัติ (ส่วนหัว)'],['aprPos','ตำแหน่ง ผู้อนุมัติ']].map(([k,l])=>inp(k,l,'',/^(pre|rvw|apr)$/.test(k)?'dlP':'',cur.h[k],`data-h="${k}"`)).join('')}</div></details>
- <div class="err" id="ferr" role="alert"></div>
- <p style="margin:14px 0 0"><button class="go adm" id="fsave">บันทึกร่าง</button> <button class="go adm" id="fsub">บันทึกและส่งให้อนุมัติ</button> <button class="go alt" id="fprevb">ดูตัวอย่างแบบฟอร์ม</button> <button class="go alt" id="fpdf">พิมพ์ / PDF</button> <button class="go alt" id="fword">ดาวน์โหลด Word</button> <button class="go alt" id="fclose">ปิด</button></p>
+ <div id="fwdn"></div><div class="err" id="ferr" role="alert"></div>
+ <p style="margin:14px 0 0"><button class="go adm" id="fsave">บันทึกร่าง</button> <button class="go adm" id="fsub">บันทึกและส่งให้อนุมัติ</button> <button class="go adm" id="fwed" title="แก้ไขหน้าเอกสารได้อิสระเหมือน Microsoft Word">✎ แก้ไขแบบ Word</button> <button class="go alt" id="fprevb">ดูตัวอย่างแบบฟอร์ม</button> <button class="go alt" id="fpdf">พิมพ์ / PDF</button> <button class="go alt" id="fword">ดาวน์โหลด Word</button> <button class="go alt" id="fclose">ปิด</button></p>
  <iframe id="fprev" title="ตัวอย่างแบบฟอร์ม" style="display:none;width:100%;height:760px;border:1px solid var(--line);background:#fff;margin-top:14px"></iframe>`;
  Q('#fed').classList.add('on');upd();Q('#fed').scrollIntoView({behavior:'smooth',block:'nearest'})}
 function updX(){let und=0;
@@ -554,10 +554,93 @@ function body(rec){if(rec.type==='X')return bodyX(rec);const f=rec.f,t=rec.type,
  return`<h3>${E(TY.C.title)}</h3><table class="in"><tr><td>ชื่อเครื่องมือ ${V(f.name)}</td><td>เลขที่ ${V(f.certNo)}</td></tr><tr><td>ยี่ห้อ ${V(f.brand)}</td><td>วันที่สอบเทียบ ${V(dl(f.calDate))}</td></tr><tr><td>รุ่น ${V(f.model)}</td><td>กำหนดสอบเทียบครั้งต่อไป ${V(dl(f.nextDate))}</td></tr><tr><td>รหัสครุภัณฑ์ ${V(f.asset)}</td><td>ช่วงค่าที่ใช้งาน ${V(f.range)}</td></tr><tr><td>บริษัท/ผู้ให้บริการสอบเทียบ ${V(f.calco)}</td><td></td></tr></table>${own}
 <p><b>รายละเอียด</b></p><table class="dt"><thead><tr><th rowspan="2">รายการประเมิน</th><th rowspan="2">ค่าที่วัดได้</th><th rowspan="2">เกณฑ์กำหนด</th><th colspan="2">ผลการประเมิน</th></tr><tr><th>Accept</th><th>Reject</th></tr></thead><tbody>${rs}</tbody></table>
 <p style="margin-top:8px"><b>สรุปผลการประเมิน</b></p><table class="in"><tr><td>${ck(f.conc==='corr')} Accept โดยใช้ค่าแก้</td><td>${ck(f.conc==='nocorr')} Accept โดยไม่ใช้ค่าแก้</td></tr><tr><td>${ck(f.conc==='repair')} Reject ส่งซ่อม</td><td>${ck(f.conc==='stop')} Reject เลิกใช้งาน</td></tr></table>${note}${sign(rec)}`}
-function html(rec,w){return`<!DOCTYPE html><html lang="th" ${w?'xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"':''}><head><meta charset="utf-8"><title>${E(rec.h.doc)} ${E(rec.f.name)}</title>${w?'<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]-->':'<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">'}<style>${CSS}</style></head><body>${head(rec)}${body(rec)}</body></html>`}
+// ---------- ฟอนต์ราชการ TH SarabunPSK ----------
+// ขนาดใน CSS ตั้งไว้สำหรับ Sarabun · TH SarabunPSK ตัวเล็กกว่า จึงขยาย ×16/11 (11pt → 16pt ตามมาตรฐานหนังสือราชการ)
+const THK=16/11,THF="'TH SarabunPSK','TH Sarabun PSK','TH Sarabun New',Sarabun,sans-serif";
+const hasTHS=(()=>{let r=null;return()=>{if(r!=null)return r;try{const c=document.createElement('canvas').getContext('2d'),t='กขคงจฉชซ abcdefgh 0123';c.font='40px monospace';const a=c.measureText(t).width;
+ r=['TH SarabunPSK','TH Sarabun PSK','TH Sarabun New'].some(f=>{c.font=`40px "${f}",monospace`;return Math.abs(c.measureText(t).width-a)>0.5})}catch(e){r=false}return r}})();
+const fsz=(h,k)=>k===1?h:String(h).replace(/font-size:\s*([\d.]+)pt/g,(m,v)=>'font-size:'+(Math.round(+v*k*2)/2)+'pt');
+const thsify=h=>fsz(String(h).replace(/font-family:\s*Sarabun[^;}"]*/g,'font-family:'+THF),THK);
+// เนื้อหาเอกสาร: ฉบับที่แก้แบบ Word (ถ้ามี) หรือสร้างจากข้อมูลที่กรอก · คืนค่าในหน่วยของโหมดฟอนต์ที่ขอ
+function inner(rec,ths){if(rec.doc){const f=rec.docF==='ths';return f===ths?rec.doc:fsz(rec.doc,ths?THK:1/THK)}const h=head(rec)+body(rec);return ths?fsz(h,THK):h}
+const WCSS='@page Section1{size:21cm 29.7cm;margin:1.2cm 1.4cm 1.2cm 1.4cm}div.Section1{page:Section1}';
+function html(rec,w,o={}){const ths=o.ths!=null?o.ths:(w?true:hasTHS()),css=ths?thsify(CSS):CSS;
+ return`<!DOCTYPE html><html lang="th" ${w?'xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"':''}><head><meta charset="utf-8"><title>${E(rec.h.doc)} ${E(rec.f.name)}</title>${w?'<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->':'<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">'}<style>${css}${w?WCSS:''}</style>${o.extra||''}</head><body>${w?'<div class="Section1">':''}${inner(rec,ths)}${w?'</div>':''}</body></html>`}
 function print(rec){const w=window.open('','_blank');if(!w){toast('เบราว์เซอร์บล็อกหน้าต่างใหม่ — กรุณาอนุญาต pop-up แล้วลองอีกครั้ง');return}
  w.document.open();w.document.write(html(rec));w.document.close();setTimeout(()=>{w.focus();w.print()},900)}
 function word(rec){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff',html(rec,1)],{type:'application/msword'}));
  a.download=(rec.h.doc+' '+(rec.f.name||'')).replace(/[\\/:*?"<>|]/g,'-').trim()+'.doc';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000)}
-window.CT_FORMS={html,calc,evalX,critOk,parse,tb:()=>TB};
+// ---------- แก้ไขแบบ Word (หน้า A4 แก้ไขได้อิสระ + แถบเครื่องมือ) ----------
+function wdNote(){const n=Q('#fwdn');if(!n||!cur)return;
+ n.innerHTML=cur.doc?`<div class="verdict p-soon" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0 0"><span style="flex:1;min-width:220px">เอกสารนี้แก้ไขแบบ Word แล้ว${cur.docAt?' ('+E(new Date(cur.docAt).toLocaleString('th-TH'))+')':''} — ตัวอย่าง / พิมพ์ / Word ใช้ฉบับที่แก้ · ถ้าแก้ตัวเลขในช่องกรอกด้านบน ต้องกด “สร้างใหม่จากช่องกรอก”</span><button class="go alt sm adm" id="fwdr">สร้างใหม่จากช่องกรอก</button></div>`:''}
+const WDS=`.wde{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;background:#e8eaed;color:#1f2328}
+.wde .wbar{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;padding:8px 12px;background:#fff;border-bottom:1px solid #d0d4d9;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.wde .wbar .grp{display:flex;gap:2px;align-items:center;padding-right:6px;margin-right:2px;border-right:1px solid #e3e6ea}
+.wde .wbar button{min-height:34px;min-width:34px;padding:4px 8px;border:1px solid transparent;border-radius:6px;background:transparent;font:inherit;font-size:.92rem;color:#1f2328;cursor:pointer}
+.wde .wbar button:hover{background:#eef1f4;border-color:#d8dde3}.wde .wbar button.on{background:#dbeef0;border-color:#9ccbd1}
+.wde .wbar select{min-height:34px;padding:3px 6px;border:1px solid #d0d4d9;border-radius:6px;font:inherit;font-size:.9rem;background:#fff;color:#1f2328}
+.wde .wtop{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#1b5e66;color:#fff;flex-wrap:wrap}
+.wde .wtop b{flex:1;min-width:200px;font-weight:600}.wde .wtop .go{min-height:36px}
+.wde .wtop small{opacity:.85}.wde .wtop .go.alt{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55)}.wde .wtop .go.alt:hover{background:rgba(255,255,255,.12)}.wde .wtop .go:not(.alt){background:#fff;color:#1b5e66;border:1px solid #fff}.wde iframe{flex:1;width:100%;border:0;background:#e8eaed}
+.wde .wst{padding:4px 12px;font-size:.8rem;color:#5b636b;background:#f6f7f9;border-top:1px solid #e1e4e8}
+@media(max-width:700px){.wde .wbar .grp{border:0}.wde .wtop b{min-width:100%}}`;
+let WD=null;
+function wdOpen(){if(!cur)return;const ro=idx>=0&&RC[idx]&&!canEdit(RC[idx]);
+ if(!Q('#wdstyle')){const st=document.createElement('style');st.id='wdstyle';st.textContent=WDS;document.head.appendChild(st)}
+ const ths=hasTHS(),mode=cur.doc?(cur.docF==='ths'):ths;
+ const el=document.createElement('div');el.className='wde';el.setAttribute('role','dialog');el.setAttribute('aria-label','แก้ไขเอกสารแบบ Word');
+ const B=(c,l,t)=>`<button type="button" data-w="${c}" title="${t}" aria-label="${t}">${l}</button>`;
+ el.innerHTML=`<div class="wtop"><b>✎ ${E(cur.h.doc||'')} · ${E(cur.f.name||'แบบฟอร์ม')}${ro?' <small>(อ่านอย่างเดียว — ส่งอนุมัติ/อนุมัติแล้ว)</small>':''}</b>
+  ${ro?'':'<button class="go" data-w="save">บันทึก</button>'} <button class="go alt" data-w="word">ดาวน์โหลด Word</button> <button class="go alt" data-w="print">พิมพ์ / PDF</button> ${ro?'':'<button class="go alt" data-w="reset" title="ทิ้งการแก้ไขในหน้านี้ สร้างเอกสารใหม่จากข้อมูลที่กรอก">เริ่มใหม่จากช่องกรอก</button>'} <button class="go alt" data-w="close">ปิด</button></div>
+  ${ro?'':`<div class="wbar">
+   <div class="grp">${B('undo','↶','เลิกทำ (Ctrl+Z)')}${B('redo','↷','ทำซ้ำ (Ctrl+Y)')}</div>
+   <div class="grp"><select data-w="font" aria-label="ฟอนต์"><option value="TH SarabunPSK">TH SarabunPSK</option><option value="TH Sarabun New">TH Sarabun New</option><option value="Sarabun">Sarabun</option><option value="Tahoma">Tahoma</option></select>
+    <select data-w="size" aria-label="ขนาดตัวอักษร (pt)" title="ขนาดตัวอักษร (pt แบบ TH SarabunPSK)">${[10,12,14,15,16,18,20,22,24,28].map(v=>`<option ${v===16?'selected':''}>${v}</option>`).join('')}</select></div>
+   <div class="grp">${B('bold','<b>B</b>','ตัวหนา (Ctrl+B)')}${B('italic','<i>I</i>','ตัวเอียง (Ctrl+I)')}${B('underline','<u>U</u>','ขีดเส้นใต้ (Ctrl+U)')}${B('strikeThrough','<s>S</s>','ขีดฆ่า')}${B('superscript','x²','ตัวยก')}${B('subscript','x₂','ตัวห้อย')}</div>
+   <div class="grp">${B('justifyLeft','⯇≡','ชิดซ้าย')}${B('justifyCenter','≡','กึ่งกลาง')}${B('justifyRight','≡⯈','ชิดขวา')}${B('justifyFull','☰','กระจายเต็มบรรทัด')}</div>
+   <div class="grp">${B('insertUnorderedList','•','รายการสัญลักษณ์')}${B('insertOrderedList','1.','รายการตัวเลข')}${B('outdent','⇤','ลดย่อหน้า')}${B('indent','⇥','เพิ่มย่อหน้า')}</div>
+   <div class="grp">${B('rowA','＋แถว','เพิ่มแถวใต้แถวที่เลือก')}${B('rowD','－แถว','ลบแถวที่เลือก')}${B('colA','＋คอลัมน์','เพิ่มคอลัมน์ทางขวา')}${B('colD','－คอลัมน์','ลบคอลัมน์ที่เลือก')}</div>
+   <div class="grp">${B('check','☑/☐','สลับช่องติ๊ก ☐ ↔ ☑ (คลิกที่ตัวช่องก่อน)')}${B('pb','⤓ ขึ้นหน้าใหม่','แทรกตัวแบ่งหน้า')}${B('removeFormat','⌫ ล้างรูปแบบ','ล้างรูปแบบตัวอักษร')}</div></div>`}
+  <iframe title="หน้าเอกสาร"></iframe><div class="wst" aria-live="polite"></div>`;
+ document.body.appendChild(el);document.body.style.overflow='hidden';
+ const fr=el.querySelector('iframe'),st=el.querySelector('.wst');
+ // มุมมองหน้า A4 + เส้นประบอกตำแหน่งขึ้นหน้าใหม่ (โดยประมาณ)
+ const scr=`<style id="wdscr">@media screen{html{background:#e8eaed}body{background:#fff;width:210mm;min-height:297mm;margin:18px auto 40px;padding:12mm 14mm;box-shadow:0 1px 3px rgba(0,0,0,.15),0 6px 24px rgba(0,0,0,.08);background:linear-gradient(#fff,#fff) 0 0/100% 12.5mm no-repeat,repeating-linear-gradient(to bottom,#fff 0,#fff calc(273mm - 1px),#9aa7b3 calc(273mm - 1px),#9aa7b3 273mm) 0 12mm/100% 273mm repeat-y #fff;outline:none;caret-color:#1b5e66}
+  td:focus-within,th:focus-within{outline:1px dashed #1b7f8c55}.wpb{border-top:1px dashed #1b7f8c;margin:6px 0;height:0}}@media print{.wpb{border:0;page-break-after:always}}</style>`;
+ fr.srcdoc=html({...cur},0,{ths:mode,extra:scr});
+ WD={el,fr,ro,mode,dirty:false};
+ const setSt=()=>{st.textContent=(ro?'อ่านอย่างเดียว':WD.dirty?'● มีการแก้ไขที่ยังไม่บันทึก':'บันทึกแล้ว / ยังไม่มีการแก้ไข')+' · ฟอนต์เอกสาร: '+(mode?'TH SarabunPSK 16pt':'Sarabun (เครื่องนี้ไม่มีฟอนต์ TH SarabunPSK — ไฟล์ Word ที่ดาวน์โหลดจะใช้ TH SarabunPSK ให้)')+' · เส้นประในหน้า = ตำแหน่งขึ้นหน้าใหม่โดยประมาณ'};
+ fr.onload=()=>{const d=fr.contentDocument;if(!ro){d.designMode='on';try{d.execCommand('styleWithCSS',false,true)}catch(e){}}
+  d.addEventListener('input',()=>{WD.dirty=true;setSt()});
+  d.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();wdAct('save')}});
+  d.addEventListener('selectionchange',()=>wdState());fit();setSt()};
+ const fit=()=>{const d=fr.contentDocument;if(!d||!d.documentElement)return;const z=Math.min(1,(fr.clientWidth-12)/820);d.documentElement.style.zoom=z<1?z:''};addEventListener('resize',fit);WD.fit=fit;
+ el.addEventListener('click',e=>{const b=e.target.closest('button[data-w]');if(b){e.preventDefault();wdAct(b.dataset.w)}});
+ el.addEventListener('mousedown',e=>{if(e.target.closest('.wbar button'))e.preventDefault()});
+ el.addEventListener('change',e=>{const x=e.target;if(x.dataset.w==='font')wdAct('font',x.value);else if(x.dataset.w==='size')wdAct('size',+x.value)});
+ WD.setSt=setSt}
+function wdDoc(){return WD&&WD.fr.contentDocument}
+function wdCell(){const d=wdDoc(),s=d.getSelection();if(!s||!s.rangeCount)return null;let n=s.anchorNode;if(n&&n.nodeType===3)n=n.parentNode;return n&&n.closest?n.closest('td,th'):null}
+function wdState(){const d=wdDoc();if(!d||WD.ro)return;['bold','italic','underline','strikeThrough','justifyLeft','justifyCenter','justifyRight','justifyFull','insertUnorderedList','insertOrderedList'].forEach(c=>{const b=WD.el.querySelector(`[data-w="${c}"]`);if(b)try{b.classList.toggle('on',d.queryCommandState(c))}catch(e){}})}
+function wdSnap(){const d=wdDoc();return d.body.innerHTML}
+function wdAct(c,v){const d=wdDoc();if(!d)return;const dirty=()=>{WD.dirty=true;WD.setSt();wdState()};
+ if(c==='close'){if(WD.dirty&&!confirm('ยังไม่ได้บันทึกการแก้ไข ปิดเลยหรือไม่?'))return;removeEventListener('resize',WD.fit);WD.el.remove();document.body.style.overflow='';WD=null;return}
+ if(c==='save'){cur.doc=wdSnap();cur.docF=WD.mode?'ths':'sb';cur.docAt=new Date().toISOString();if(save()){WD.dirty=false;WD.setSt();wdNote();toast('บันทึกเอกสารที่แก้ไขแล้ว')}else toast(Q('#ferr').textContent||'บันทึกไม่สำเร็จ');return}
+ if(c==='word'||c==='print'){const r={...cur,doc:wdSnap(),docF:WD.mode?'ths':'sb'};c==='word'?word(r):print(r);return}
+ if(c==='reset'){if(!confirm('ทิ้งการแก้ไขทั้งหมดในหน้านี้ แล้วสร้างเอกสารใหม่จากข้อมูลที่กรอก?'))return;const m=WD.mode,rec={...cur};delete rec.doc;d.body.innerHTML=inner(rec,m);dirty();return}
+ d.body.focus();
+ if(c==='font'){d.execCommand('fontName',false,v);return dirty()}
+ if(c==='size'){const pt=WD.mode?v:Math.round(v/THK*100)/100;d.execCommand('styleWithCSS',false,false);d.execCommand('fontSize',false,'7');d.execCommand('styleWithCSS',false,true);
+  d.querySelectorAll('font[size="7"]').forEach(f=>{const sp=d.createElement('span');sp.style.fontSize=pt+'pt';while(f.firstChild)sp.appendChild(f.firstChild);f.replaceWith(sp)});
+  d.querySelectorAll('[style*="xxx-large"]').forEach(x=>x.style.fontSize=pt+'pt');return dirty()}
+ if(c==='pb'){d.execCommand('insertHTML',false,'<div class="wpb" style="page-break-after:always"></div><p><br></p>');return dirty()}
+ if(c==='check'){const s=d.getSelection();if(s&&s.rangeCount){const n=s.anchorNode;if(n&&n.nodeType===3){const t=n.textContent,o=s.anchorOffset,i=[o,o-1,o+1].find(k=>k>=0&&k<t.length&&/[☐☑]/.test(t[k]));if(i!=null){n.textContent=t.slice(0,i)+(t[i]==='☐'?'☑':'☐')+t.slice(i+1);return dirty()}}}
+  d.execCommand('insertText',false,'☐ ');return dirty()}
+ if(/^(row|col)[AD]$/.test(c)){const td=wdCell();if(!td){toast('คลิกในช่องของตารางก่อน');return}const tr=td.parentNode,tb=td.closest('table'),ci=[...tr.children].indexOf(td);
+  if(c==='rowA'){const n=tr.cloneNode(true);n.querySelectorAll('td,th').forEach(x=>{x.innerHTML='&nbsp;';x.removeAttribute('rowspan')});tr.after(n)}
+  else if(c==='rowD'){if(tb.rows.length<=1)return;tr.remove()}
+  else [...tb.rows].forEach(r=>{const x=r.children[Math.min(ci,r.children.length-1)];if(!x)return;if(c==='colA'){const n=x.cloneNode(false);n.innerHTML='&nbsp;';n.removeAttribute('colspan');x.after(n)}else if(r.children.length>1)x.remove()});
+  return dirty()}
+ try{d.execCommand(c,false,null)}catch(e){}dirty()}
+window.CT_FORMS={html,thsify,hasTHS,calc,evalX,critOk,parse,tb:()=>TB};
 })();

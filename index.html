@@ -304,7 +304,7 @@ body.gated .mtop{display:none}
     <div class="fgrid adm" style="margin-top:12px">
       <div><label for="qn">ชื่อ-สกุล (มีคำนำหน้า) *</label><input id="qn" placeholder="เช่น นางสาวกรรณิการ์ สุมาลย์กันต์"></div>
       <div><label for="qp">ตำแหน่ง</label><input id="qp" list="dlPos" placeholder="เช่น นักวิทยาศาสตร์การแพทย์ชำนาญการ"></div>
-      <div><label for="qx">ตำแหน่งบริหาร</label><select id="qx"><option value="">—</option><option>ผู้อำนวยการ</option><option>รองผู้อำนวยการด้านวิชาการ</option><option>รองผู้อำนวยการด้านบริหาร</option><option>รองผู้อำนวยการด้านบริการ</option><option>หัวหน้ากลุ่มงาน</option><option>หัวหน้าฝ่าย</option></select></div>
+      <div><label for="qx">ตำแหน่งบริหาร (เลือก หรือพิมพ์เพิ่มเอง)</label><input id="qx" list="dlEx" placeholder="— ไม่มี — / เลือกจากรายการ หรือพิมพ์เอง"><datalist id="dlEx"></datalist></div>
       <div style="grid-column:1/-1"><label>ตำแหน่งวิชาการ / คุณภาพ (เลือกได้หลายข้อ)</label><div class="acbox" id="qa"></div>
         <input id="qao" placeholder="อื่น ๆ (พิมพ์เอง คั่นหลายตำแหน่งด้วย ,) เช่น ผู้จัดการวิชาการด้านอาหาร" style="margin-top:6px"></div>
       <div><label for="qg">กลุ่มงาน</label><select id="qg"></select></div>
@@ -575,7 +575,8 @@ const ACP=['ผู้จัดการคุณภาพ','ผู้จัด�
 const acL=v=>String(v||'').split(/\s*[,;\n]\s*/).map(x=>x.trim()).filter(Boolean);
 const acN=v=>{v=String(v||'').trim();return /รอง/.test(v)?v:/ห้องปฏิบัติการ/.test(v)&&/อำนวยการ|ผอ/.test(v)?ACP[4]:/วิชาการ/.test(v)&&/เคมี/.test(v)?ACP[1]:/วิชาการ/.test(v)&&/จุล/.test(v)?ACP[2]:/วิชาการ/.test(v)&&/แพทย์/.test(v)?ACP[3]:/^ผู้จัดการคุณภาพ$|^QM$/i.test(v)?ACP[0]:v};
 const acJ=a=>uq(a.map(acN)).join(', ');
-const XR=x=>['ผู้อำนวยการ','รองผู้อำนวยการด้านวิชาการ','รองผู้อำนวยการด้านบริหาร','รองผู้อำนวยการด้านบริการ','หัวหน้ากลุ่มงาน','หัวหน้าฝ่าย'].indexOf(x)+1||9;
+const EXP=['ผู้อำนวยการ','รองผู้อำนวยการด้านวิชาการ','รองผู้อำนวยการด้านบริหาร','รองผู้อำนวยการด้านบริการ','หัวหน้ากลุ่มงาน','หัวหน้าฝ่าย'];
+const XR=x=>EXP.indexOf(x)+1||(x?8:9);
 function actOn(n){const a=window.ACT;if(!a||!a.name||a.name!==n)return false;const t=new Date().toISOString().slice(0,10);return(!a.from||t>=a.from)&&(!a.to||t<=a.to)}
 function execTitle(p){if(!p||!p.exec)return'';return p.exec==='ผู้อำนวยการ'?'ผู้อำนวยการ'+UNITN():p.exec==='หัวหน้ากลุ่มงาน'&&p.group?'หัวหน้ากลุ่มงาน'+p.group:p.exec}
 // ตำแหน่งใต้ลายเซ็น: ผู้อนุมัติ = ตำแหน่งในสายงาน + ตำแหน่งบริหาร คนละบรรทัด · รักษาราชการแทน = ตำแหน่ง / รักษาราชการแทน / ผู้อำนวยการ…
@@ -611,7 +612,7 @@ function rmst(){const nm=t=>CO.filter(c=>c.type===t||c.type==='ทั้งส�
  $('#ppg').innerHTML=np>1?pb(PPG-1,'‹ ก่อนหน้า',PPG===1)+nums+pb(PPG+1,'ถัดไป ›',PPG===np):'';
  $('#pcount').textContent=PS.length?`ทั้งหมด ${PS.length} คน${pq?' · พบ '+pr.length:''}${pr.length>PPS?` · แสดง ${(PPG-1)*PPS+1}–${Math.min(PPG*PPS,pr.length)}`:''}`:'';
  acDraw();
- $('#dlPos').innerHTML=opts([...new Set(PS.map(p=>p.pos).filter(Boolean))]);
+ $('#dlPos').innerHTML=opts([...new Set(PS.map(p=>p.pos).filter(Boolean))]);$('#dlEx').innerHTML=opts([...EXP,...PS.map(p=>p.exec)]);
  const an=$('#actn');if(an){an.innerHTML='<option value="">— ไม่มี —</option>'+PS.map(p=>`<option value="${esc(p.name)}" ${ACT.name===p.name?'selected':''}>${esc(p.name)}${p.exec?' · '+esc(p.exec):p.pos?' · '+esc(p.pos):''}</option>`).join('');$('#actf').value=ACT.from||'';$('#actt').value=ACT.to||'';$('#actl').value=actLab(ACT.label);
   $('#actst').textContent=ACT.name?(actOn(ACT.name)?'ตอนนี้: '+ACT.name+' รักษาราชการแทน':'กำหนดไว้: '+ACT.name+' (ยังไม่อยู่ในช่วงวันที่)'):''}
  $('#qg').innerHTML='<option value="">—</option>'+GROUPS.map(g=>`<option>${esc(g)}</option>`).join('');
@@ -619,7 +620,7 @@ function rmst(){const nm=t=>CO.filter(c=>c.type===t||c.type==='ทั้งส�
 $('#mcs').onclick=()=>{const c={name:$('#mn').value.trim(),type:$('#mt').value,phone:$('#mp').value.trim(),accr:$('#ma').value.trim()};if(!c.name){toast('กรอกชื่อบริษัท');return}
  if(MI.co>=0){log('แก้ไขบริษัท',c.name,CO[MI.co],c);CO[MI.co]=c}else{if(CO.some(x=>x.name===c.name)){toast('มีบริษัทนี้แล้ว');return}CO.push(c);log('เพิ่มบริษัท',c.name,null,c)}
  MI.co=-1;['mn','mp','ma'].forEach(k=>$('#'+k).value='');rmst();toast('บันทึกบริษัทแล้ว')};
-$('#qs').onclick=()=>{const c={name:$('#qn').value.replace(/\s+/g,' ').trim(),pos:$('#qp').value.trim(),exec:$('#qx').value,ac:acJ([...[...document.querySelectorAll('#qa input:checked')].map(x=>x.value),...acL($('#qao').value)]),group:$('#qg').value,contact:$('#qc').value.trim()};if(!c.name){toast('กรอกชื่อ-สกุล');return}
+$('#qs').onclick=()=>{const c={name:$('#qn').value.replace(/\s+/g,' ').trim(),pos:$('#qp').value.trim(),exec:$('#qx').value.replace(/\s+/g,' ').trim(),ac:acJ([...[...document.querySelectorAll('#qa input:checked')].map(x=>x.value),...acL($('#qao').value)]),group:$('#qg').value,contact:$('#qc').value.trim()};if(!c.name){toast('กรอกชื่อ-สกุล');return}
  if(MI.ps>=0){const o=PS[MI.ps];log('แก้ไขบุคลากร',c.name,o,c);if(o.name!==c.name)D.forEach(i=>{if(i.own===o.name)i.own=c.name;if(i.own2===o.name)i.own2=c.name});PS[MI.ps]={...o,...c}}else{if(PS.some(x=>x.name===c.name)){toast('มีชื่อนี้แล้ว');return}PS.push(c);log('เพิ่มผู้รับผิดชอบ',c.name,null,c)}
  if(MI.ps>=0){const old=PS[MI.ps]&&PS[MI.ps].name;}MI.ps=-1;['qn','qp','qc','qao'].forEach(k=>$('#'+k).value='');$('#qx').value='';ACSEL=[];$('#qmode').textContent='';rmst();toast('บันทึกบุคลากรแล้ว')};
 $('#qclr2').onclick=()=>{MI.ps=-1;['qn','qp','qc','qao'].forEach(k=>$('#'+k).value='');$('#qx').value='';$('#qg').value='';ACSEL=[];acDraw();$('#qmode').textContent=''};$('#pq').oninput=()=>{PPG=1;rmst()};
@@ -951,8 +952,8 @@ function planHtml(p,w){const d=pdoc(p),e=v=>esc(v==null?'':v);let its=p.items.ma
 <table class="pt"><colgroup>${W.map(x=>`<col style="width:${x}%">`).join('')}</colgroup><thead><tr><th>ลำดับ</th><th>ชื่อเครื่อง</th><th>ยี่ห้อ/รุ่น</th><th>Serial No.</th><th>รหัสครุภัณฑ์</th><th>สถานที่ติดตั้ง</th><th>กลุ่มงาน</th><th>ความถี่การสอบเทียบ</th><th>จุดสอบเทียบ</th><th>เกณฑ์การยอมรับ</th><th>วันที่สอบเทียบครั้งล่าสุด</th><th>วันที่สอบเทียบครั้งต่อไป</th></tr></thead><tbody>${rows}</tbody></table>${sg}
 ${w?`<p style="font-size:9pt;margin-top:18px">${e(foot)}</p>`:`<div class="pf"><span>${e(foot)}</span><span>หน้าที่ 1 ของ … (เลขหน้าจริงจะพิมพ์ที่ท้ายทุกหน้า)</span></div>`}</div></body></html>`}
 function planPrint(p){const w=window.open('','_blank');if(!w){toast('เบราว์เซอร์บล็อกหน้าต่างใหม่ — กรุณาอนุญาต pop-up แล้วลองอีกครั้ง');return}
- w.document.open();w.document.write(planHtml(p));w.document.close();setTimeout(()=>{w.focus();w.print()},900)}
-function planWord(p){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿',planHtml(p,1)],{type:'application/msword'}));
+ w.document.open();w.document.write(window.CT_FORMS&&CT_FORMS.hasTHS()?CT_FORMS.thsify(planHtml(p)):planHtml(p));w.document.close();setTimeout(()=>{w.focus();w.print()},900)}
+function planWord(p){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿',window.CT_FORMS?CT_FORMS.thsify(planHtml(p,1)):planHtml(p,1)],{type:'application/msword'}));
  a.download=(p.name||'แผนสอบเทียบ').replace(/[\\/:*?"<>|]/g,'-')+'.doc';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000)}
 function pdocForm(p){const d=pdoc(p),f=(k,l,v,at='')=>`<div><label>${l}</label><input data-pd="${k}" value="${esc(v||'')}" ${at}></div>`;
  return`<details class="xbox"><summary>ตั้งค่าหัวกระดาษ / ผู้ลงนาม / การเรียงลำดับ</summary><div class="fgrid">${f('code','เลขที่แบบฟอร์ม',d.code)}${f('title','ชื่อแบบฟอร์ม',d.title)}${f('rev','แก้ไขครั้งที่',d.rev)}${f('unit','หน่วยงาน',d.unit)}
