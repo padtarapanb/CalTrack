@@ -40,7 +40,10 @@ h1{font-size:1.5rem;margin:0 0 4px}.lead{color:var(--mute);margin:0 0 22px}
 .bars div{flex:1;text-align:center;font-size:.75rem;color:var(--mute)}
 .bars i{display:block;background:var(--brand);border-radius:4px 4px 0 0;margin-bottom:4px}
 .tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-input,select{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit}
+input,select,textarea{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit}
+textarea.posx,#actl{width:100%;resize:vertical;line-height:1.45;min-height:40px;display:block;field-sizing:content}
+.acbox{display:flex;flex-wrap:wrap;gap:6px 8px}.acbox label{display:inline-flex!important;flex-direction:row;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--line);border-radius:999px;font-size:.86rem;cursor:pointer;background:var(--panel);margin:0}.acbox label:has(input:checked){border-color:var(--brand);background:color-mix(in srgb,var(--brand) 12%,transparent)}.acbox input{min-height:0;margin:0;width:auto!important;flex:none;padding:0}
+.actag{display:inline-block;font-size:.75rem;padding:1px 7px;border-radius:999px;background:color-mix(in srgb,var(--brand) 12%,transparent);color:var(--brand);margin:2px 3px 0 0;white-space:nowrap}
 input[type=search]{flex:1;min-width:200px}
 .tw{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
 table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:620px}
@@ -296,9 +299,27 @@ body.gated .mtop{display:none}
 
 <!-- Master data -->
 <section class="view" id="mst">
-  <h1>บริษัท / บุคลากร</h1><p class="lead">ข้อมูลหลักที่ใช้เลือกในทะเบียนเครื่องมือและใบรับรอง (บริษัทจำหน่าย · บริษัทสอบเทียบ · ผู้รับผิดชอบ)</p>
+  <h1>บริษัท / บุคลากร</h1><p class="lead">ข้อมูลหลักที่ใช้เลือกในทะเบียนเครื่องมือและใบรับรอง (บุคลากรภายใน · ผู้รักษาราชการแทน · บริษัทภายนอก)</p>
+  <div class="box"><div class="uhead"><div><h2 style="margin:0">บุคลากร</h2><p class="lead" style="margin:2px 0 0;font-size:.85rem">รายชื่อนี้ใช้ในดรอปดาวน์ผู้รับผิดชอบเครื่องมือ และช่องผู้จัดทำ / ผู้ทบทวน / ผู้ประเมิน / ผู้อนุมัติ ทุกแบบฟอร์ม · เลือกชื่อแล้วระบบเติมตำแหน่งให้</p></div><input type="search" id="pq" placeholder="ค้นหาชื่อ / ตำแหน่ง / กลุ่มงาน" aria-label="ค้นหาบุคลากร" style="min-width:220px"></div>
+    <div class="fgrid adm" style="margin-top:12px">
+      <div><label for="qn">ชื่อ-สกุล (มีคำนำหน้า) *</label><input id="qn" placeholder="เช่น นางสาวกรรณิการ์ สุมาลย์กันต์"></div>
+      <div><label for="qp">ตำแหน่ง</label><input id="qp" list="dlPos" placeholder="เช่น นักวิทยาศาสตร์การแพทย์ชำนาญการ"></div>
+      <div><label for="qx">ตำแหน่งบริหาร</label><select id="qx"><option value="">—</option><option>ผู้อำนวยการ</option><option>รองผู้อำนวยการด้านวิชาการ</option><option>รองผู้อำนวยการด้านบริหาร</option><option>รองผู้อำนวยการด้านบริการ</option><option>หัวหน้ากลุ่มงาน</option><option>หัวหน้าฝ่าย</option></select></div>
+      <div style="grid-column:1/-1"><label>ตำแหน่งวิชาการ / คุณภาพ (เลือกได้หลายข้อ)</label><div class="acbox" id="qa"></div>
+        <input id="qao" placeholder="อื่น ๆ (พิมพ์เอง คั่นหลายตำแหน่งด้วย ,) เช่น ผู้จัดการวิชาการด้านอาหาร" style="margin-top:6px"></div>
+      <div><label for="qg">กลุ่มงาน</label><select id="qg"></select></div>
+      <div><label for="qc">ช่องทางติดต่อ (โทร / LINE)</label><input id="qc"></div>
+    </div>
+    <p class="adm" style="margin:0 0 12px"><button class="go" id="qs">บันทึกบุคลากร</button> <button class="go alt" id="qclr2">ล้างช่อง</button> <span id="qmode" class="lead" style="font-size:.85rem"></span></p>
+    <div class="tw"><table class="rtab"><thead><tr><th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>บริหาร / วิชาการ</th><th>กลุ่มงาน</th><th>ติดต่อ</th><th>เครื่องที่รับผิดชอบ</th><th class="adm"></th></tr></thead><tbody id="mps"></tbody></table></div>
+    <div class="pager" id="ppg"></div>
+    <p class="lead" id="pcount" style="font-size:.85rem;margin:8px 0 0"></p>
+  </div>
+  <div class="box radmo" style="margin-top:16px"><h2>ผู้รักษาราชการแทนผู้อำนวยการ</h2><p class="lead" style="font-size:.85rem;margin:0 0 10px">ช่วงวันที่กำหนด เมื่อเลือกคนนี้เป็น “ผู้อนุมัติ” ในแบบฟอร์ม ระบบจะใส่ตำแหน่งแยกบรรทัดให้อัตโนมัติ เช่น<br>นักวิทยาศาสตร์การแพทย์ชำนาญการพิเศษ<br>รักษาราชการแทน<br>ผู้อำนวยการศูนย์วิทยาศาสตร์การแพทย์ที่ 2 พิษณุโลก</p>
+    <div class="fgrid"><div><label for="actn">ผู้รักษาราชการแทน</label><select id="actn"></select></div><div><label for="actf">ตั้งแต่วันที่</label><input type="date" id="actf"></div><div><label for="actt">ถึงวันที่ (เว้นว่าง = จนกว่าจะยกเลิก)</label><input type="date" id="actt"></div><div style="grid-column:1/-1"><label for="actl">ข้อความที่พิมพ์ใต้ตำแหน่ง (ขึ้นบรรทัดใหม่ได้ ตามแบบหนังสือราชการ)</label><textarea id="actl" rows="2"></textarea></div></div>
+    <p style="margin:0"><button class="go" id="acts">บันทึก</button> <button class="go alt" id="actx">ยกเลิกการรักษาราชการแทน</button> <span id="actst" class="lead" style="font-size:.88rem"></span></p></div>
   <div>
-    <div class="box"><h2>บริษัท</h2>
+    <div class="box" style="margin-top:16px"><h2>บริษัท (หน่วยงานภายนอก)</h2>
       <div class="fgrid adm" style="grid-template-columns:1fr 1fr">
         <div><label for="mn">ชื่อบริษัท *</label><input id="mn"></div>
         <div><label for="mt">ประเภท</label><select id="mt"><option>ผู้จำหน่าย</option><option>บริษัทสอบเทียบ</option><option>ทั้งสองอย่าง</option></select></div>
@@ -309,21 +330,6 @@ body.gated .mtop{display:none}
       <div class="tw"><table style="min-width:0"><thead><tr><th>บริษัท</th><th>ประเภท</th><th class="adm"></th></tr></thead><tbody id="mco"></tbody></table></div>
     </div>
   </div>
-  <div class="box" style="margin-top:16px"><div class="uhead"><div><h2 style="margin:0">บุคลากร</h2><p class="lead" style="margin:2px 0 0;font-size:.85rem">รายชื่อนี้ใช้ในดรอปดาวน์ผู้รับผิดชอบเครื่องมือ และช่องผู้จัดทำ / ผู้ทบทวน / ผู้ประเมิน / ผู้อนุมัติ ทุกแบบฟอร์ม · เลือกชื่อแล้วระบบเติมตำแหน่งให้</p></div><input type="search" id="pq" placeholder="ค้นหาชื่อ / ตำแหน่ง / กลุ่มงาน" aria-label="ค้นหาบุคลากร" style="min-width:220px"></div>
-    <div class="fgrid adm" style="margin-top:12px">
-      <div><label for="qn">ชื่อ-สกุล (มีคำนำหน้า) *</label><input id="qn" placeholder="เช่น นางสาวกรรณิการ์ สุมาลย์กันต์"></div>
-      <div><label for="qp">ตำแหน่ง</label><input id="qp" list="dlPos" placeholder="เช่น นักวิทยาศาสตร์การแพทย์ชำนาญการ"></div>
-      <div><label for="qx">ตำแหน่งบริหาร</label><select id="qx"><option value="">—</option><option>ผู้อำนวยการ</option><option>รองผู้อำนวยการด้านวิชาการ</option><option>รองผู้อำนวยการด้านบริหาร</option><option>รองผู้อำนวยการด้านบริการ</option><option>หัวหน้ากลุ่มงาน</option><option>หัวหน้าฝ่าย</option></select></div>
-      <div><label for="qg">กลุ่มงาน</label><select id="qg"></select></div>
-      <div><label for="qc">ช่องทางติดต่อ (โทร / LINE)</label><input id="qc"></div>
-    </div>
-    <p class="adm" style="margin:0 0 12px"><button class="go" id="qs">บันทึกบุคลากร</button> <button class="go alt" id="qclr2">ล้างช่อง</button> <span id="qmode" class="lead" style="font-size:.85rem"></span></p>
-    <div class="tw"><table class="rtab"><thead><tr><th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>ตำแหน่งบริหาร</th><th>กลุ่มงาน</th><th>ติดต่อ</th><th>เครื่องที่รับผิดชอบ</th><th class="adm"></th></tr></thead><tbody id="mps"></tbody></table></div>
-    <p class="lead" id="pcount" style="font-size:.85rem;margin:8px 0 0"></p>
-  </div>
-  <div class="box radmo" style="margin-top:16px"><h2>ผู้รักษาราชการแทนผู้อำนวยการ</h2><p class="lead" style="font-size:.85rem;margin:0 0 10px">ช่วงวันที่กำหนด เมื่อเลือกคนนี้เป็น “ผู้อนุมัติ” ในแบบฟอร์ม ระบบจะใส่ตำแหน่ง “รักษาราชการแทน…” ให้อัตโนมัติ</p>
-    <div class="fgrid"><div><label for="actn">ผู้รักษาราชการแทน</label><select id="actn"></select></div><div><label for="actf">ตั้งแต่วันที่</label><input type="date" id="actf"></div><div><label for="actt">ถึงวันที่ (เว้นว่าง = จนกว่าจะยกเลิก)</label><input type="date" id="actt"></div><div style="grid-column:1/-1"><label for="actl">ข้อความตำแหน่งที่พิมพ์ในเอกสาร</label><input id="actl"></div></div>
-    <p style="margin:0"><button class="go" id="acts">บันทึก</button> <button class="go alt" id="actx">ยกเลิกการรักษาราชการแทน</button> <span id="actst" class="lead" style="font-size:.88rem"></span></p></div>
   <div class="box adm" style="margin-top:16px"><h2>นำเข้าบริษัท / บุคลากรจาก Excel</h2>
     <p class="lead" style="font-size:.88rem;margin:0 0 10px">ไฟล์ .xlsx ที่มีคอลัมน์ “ชื่อบริษัท / ประเภท / โทร / ISO 17025” หรือ “ชื่อผู้รับผิดชอบ / กลุ่มงาน / ช่องทางติดต่อ” (แยกชีตหรือชีตเดียวก็ได้) · ชื่อที่มีอยู่แล้วจะไม่ถูกเขียนทับ เติมเฉพาะช่องที่ว่าง</p>
     <label class="go" style="display:inline-block;cursor:pointer">เลือกไฟล์ Excel<input type="file" id="mxf" accept=".xlsx,.xls,.csv" style="display:none"></label>
@@ -556,16 +562,32 @@ function ownSave(n,g){if(isPerson(n)&&!PS.some(p=>p.name===n)){PS.push({name:n,g
 const fx=()=>({scope:$('#fsc').value,cat:$('#fc').value,own2:ownV('fw2'),vendor:$('#fv').value.trim(),calco:$('#fk').value.trim(),ops:$('#fo').value,meth:$('#fmeth').value||'cal',ptype:$('#fpt').value});
 function chint(){const c=CAT[$('#fc').value];$('#chint').textContent=c?c.d:'เลือกหมวดเพื่อดูเกณฑ์ — หมวดมีผลต่อการคีย์ค่าแก้และการบังคับกรอก U / เกณฑ์ยอมรับ'}
 $('#fc').onchange=chint;
-let CO=SAVED&&SAVED.CO||[],PS=SAVED&&SAVED.PS||[],MI={co:-1,ps:-1};
+let CO=SAVED&&SAVED.CO||[],PS=SAVED&&SAVED.PS||[],MI={co:-1,ps:-1},PPG=1,ACSEL=[];const PPS=10;
 const uq=a=>[...new Set(a.filter(Boolean))],opts=a=>uq(a).map(v=>`<option value="${esc(v)}">`).join('');
 // ---------- บุคลากร: ตำแหน่ง / ตำแหน่งบริหาร / รักษาราชการแทน ----------
 window.ACT=SAVED&&SAVED.ACT||{name:'',from:'',to:'',label:''};
 const UNITN=()=>(typeof FSET!=='undefined'&&FSET.unit)||(typeof PLD!=='undefined'&&PLD.unit)||'ศูนย์วิทยาศาสตร์การแพทย์ที่ 2 พิษณุโลก';
-const ACTL=()=>'รักษาราชการแทนผู้อำนวยการ'+UNITN();
+const ACTL=()=>'รักษาราชการแทน\nผู้อำนวยการ'+UNITN();
+// ข้อความรักษาราชการแทนแบบเดิม (บรรทัดเดียว) → แยกบรรทัด “รักษาราชการแทน / ผู้อำนวยการ…”
+const actLab=v=>{v=String(v||'').trim();if(!v)return ACTL();return v.includes('\n')?v:v.replace(/^รักษาราชการแทน\s*/,'รักษาราชการแทน\n')};
+// ตำแหน่งวิชาการ / คุณภาพ (เก็บเป็นข้อความคั่นด้วย , )
+const ACP=['ผู้จัดการคุณภาพ','ผู้จัดการวิชาการด้านเคมี','ผู้จัดการวิชาการด้านจุลชีววิทยา','ผู้จัดการวิชาการด้านการแพทย์','ผู้อำนวยการห้องปฏิบัติการทางการแพทย์'];
+const acL=v=>String(v||'').split(/\s*[,;\n]\s*/).map(x=>x.trim()).filter(Boolean);
+const acN=v=>{v=String(v||'').trim();return /รอง/.test(v)?v:/ห้องปฏิบัติการ/.test(v)&&/อำนวยการ|ผอ/.test(v)?ACP[4]:/วิชาการ/.test(v)&&/เคมี/.test(v)?ACP[1]:/วิชาการ/.test(v)&&/จุล/.test(v)?ACP[2]:/วิชาการ/.test(v)&&/แพทย์/.test(v)?ACP[3]:/^ผู้จัดการคุณภาพ$|^QM$/i.test(v)?ACP[0]:v};
+const acJ=a=>uq(a.map(acN)).join(', ');
 const XR=x=>['ผู้อำนวยการ','รองผู้อำนวยการด้านวิชาการ','รองผู้อำนวยการด้านบริหาร','รองผู้อำนวยการด้านบริการ','หัวหน้ากลุ่มงาน','หัวหน้าฝ่าย'].indexOf(x)+1||9;
 function actOn(n){const a=window.ACT;if(!a||!a.name||a.name!==n)return false;const t=new Date().toISOString().slice(0,10);return(!a.from||t>=a.from)&&(!a.to||t<=a.to)}
 function execTitle(p){if(!p||!p.exec)return'';return p.exec==='ผู้อำนวยการ'?'ผู้อำนวยการ'+UNITN():p.exec==='หัวหน้ากลุ่มงาน'&&p.group?'หัวหน้ากลุ่มงาน'+p.group:p.exec}
-function posFull(n,appr){const p=PS.find(x=>x.name===n);let t=p?(appr&&p.exec?execTitle(p):p.pos||execTitle(p)):'';if(appr&&actOn(n))t=(t?t+' ':'')+(ACT.label||ACTL());return t}
+// ตำแหน่งใต้ลายเซ็น: ผู้อนุมัติ = ตำแหน่งในสายงาน + ตำแหน่งบริหาร คนละบรรทัด · รักษาราชการแทน = ตำแหน่ง / รักษาราชการแทน / ผู้อำนวยการ…
+function posFull(n,appr){const p=PS.find(x=>x.name===n);if(!p)return'';
+ if(appr&&actOn(n))return[p.pos,actLab(ACT.label)].filter(Boolean).join('\n');
+ if(appr&&p.exec){const x=execTitle(p);return[p.pos&&p.pos!==x?p.pos:'',x].filter(Boolean).join('\n')}
+ return p.pos||execTitle(p)}
+const posOne=v=>String(v||'').replace(/\s*\n\s*/g,' ');
+// ช่องตำแหน่ง = กล่องข้อความหลายบรรทัด (Enter ขึ้นบรรทัดใหม่ได้) · ตอนพิมพ์เอกสารแสดงตามบรรทัด
+window.posTA=(at,v)=>`<textarea class="posx" rows="${String(v||'').split('\n').reduce((n,l)=>n+Math.max(1,Math.ceil(l.length/34)),0)}" ${at}>${esc(v||'')}</textarea>`;
+window.ELB=v=>esc(v==null?'':v).replace(/\n/g,'<br>');
+document.addEventListener('input',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('posx'))t.rows=Math.max(1,t.value.split('\n').length)},true);
 window.posFull=posFull;
 // เลือกชื่อจากรายชื่อบุคลากร → เติมตำแหน่งในช่องคู่กันให้อัตโนมัติ
 function posPair(el){const d=el.dataset,c=el.closest('dialog,#fed,#ftb,#pdoc,section')||document;let t=null,ap=false;
@@ -574,27 +596,38 @@ function posPair(el){const d=el.dataset,c=el.closest('dialog,#fed,#ftb,#pdoc,sec
  else if(d.t&&/^(pre|rvw|apr)$/.test(d.t)){t=c.querySelector(`[data-t="${d.t}Pos"]`);ap=d.t==='apr'}
  else if(d.h&&/^(pre|rvw|apr)$/.test(d.h)){t=c.querySelector(`[data-h="${d.h}Pos"]`);ap=d.h==='apr'}
  else if(d.k==='evalN'||d.k==='apprN'){t=c.querySelector(`[data-k="${d.k==='evalN'?'evalP':'apprP'}"]`);ap=d.k==='apprN'}
+ else if(d.pd&&/^s\d+n$/.test(d.pd)){t=c.querySelector(`[data-pd="${d.pd.replace(/n$/,'p')}"]`);ap=/อนุมัติ/.test((el.closest('div')||{}).textContent||'')}
  else if(/^s\d+n$/.test(el.id)){t=document.getElementById(el.id.replace(/n$/,'p'));ap=/อนุมัติ/.test((el.closest('div')||{}).textContent||'')}
  return t?{t,ap}:null}
 document.addEventListener('change',e=>{const el=e.target;if(!el||el.tagName!=='INPUT'||el.getAttribute('list')!=='dlP')return;const n=el.value.trim();if(!PS.some(p=>p.name===n))return;const q=posPair(el);if(!q)return;
- const v=posFull(n,q.ap);if(v&&(!q.t.value.trim()||q.t.dataset.autopos==='1')){q.t.value=v;q.t.dataset.autopos='1';q.t.dispatchEvent(new Event('input',{bubbles:true}));q.t.dispatchEvent(new Event('change',{bubbles:true}))}},true);
+ let v=posFull(n,q.ap);if(q.t.tagName!=='TEXTAREA')v=posOne(v);else q.t.rows=Math.max(1,v.split('\n').length);if(v&&(!q.t.value.trim()||q.t.dataset.autopos==='1')){q.t.value=v;q.t.dataset.autopos='1';q.t.dispatchEvent(new Event('input',{bubbles:true}));q.t.dispatchEvent(new Event('change',{bubbles:true}))}},true);
 function rmst(){const nm=t=>CO.filter(c=>c.type===t||c.type==='ทั้งสองอย่าง').map(c=>c.name),b=(m,n)=>`<td class="adm" style="white-space:nowrap"><button class="go alt sm" data-m="${m}" data-e="${n}">แก้ไข</button> <button class="go alt sm" data-m="${m}" data-d="${n}">ลบ</button></td>`,sm=t=>`<small style="display:block;color:var(--mute)">${t}</small>`;
  $('#mco').innerHTML=CO.map((c,n)=>`<tr><td><b>${esc(c.name)}</b>${sm(esc(c.phone||'')+(c.accr?' · 17025: '+esc(c.accr):''))}</td><td>${esc(c.type)}</td>${b('co',n)}</tr>`).join('')||'<tr><td colspan="3">ยังไม่มีข้อมูล</td></tr>';
- const pq=($('#pq').value||'').trim().toLowerCase(),pr=PS.map((p,n)=>[p,n]).filter(([p])=>!pq||[p.name,p.pos,p.exec,p.group,p.contact].join(' ').toLowerCase().includes(pq)).sort((a,b)=>XR(a[0].exec)-XR(b[0].exec)||String(a[0].group||'').localeCompare(String(b[0].group||''),'th')||a[0].name.localeCompare(b[0].name,'th'));
- $('#mps').innerHTML=pr.map(([p,n])=>{const k=D.filter(i=>i.own===p.name||i.own2===p.name).length,ac=actOn(p.name);return`<tr><td><b>${esc(p.name)}</b>${ac?'<small style="display:block;color:var(--brand);font-weight:600">'+esc(ACT.label)+'</small>':''}</td><td>${esc(p.pos||'–')}</td><td>${esc(p.exec||'–')}</td><td>${esc(p.group||'–')}</td><td>${esc(p.contact||'–')}</td><td>${k||'–'}</td>${b('ps',n)}</tr>`}).join('')||`<tr><td colspan="7">${pq?'ไม่พบชื่อที่ค้นหา':'ยังไม่มีข้อมูล — เพิ่มทีละคน หรือนำเข้าจาก Excel ด้านล่าง'}</td></tr>`;
- $('#pcount').textContent=PS.length?`ทั้งหมด ${PS.length} คน${pq?' · แสดง '+pr.length:''}`:'';
+ const pq=($('#pq').value||'').trim().toLowerCase(),pr=PS.map((p,n)=>[p,n]).filter(([p])=>!pq||[p.name,p.pos,p.exec,p.ac,p.group,p.contact].join(' ').toLowerCase().includes(pq)).sort((a,b)=>XR(a[0].exec)-XR(b[0].exec)||(a[0].ac?0:1)-(b[0].ac?0:1)||String(a[0].group||'').localeCompare(String(b[0].group||''),'th')||a[0].name.localeCompare(b[0].name,'th',{numeric:true}));
+ const np=Math.max(1,Math.ceil(pr.length/PPS));if(PPG>np)PPG=np;if(PPG<1)PPG=1;const vis=pr.slice((PPG-1)*PPS,PPG*PPS);
+ $('#mps').innerHTML=vis.map(([p,n])=>{const k=D.filter(i=>i.own===p.name||i.own2===p.name).length,ac=actOn(p.name),rl=[p.exec?'<b style="font-weight:600">'+esc(p.exec)+'</b>':'',...acL(p.ac).map(x=>'<span class="actag">'+esc(x)+'</span>')].filter(Boolean);return`<tr><td><b>${esc(p.name)}</b>${ac?'<small style="display:block;color:var(--brand);font-weight:600">'+esc(posOne(actLab(ACT.label)))+'</small>':''}</td><td>${esc(p.pos||'–')}</td><td>${rl.length?rl.join('<br>'):'–'}</td><td>${esc(p.group||'–')}</td><td>${esc(p.contact||'–')}</td><td>${k||'–'}</td>${b('ps',n)}</tr>`}).join('')||`<tr><td colspan="7">${pq?'ไม่พบชื่อที่ค้นหา':'ยังไม่มีข้อมูล — เพิ่มทีละคน หรือนำเข้าจาก Excel ด้านล่าง'}</td></tr>`;
+ const pb=(x,l,d,c)=>`<button data-ppg="${x}" ${d?'disabled':''} ${c?'aria-current="true"':''} aria-label="หน้า ${x}">${l}</button>`;let nums='';
+ if(np>1){const ps=[...new Set([1,PPG-2,PPG-1,PPG,PPG+1,PPG+2,np])].filter(x=>x>=1&&x<=np).sort((a,b)=>a-b);ps.forEach((x,k)=>{if(k&&x-ps[k-1]>1)nums+='<span>…</span>';nums+=pb(x,x,0,x===PPG)})}
+ $('#ppg').innerHTML=np>1?pb(PPG-1,'‹ ก่อนหน้า',PPG===1)+nums+pb(PPG+1,'ถัดไป ›',PPG===np):'';
+ $('#pcount').textContent=PS.length?`ทั้งหมด ${PS.length} คน${pq?' · พบ '+pr.length:''}${pr.length>PPS?` · แสดง ${(PPG-1)*PPS+1}–${Math.min(PPG*PPS,pr.length)}`:''}`:'';
+ acDraw();
  $('#dlPos').innerHTML=opts([...new Set(PS.map(p=>p.pos).filter(Boolean))]);
- const an=$('#actn');if(an){an.innerHTML='<option value="">— ไม่มี —</option>'+PS.map(p=>`<option value="${esc(p.name)}" ${ACT.name===p.name?'selected':''}>${esc(p.name)}${p.exec?' · '+esc(p.exec):p.pos?' · '+esc(p.pos):''}</option>`).join('');$('#actf').value=ACT.from||'';$('#actt').value=ACT.to||'';$('#actl').value=ACT.label||ACTL();
+ const an=$('#actn');if(an){an.innerHTML='<option value="">— ไม่มี —</option>'+PS.map(p=>`<option value="${esc(p.name)}" ${ACT.name===p.name?'selected':''}>${esc(p.name)}${p.exec?' · '+esc(p.exec):p.pos?' · '+esc(p.pos):''}</option>`).join('');$('#actf').value=ACT.from||'';$('#actt').value=ACT.to||'';$('#actl').value=actLab(ACT.label);
   $('#actst').textContent=ACT.name?(actOn(ACT.name)?'ตอนนี้: '+ACT.name+' รักษาราชการแทน':'กำหนดไว้: '+ACT.name+' (ยังไม่อยู่ในช่วงวันที่)'):''}
  $('#qg').innerHTML='<option value="">—</option>'+GROUPS.map(g=>`<option>${esc(g)}</option>`).join('');
- $('#dlV').innerHTML=opts(nm('ผู้จำหน่าย'));$('#dlK').innerHTML=opts(nm('บริษัทสอบเทียบ'));$('#dlP').innerHTML=PS.filter(p=>p.on!==false).map(p=>`<option value="${esc(p.name)}">${esc(posFull(p.name)||p.group||'')}</option>`).join('')+opts([...new Set([...D.map(i=>i.own),...D.map(i=>i.own2)])].filter(n=>n&&!PS.some(p=>p.name===n)&&isPerson(n)))}
+ $('#dlV').innerHTML=opts(nm('ผู้จำหน่าย'));$('#dlK').innerHTML=opts(nm('บริษัทสอบเทียบ'));$('#dlP').innerHTML=PS.filter(p=>p.on!==false).map(p=>`<option value="${esc(p.name)}">${esc([posOne(posFull(p.name)),p.exec,...acL(p.ac)].filter((v,k,a)=>v&&a.indexOf(v)===k).join(' · ')||p.group||'')}</option>`).join('')+opts([...new Set([...D.map(i=>i.own),...D.map(i=>i.own2)])].filter(n=>n&&!PS.some(p=>p.name===n)&&isPerson(n)))}
 $('#mcs').onclick=()=>{const c={name:$('#mn').value.trim(),type:$('#mt').value,phone:$('#mp').value.trim(),accr:$('#ma').value.trim()};if(!c.name){toast('กรอกชื่อบริษัท');return}
  if(MI.co>=0){log('แก้ไขบริษัท',c.name,CO[MI.co],c);CO[MI.co]=c}else{if(CO.some(x=>x.name===c.name)){toast('มีบริษัทนี้แล้ว');return}CO.push(c);log('เพิ่มบริษัท',c.name,null,c)}
  MI.co=-1;['mn','mp','ma'].forEach(k=>$('#'+k).value='');rmst();toast('บันทึกบริษัทแล้ว')};
-$('#qs').onclick=()=>{const c={name:$('#qn').value.replace(/\s+/g,' ').trim(),pos:$('#qp').value.trim(),exec:$('#qx').value,group:$('#qg').value,contact:$('#qc').value.trim()};if(!c.name){toast('กรอกชื่อ-สกุล');return}
+$('#qs').onclick=()=>{const c={name:$('#qn').value.replace(/\s+/g,' ').trim(),pos:$('#qp').value.trim(),exec:$('#qx').value,ac:acJ([...[...document.querySelectorAll('#qa input:checked')].map(x=>x.value),...acL($('#qao').value)]),group:$('#qg').value,contact:$('#qc').value.trim()};if(!c.name){toast('กรอกชื่อ-สกุล');return}
  if(MI.ps>=0){const o=PS[MI.ps];log('แก้ไขบุคลากร',c.name,o,c);if(o.name!==c.name)D.forEach(i=>{if(i.own===o.name)i.own=c.name;if(i.own2===o.name)i.own2=c.name});PS[MI.ps]={...o,...c}}else{if(PS.some(x=>x.name===c.name)){toast('มีชื่อนี้แล้ว');return}PS.push(c);log('เพิ่มผู้รับผิดชอบ',c.name,null,c)}
- if(MI.ps>=0){const old=PS[MI.ps]&&PS[MI.ps].name;}MI.ps=-1;['qn','qp','qc'].forEach(k=>$('#'+k).value='');$('#qx').value='';$('#qmode').textContent='';rmst();toast('บันทึกบุคลากรแล้ว')};
-$('#qclr2').onclick=()=>{MI.ps=-1;['qn','qp','qc'].forEach(k=>$('#'+k).value='');$('#qx').value='';$('#qg').value='';$('#qmode').textContent=''};$('#pq').oninput=rmst;
+ if(MI.ps>=0){const old=PS[MI.ps]&&PS[MI.ps].name;}MI.ps=-1;['qn','qp','qc','qao'].forEach(k=>$('#'+k).value='');$('#qx').value='';ACSEL=[];$('#qmode').textContent='';rmst();toast('บันทึกบุคลากรแล้ว')};
+$('#qclr2').onclick=()=>{MI.ps=-1;['qn','qp','qc','qao'].forEach(k=>$('#'+k).value='');$('#qx').value='';$('#qg').value='';ACSEL=[];acDraw();$('#qmode').textContent=''};$('#pq').oninput=()=>{PPG=1;rmst()};
+$('#ppg').onclick=e=>{const b=e.target.closest('[data-ppg]');if(!b||b.disabled)return;PPG=+b.dataset.ppg;rmst();$('#mps').closest('.box').scrollIntoView({behavior:'smooth',block:'start'})};
+// ชิปตำแหน่งวิชาการ/คุณภาพ: ค่ามาตรฐาน + ที่เคยพิมพ์เพิ่มเอง
+function acDraw(){const box=$('#qa');if(!box)return;const all=uq([...ACP,...PS.flatMap(p=>acL(p.ac))]);
+ box.innerHTML=all.map(v=>`<label><input type="checkbox" value="${esc(v)}" ${ACSEL.includes(v)?'checked':''}>${esc(v)}</label>`).join('')}
+$('#qa').onchange=e=>{const x=e.target;if(x.type!=='checkbox')return;ACSEL=x.checked?uq([...ACSEL,x.value]):ACSEL.filter(v=>v!==x.value)};
 // ---------- นำเข้าบริษัท / ผู้รับผิดชอบ ----------
 let MX=null;const nmz=v=>cs(v).replace(/\s+/g,' ');
 const coType=v=>{v=cs(v);return /สอบเทียบ|cal/i.test(v)&&/จำหน่าย|vendor|sell/i.test(v)||/ทั้ง/.test(v)?'ทั้งสองอย่าง':/สอบเทียบ|cal/i.test(v)?'บริษัทสอบเทียบ':'ผู้จำหน่าย'};
@@ -606,11 +639,12 @@ function mxParse(wb){const co=[],ps=[],ps_push=x=>ps.push(x);
   if(isCo){const n=col(/บริษัท|company|ชื่อ/i),t=col(/ประเภท|type/i),ph=col(/โทร|อีเมล|e-?mail|ติดต่อ|phone/i),ac=col(/17025|รับรอง|accr/i);
    R.slice(hi+1).forEach(r=>{const name=nmz(r[n]);if(name)co.push({name,type:t>=0?coType(r[t]):'ผู้จำหน่าย',phone:ph>=0?cs(r[ph]):'',accr:ac>=0?cs(r[ac]):''})})}
   const pn=col(/ผู้รับผิดชอบ|บุคลากร|ชื่อ.?-?.?สกุล|^ชื่อ|name/i);
-  if(pn>=0&&(!isCo||col(/ผู้รับผิดชอบ/)>=0)){const p2=isCo?col(/ผู้รับผิดชอบ/):pn,g=col(/กลุ่ม|ฝ่าย|สังกัด/),c=col(/ติดต่อ|โทร|line|อีเมล|e-?mail/i),xp=col(/ตำแหน่งบริหาร|บริหาร/),ps=H.findIndex((h,k)=>/ตำแหน่ง|position/i.test(h)&&k!==xp);
-   R.slice(hi+1).forEach(r=>{const name=nmz(r[p2]);if(!name)return;let ex=xp>=0?cs(r[xp]):'',po=ps>=0?cs(r[ps]):'';
+  if(pn>=0&&(!isCo||col(/ผู้รับผิดชอบ/)>=0)){const p2=isCo?col(/ผู้รับผิดชอบ/):pn,g=col(/กลุ่ม|ฝ่าย|สังกัด/),c=col(/ติดต่อ|โทร|line|อีเมล|e-?mail/i),xp=col(/ตำแหน่งบริหาร|บริหาร/),xa=col(/วิชาการ|คุณภาพ/),ps=H.findIndex((h,k)=>/ตำแหน่ง|position/i.test(h)&&k!==xp&&k!==xa);
+   R.slice(hi+1).forEach(r=>{const name=nmz(r[p2]);if(!name)return;let ex=xp>=0?cs(r[xp]):'',po=ps>=0?cs(r[ps]):'',ac=xa>=0?acL(cs(r[xa])):[];
+    if(/ห้องปฏิบัติการ|ผู้จัดการ/.test(ex)){ac.push(ex);ex=''}
     const XN=v=>/รอง/.test(v)?(/วิชาการ/.test(v)?'รองผู้อำนวยการด้านวิชาการ':/บริหาร/.test(v)?'รองผู้อำนวยการด้านบริหาร':/บริการ/.test(v)?'รองผู้อำนวยการด้านบริการ':v):/^ผู้อำนวยการ|^ผอ\.?$/.test(v)?'ผู้อำนวยการ':/หัวหน้ากลุ่ม/.test(v)?'หัวหน้ากลุ่มงาน':/หัวหน้าฝ่าย/.test(v)?'หัวหน้าฝ่าย':v;
-    if(!ex&&/ผู้อำนวยการ|หัวหน้ากลุ่ม|หัวหน้าฝ่าย/.test(po)){ex=XN(po)}else ex=XN(ex);
-    ps_push({name,pos:po,exec:ex,group:g>=0?cs(r[g]):'',contact:c>=0?cs(r[c]):''})})}});
+    if(!ex&&/ผู้อำนวยการ|หัวหน้ากลุ่ม|หัวหน้าฝ่าย/.test(po)&&!/ห้องปฏิบัติการ/.test(po)){ex=XN(po)}else ex=XN(ex);
+    ps_push({name,pos:po,exec:ex,ac:acJ(ac),group:g>=0?cs(r[g]):'',contact:c>=0?cs(r[c]):''})})}});
  return{co,ps}}
 const okPerson=x=>x&&x.length>=4&&!/^(กลุ่ม|ฝ่าย|ห้อง|งาน)/.test(x)&&!GROUPS.includes(x)&&!/^ผู้รับผิดชอบ\s*[ก-ฮ]$/.test(x)&&(/^(นาย|นาง|น\.ส\.|ดร\.|ภก\.|ภญ\.|mr|ms|mrs|dr)/i.test(x)||/\S+\s+\S+/.test(x));
 function mxFromReg(){const co=[],ps=[],gp={};
@@ -620,11 +654,11 @@ function mxFromReg(){const co=[],ps=[],gp={};
 function mxPlan(src){const merge=(A,L,keys)=>{const m=new Map();L.forEach(x=>{const k=x.name.toLowerCase(),o=m.get(k);if(!o)m.set(k,{...x});else{keys.forEach(f=>{if(!o[f]&&x[f])o[f]=x[f]});if(o.type&&x.type&&o.type!==x.type&&f0(o.type,x.type))o.type='ทั้งสองอย่าง'}});
   const add=[],upd=[],same=[];m.forEach(x=>{const e=A.find(a=>nmz(a.name).toLowerCase()===x.name.toLowerCase());if(!e)add.push(x);else{const f=keys.filter(k=>!e[k]&&x[k]);f.length?upd.push([e,x,f]):same.push(x)}});return{add,upd,same}};
  const f0=(a,b)=>a!=='ทั้งสองอย่าง'&&b!=='ทั้งสองอย่าง';
- return{co:merge(CO,src.co,['phone','accr','type']),ps:merge(PS,src.ps,['pos','exec','group','contact'])}}
+ return{co:merge(CO,src.co,['phone','accr','type']),ps:merge(PS,src.ps,['pos','exec','ac','group','contact'])}}
 function mxShow(src,from){MX=mxPlan(src);const P=MX,li=(a,f)=>a.length?'<ul style="margin:4px 0 0;padding-left:18px;max-height:160px;overflow:auto">'+a.slice(0,200).map(f).join('')+'</ul>':'';
  const sec=(t,x,fmt)=>`<div style="margin-bottom:10px"><b>${t}</b> · เพิ่มใหม่ ${x.add.length} · เติมข้อมูล ${x.upd.length} · มีอยู่แล้ว ${x.same.length}${li(x.add,v=>'<li>'+fmt(v)+'</li>')}${li(x.upd,([e,v,f])=>'<li>'+esc(e.name)+' <small>(เติม '+f.join(', ')+')</small></li>')}</div>`;
  const n=P.co.add.length+P.co.upd.length+P.ps.add.length+P.ps.upd.length;
- $('#mxr').innerHTML=`<div class="verdict ${n?'p-soon':'p-ok'}" style="display:block"><p style="margin:0 0 8px">${esc(from)}</p>${sec('บริษัท',P.co,v=>esc(v.name)+' <small>('+esc(v.type)+')</small>')}${sec('บุคลากร',P.ps,v=>esc(v.name)+' <small>('+esc([v.pos,v.exec,v.group].filter(Boolean).join(' · ')||'-')+')</small>')}
+ $('#mxr').innerHTML=`<div class="verdict ${n?'p-soon':'p-ok'}" style="display:block"><p style="margin:0 0 8px">${esc(from)}</p>${sec('บริษัท',P.co,v=>esc(v.name)+' <small>('+esc(v.type)+')</small>')}${sec('บุคลากร',P.ps,v=>esc(v.name)+' <small>('+esc([v.pos,v.exec,v.ac,v.group].filter(Boolean).join(' · ')||'-')+')</small>')}
   ${n?`<button class="go" id="mxok">ยืนยันนำเข้า ${n} รายการ</button> <button class="go alt" id="mxc">ยกเลิก</button>`:'ไม่มีรายการใหม่ให้นำเข้า'}</div>`;
  if(n){$('#mxok').onclick=mxApply;$('#mxc').onclick=()=>{MX=null;$('#mxr').innerHTML=''}}}
 function mxApply(){if(!MX)return;const P=MX;let a=0,u=0;
@@ -637,14 +671,14 @@ $('#mxf').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)r
 $('#mxd').onclick=()=>mxShow(mxFromReg(),'จากทะเบียนเครื่องมือ '+D.length+' เครื่อง (ผู้รับผิดชอบ / ผู้จำหน่าย / บริษัทสอบเทียบ)');
 $('#mxt').onclick=()=>{if(!window.XLSX){toast('โหลดตัวอ่าน Excel ไม่สำเร็จ');return}const wb=XLSX.utils.book_new();
  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['ชื่อบริษัท','ประเภท (ผู้จำหน่าย / บริษัทสอบเทียบ / ทั้งสองอย่าง)','โทร / อีเมล ผู้ติดต่อ','เลขที่รับรอง ISO/IEC 17025'],['บริษัท ตัวอย่าง จำกัด','บริษัทสอบเทียบ','02-000-0000','Calibration 0000']]),'บริษัท');
- XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['ชื่อ-สกุล','ตำแหน่ง','ตำแหน่งบริหาร (ถ้ามี)','กลุ่มงาน','ช่องทางติดต่อ (โทร / LINE)'],['นายตัวอย่าง ผู้อำนวยการ','นักวิทยาศาสตร์การแพทย์เชี่ยวชาญ','ผู้อำนวยการ','',''],['นางสาวตัวอย่าง รองวิชาการ','นักวิทยาศาสตร์การแพทย์ชำนาญการพิเศษ','รองผู้อำนวยการด้านวิชาการ','',''],['นางสาวตัวอย่าง ใจดี','นักวิทยาศาสตร์การแพทย์ชำนาญการ','','พยาธิ','08x-xxx-xxxx']]),'บุคลากร');
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['ชื่อ-สกุล','ตำแหน่ง','ตำแหน่งบริหาร (ถ้ามี)','ตำแหน่งวิชาการ / คุณภาพ (ถ้ามี คั่นด้วย ,)','กลุ่มงาน','ช่องทางติดต่อ (โทร / LINE)'],['นายตัวอย่าง ผู้อำนวยการ','นักวิทยาศาสตร์การแพทย์เชี่ยวชาญ','ผู้อำนวยการ','ผู้อำนวยการห้องปฏิบัติการทางการแพทย์','',''],['นางสาวตัวอย่าง รองวิชาการ','นักวิทยาศาสตร์การแพทย์ชำนาญการพิเศษ','รองผู้อำนวยการด้านวิชาการ','ผู้จัดการคุณภาพ','',''],['นางสาวตัวอย่าง ใจดี','นักวิทยาศาสตร์การแพทย์ชำนาญการ','','ผู้จัดการวิชาการด้านเคมี','อาหาร','08x-xxx-xxxx']]),'บุคลากร');
  XLSX.writeFile(wb,'caltrack-รายชื่อ-ตัวอย่าง.xlsx')};
 $('#acts').onclick=()=>{const n=$('#actn').value,f=$('#actf').value,t=$('#actt').value;if(n&&t&&f&&t<f){toast('วันที่สิ้นสุดต้องไม่ก่อนวันเริ่ม');return}
- const o={...ACT};window.ACT={name:n,from:f,to:t,label:$('#actl').value.trim()||ACTL()};ACT=window.ACT;log('กำหนดผู้รักษาราชการแทนผู้อำนวยการ',n||'-',o.name?o:null,n?ACT:null);rmst();toast(n?'บันทึกแล้ว':'ยกเลิกแล้ว')};
+ const o={...ACT};window.ACT={name:n,from:f,to:t,label:actLab($('#actl').value)};ACT=window.ACT;log('กำหนดผู้รักษาราชการแทนผู้อำนวยการ',n||'-',o.name?o:null,n?ACT:null);rmst();toast(n?'บันทึกแล้ว':'ยกเลิกแล้ว')};
 $('#actx').onclick=()=>{$('#actn').value='';$('#acts').click()};
 $('#mst').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;const m=b.dataset.m,A=m==='co'?CO:PS;
  if(b.dataset.d!==undefined){const x=A[+b.dataset.d];if(confirm('ลบ “'+x.name+'” ?')){log(m==='co'?'ลบบริษัท':'ลบผู้รับผิดชอบ',x.name,x,null);A.splice(+b.dataset.d,1);rmst();toast('ลบแล้ว')}}
- else{const x=A[+b.dataset.e];MI[m]=+b.dataset.e;if(m==='co'){$('#mn').value=x.name;$('#mt').value=x.type;$('#mp').value=x.phone||'';$('#ma').value=x.accr||''}else{$('#qn').value=x.name;$('#qp').value=x.pos||'';$('#qx').value=x.exec||'';$('#qg').value=x.group||'';$('#qc').value=x.contact||'';$('#qmode').textContent='กำลังแก้ไข: '+x.name;$('#qn').scrollIntoView({behavior:'smooth',block:'center'})}}};
+ else{const x=A[+b.dataset.e];MI[m]=+b.dataset.e;if(m==='co'){$('#mn').value=x.name;$('#mt').value=x.type;$('#mp').value=x.phone||'';$('#ma').value=x.accr||''}else{$('#qn').value=x.name;$('#qp').value=x.pos||'';$('#qx').value=x.exec||'';ACSEL=acL(x.ac).map(acN);$('#qao').value='';acDraw();$('#qg').value=x.group||'';$('#qc').value=x.contact||'';$('#qmode').textContent='กำลังแก้ไข: '+x.name;$('#qn').scrollIntoView({behavior:'smooth',block:'center'})}}};
 rmst();
 
 function toast(t){persist();dash();const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2200)}
@@ -911,7 +945,7 @@ function planHtml(p,w){const d=pdoc(p),e=v=>esc(v==null?'':v);let its=p.items.ma
  @media screen{body{background:#dfe5e9;padding:14px}.pg{background:#fff;padding:12mm 10mm;width:297mm;max-width:100%;margin:auto;box-shadow:0 2px 12px rgba(0,0,0,.18)}.pf{display:flex;justify-content:space-between;font-size:9pt;margin-top:22px;color:#333}}`;
  const W=[4,13,12,7,10,6,6,7,9,8,9,9];
  const rows=its.map((i,n)=>`<tr><td class="c">${n+1}</td><td>${e(i.name)}</td><td>${e(i.brand)}</td><td class="c">${e(i.serial)}</td><td class="c">${/^ไม่มีรหัส/.test(i.id)?'':e(i.id)}</td><td class="c">${e(i.loc==='–'?'':i.loc)}</td><td class="c">${e(i.group)}</td><td class="n">${e(freqT(i))}</td><td>${e(i.x&&i.x.pts)}</td><td>${e(i.x&&(i.x.crit||i.x.mpe))}</td><td class="n">${fds(i.last)}</td><td class="n">${fds(i.due)}</td></tr>`).join('')||'<tr><td colspan="12" class="c">ไม่มีเครื่องมือในแผน</td></tr>';
- const sg=`<table class="sg"><tr>${d.s.map(x=>`<td>ลงชื่อ ......................................... ${e(x.l)}<br>(${e(x.n)||'&nbsp;'.repeat(40)})<br>${e(x.p)||'ตำแหน่ง .................................'}<br>${e(x.d)||'......../......../........'}</td>`).join('')}</tr></table>`;
+ const sg=`<table class="sg"><tr>${d.s.map(x=>`<td>ลงชื่อ ......................................... ${e(x.l)}<br>(${e(x.n)||'&nbsp;'.repeat(40)})<br>${x.p?e(x.p).replace(/\n/g,'<br>'):'ตำแหน่ง .................................'}<br>${e(x.d)||'......../......../........'}</td>`).join('')}</tr></table>`;
  return`<!DOCTYPE html><html lang="th" ${w?'xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"':''}><head><meta charset="utf-8"><title>${e(d.title)} ปีงบประมาณ ${e(p.fy)}</title>${w?'<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]-->':'<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">'}<style>${css}</style></head>
 <body><div class="${w?'Section1':'pg'}"><h1>${e(d.title)}</h1><h2>หน่วยงาน : ${e(d.unit)} &nbsp; ปีงบประมาณ พ.ศ.${e(p.fy)}</h2>
 <table class="pt"><colgroup>${W.map(x=>`<col style="width:${x}%">`).join('')}</colgroup><thead><tr><th>ลำดับ</th><th>ชื่อเครื่อง</th><th>ยี่ห้อ/รุ่น</th><th>Serial No.</th><th>รหัสครุภัณฑ์</th><th>สถานที่ติดตั้ง</th><th>กลุ่มงาน</th><th>ความถี่การสอบเทียบ</th><th>จุดสอบเทียบ</th><th>เกณฑ์การยอมรับ</th><th>วันที่สอบเทียบครั้งล่าสุด</th><th>วันที่สอบเทียบครั้งต่อไป</th></tr></thead><tbody>${rows}</tbody></table>${sg}
@@ -923,7 +957,7 @@ function planWord(p){const a=document.createElement('a');a.href=URL.createObject
 function pdocForm(p){const d=pdoc(p),f=(k,l,v,at='')=>`<div><label>${l}</label><input data-pd="${k}" value="${esc(v||'')}" ${at}></div>`;
  return`<details class="xbox"><summary>ตั้งค่าหัวกระดาษ / ผู้ลงนาม / การเรียงลำดับ</summary><div class="fgrid">${f('code','เลขที่แบบฟอร์ม',d.code)}${f('title','ชื่อแบบฟอร์ม',d.title)}${f('rev','แก้ไขครั้งที่',d.rev)}${f('unit','หน่วยงาน',d.unit)}
  <div><label>เรียงลำดับในแบบฟอร์ม</label><select data-pd="sort"><option value="" ${!d.sort?'selected':''}>ตามลำดับในแผน</option><option value="group" ${d.sort==='group'?'selected':''}>ตามกลุ่มงาน</option><option value="due" ${d.sort==='due'?'selected':''}>ครบกำหนดก่อน</option><option value="name" ${d.sort==='name'?'selected':''}>ชื่อเครื่อง</option></select></div></div>
- <div class="fgrid">${d.s.map((x,k)=>f('s'+k+'n',esc(x.l)+' (ชื่อ)',x.n,'list="dlP"')+f('s'+k+'p','ตำแหน่ง',x.p)+f('s'+k+'d','วันที่ลงนาม',x.d,'placeholder="เว้นว่างไว้เขียนด้วยมือได้"')).join('')}</div>
+ <div class="fgrid">${d.s.map((x,k)=>f('s'+k+'n',esc(x.l)+' (ชื่อ)',x.n,'list="dlP"')+`<div><label>ตำแหน่ง</label>${posTA(`data-pd="s${k}p"`,x.p)}</div>`+f('s'+k+'d','วันที่ลงนาม',x.d,'placeholder="เว้นว่างไว้เขียนด้วยมือได้"')).join('')}</div>
  <p class="lead" style="margin:0;font-size:.85rem">ค่าที่แก้ที่นี่จะใช้เป็นค่าเริ่มต้นของแผนถัดไปด้วย · จุดสอบเทียบและเกณฑ์มาจากทะเบียนเครื่องมือ (แก้ได้ที่ ทะเบียน → แก้ไขข้อมูล → ข้อมูลเพิ่มเติม)</p></details>`}
 let pdT=null;
 function pdocSet(p,el){const d=pdoc(p),k=el.dataset.pd,m=k.match(/^s(\d)([npd])$/);if(m)d.s[+m[1]][m[2]]=el.value;else d[k]=el.value;
