@@ -501,7 +501,7 @@ function drawX(){const T=cur.tpl,f=cur.f,R=T.rule||{};
  <div class="fgrid"><div style="grid-column:1/-1"><label>หมายเหตุ</label><input data-k="note" value="${E(f.note)}"></div>
  ${T.sg.map((l,i)=>inp('',E(l)+' (ชื่อ)','','dlP',f.sg[i].n,`data-s="${i}" data-sf="n"`)+inp('','ตำแหน่ง','','',f.sg[i].p,`data-s="${i}" data-sf="p"`)).join('')}</div>
  <details class="xbox"><summary>ส่วนหัวเอกสาร (เลขที่เอกสาร / ผู้จัดทำ / ผู้ทบทวน / ผู้อนุมัติ)</summary><div class="fgrid">
- ${[['doc','เอกสารเลขที่'],['rev','แก้ไขครั้งที่'],['issue','วันที่ประกาศใช้'],['pre','ผู้จัดทำ'],['prePos','ตำแหน่ง ผู้จัดทำ'],['rvw','ผู้ทบทวน'],['rvwPos','ตำแหน่ง ผู้ทบทวน'],['apr','ผู้อนุมัติ (ส่วนหัว)'],['aprPos','ตำแหน่ง ผู้อนุมัติ']].map(([k,l])=>inp(k,l,'','',cur.h[k],`data-h="${k}"`)).join('')}</div></details>
+ ${[['doc','เอกสารเลขที่'],['rev','แก้ไขครั้งที่'],['issue','วันที่ประกาศใช้'],['pre','ผู้จัดทำ'],['prePos','ตำแหน่ง ผู้จัดทำ'],['rvw','ผู้ทบทวน'],['rvwPos','ตำแหน่ง ผู้ทบทวน'],['apr','ผู้อนุมัติ (ส่วนหัว)'],['aprPos','ตำแหน่ง ผู้อนุมัติ']].map(([k,l])=>inp(k,l,'',/^(pre|rvw|apr)$/.test(k)?'dlP':'',cur.h[k],`data-h="${k}"`)).join('')}</div></details>
  <div class="err" id="ferr" role="alert"></div>
  <p style="margin:14px 0 0"><button class="go adm" id="fsave">บันทึกร่าง</button> <button class="go adm" id="fsub">บันทึกและส่งให้อนุมัติ</button> <button class="go alt" id="fprevb">ดูตัวอย่างแบบฟอร์ม</button> <button class="go alt" id="fpdf">พิมพ์ / PDF</button> <button class="go alt" id="fword">ดาวน์โหลด Word</button> <button class="go alt" id="fclose">ปิด</button></p>
  <iframe id="fprev" title="ตัวอย่างแบบฟอร์ม" style="display:none;width:100%;height:760px;border:1px solid var(--line);background:#fff;margin-top:14px"></iframe>`;
