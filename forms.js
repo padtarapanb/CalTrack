@@ -490,8 +490,8 @@ Q('#fed').addEventListener('input',e=>{const x=e.target,d=x.dataset;if(!cur)retu
  if(cur.type==='A'&&d.k==='kind'){setTimeout(draw,0)}else if(cur.type==='A'&&/^(unit|unitE|c1|c2|fx)$/.test(d.k||''))setTimeout(()=>{const L=labA(cur.f);document.querySelectorAll('#fed th[data-hc]').forEach(th=>{const k=th.dataset.hc,t=L[{tv:'c1',mv:'c2'}[k]||k];if(t&&k!=='x')th.textContent=t;else if(k==='x')th.firstChild.textContent=t});document.querySelectorAll('#fed [data-k=c1],#fed [data-k=c2]').forEach(i=>i.placeholder=L[i.dataset.k])},0);
  if(d.k){if(x.type==='checkbox')cur.f[d.k]=x.checked;else{cur.f[d.k]=x.value;if(d.k==='conc')cur.f.concM=1}}
  else if(d.h)cur.h[d.h]=x.value;else if(d.s!==undefined)cur.f.sg[+d.s][d.sf]=x.value;else if(d.r!==undefined)secRows(cur,+(d.p||0))[+d.r][d.c]=x.type==='checkbox'?x.checked:x.value;else return;upd()});
-function fillFrom(i){const f=cur.f,b=String(i.brand||'').split('/').map(s=>s.trim());
- Object.assign(f,{name:i.name,brand:cur.type==='B'?i.brand:b[0]||'',model:b[1]||'',asset:i.id,serial:i.serial||'',room:i.loc||'',owner:i.own||'',calco:i.calco||(i.x&&i.x.calby)||'',calDate:i.last||''});
+function fillFrom(i){const f=cur.f,bm=window.bmOf?bmOf(i):{b:i.brand,m:''},b=[bm.b,bm.m];if(!String(f.certNo||'').trim()&&window.certOf)f.certNo=certOf(i);
+ Object.assign(f,{name:i.name,brand:cur.type==='B'?[bm.b,bm.m].filter(Boolean).join(' / '):b[0]||'',model:b[1]||'',asset:i.id,serial:i.serial||'',room:i.loc||'',owner:i.own||'',calco:i.calco||(i.x&&i.x.calby)||'',calDate:i.last||''});
  if(cur.type==='C'||cur.type==='X')f.nextDate=i.due||'';if(cur.type==='X')f.range=f.range||(i.x&&i.x.range)||'';f.inst=i.id}
 Q('#fed').addEventListener('change',e=>{if(e.target.id==='fpick'){const i=D.find(z=>z.id===e.target.value);if(!i)return;fillFrom(i);if(cur.type==='A'&&!cur.f.kind&&/^(pm|ver)$/.test(i.meth||''))cur.f.kind=i.meth;
  const pv=prevRecs(cur);if(pv.length&&!used(cur).length&&cur.type!=='X'){pullPrev(pv[0]);toast('ดึงโครงตาราง/เกณฑ์จากบันทึกปีงบ '+fyOf(pv[0])+' แล้ว — กรอกค่าปีนี้ได้เลย')}draw()}});
