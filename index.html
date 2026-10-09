@@ -36,6 +36,16 @@ h1{font-size:1.5rem;margin:0 0 4px}.lead{color:var(--mute);margin:0 0 22px}
 .todo:last-child{border:0}.todo small{display:block;color:var(--mute)}
 .pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:600;white-space:nowrap;height:fit-content}
 .p-ok{background:var(--okbg);color:var(--ok)}.p-soon{background:var(--soonbg);color:var(--soon)}.p-bad{background:var(--badbg);color:var(--bad)}
+.sbox{display:flex;gap:6px;flex:1 1 340px;min-width:260px;max-width:100%;align-items:stretch}.sbox input{flex:1 1 auto;min-width:0!important;width:auto}.sbox .sbtn{white-space:nowrap;min-height:40px}
+.eqfw{display:flex;gap:6px;margin:0 0 6px}.eqfw input{flex:1 1 auto;width:auto!important;min-width:0!important;min-height:34px;padding:6px 10px;font-size:.88rem}.eqfw button{min-height:34px}
+optgroup{font-weight:700;color:var(--brand)}optgroup option{font-weight:400;color:var(--ink)}
+.pvbar{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;justify-content:flex-start;flex-wrap:wrap;padding:8px 10px;margin:-4px 0 12px;background:color-mix(in srgb,var(--brand) 8%,var(--panel));border:1px solid var(--line);border-radius:10px;font-size:.86rem;color:var(--mute)}
+dialog.pvd{position:fixed;inset:12px 12px 12px auto;margin:0;width:min(860px,52vw);height:auto;max-height:none;max-width:none;z-index:900;box-shadow:0 10px 40px rgba(0,0,0,.25)}dialog.pvd[open]{display:flex;flex-direction:column}
+.pvd .pvh{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 8px}.pvd iframe{flex:1;width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;min-height:300px}
+@media(min-width:861px){body.pvon main{margin-right:min(872px,53vw)}}
+@media(max-width:860px){dialog.pvd{inset:8px;width:auto}}
+.cfold{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;margin:0 0 12px;border:1px dashed var(--line);border-radius:10px;font-size:.9rem}.cfold b{font-weight:600}
+#cld input{width:100%}
 .bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:8px}
 .bars div{flex:1;text-align:center;font-size:.75rem;color:var(--mute)}
 .bars i{display:block;background:var(--brand);border-radius:4px 4px 0 0;margin-bottom:4px}
@@ -445,7 +455,8 @@ body.gated .mtop{display:none}
   <h1>คลังใบรับรองสอบเทียบ</h1><p class="lead">จัดเก็บแยกตามปีงบประมาณ (1 ต.ค. – 30 ก.ย.) ระบบจัดเข้าปีงบประมาณให้อัตโนมัติจากวันที่สอบเทียบ</p>
   <div class="tools"><select id="cy" aria-label="ปีงบประมาณ"></select><input type="search" id="cq" placeholder="ค้นหาเลขที่ใบรับรอง / รหัสครุภัณฑ์" aria-label="ค้นหาใบรับรอง"><button class="go adm" id="cadd">+ อัปโหลดใบรับรอง</button></div>
   <div class="box det" id="cf"><h2>อัปโหลดใบรับรองสอบเทียบ</h2>
-    <div class="cdrop"><label for="cfile"><b>แนบไฟล์ใบรับรอง (PDF)</b> — ระบบอ่านเลขที่ใบรับรอง วันที่สอบเทียบ บริษัท และเครื่องมือจากไฟล์ แล้วกรอกให้</label><input type="file" id="cfile" accept=".pdf,image/*"><div id="cread" class="cread"></div></div>
+    <div class="cdrop"><label for="cfile"><b>แนบไฟล์ใบรับรอง (PDF)</b> — ระบบอ่านเลขที่ใบรับรอง วันที่สอบเทียบ บริษัท และเครื่องมือจากไฟล์ แล้วกรอกให้</label><input type="file" id="cfile" accept=".pdf,image/*"><div id="cread" class="cread"></div>
+      <div style="margin-top:10px"><label for="clink"><b>หรือ วางลิงก์ Google Drive ของไฟล์ใบรับรอง</b> <small style="color:var(--mute)">(ไฟล์ต้องแชร์ “ทุกคนที่มีลิงก์” หรือให้สิทธิ์บัญชีที่เปิดดู)</small></label><input id="clink" type="url" placeholder="https://drive.google.com/file/d/…/view"></div></div>
     <div class="fgrid">
       <div><label for="ci">เครื่องมือ *</label><select id="ci"></select></div>
       <div><label for="cn">เลขที่ใบรับรอง *</label><input id="cn"></div>
@@ -468,6 +479,7 @@ body.gated .mtop{display:none}
     <p style="margin:14px 0 0"><button class="go" id="csave">บันทึก</button> <button class="go alt" id="ccancel">ยกเลิก</button></p>
   </div>
   <p class="lead" id="cs" style="margin-bottom:10px"></p>
+  <div id="cfold" class="cfold"></div>
   <div class="tw"><table><thead><tr><th>ปีงบประมาณ</th><th>เลขที่ใบรับรอง</th><th>เครื่องมือ</th><th>วันที่สอบเทียบ</th><th>ผู้ให้บริการ</th><th>ผล</th><th>U / เกณฑ์</th><th>สถานะต่อไป</th><th>ไฟล์</th><th class="adm"></th></tr></thead><tbody id="ct"></tbody></table></div>
 </section>
 </main>
@@ -515,6 +527,25 @@ const bmTxt=i=>{const x=bmOf(i);return[x.b,x.m].filter(v=>v&&v!=='-').join(' / '
 // เลขที่ใบรายงานผลการสอบเทียบ: ที่กรอกไว้ หรือใบรับรองล่าสุดของรอบปัจจุบัน
 function certOf(i){if(!i)return'';if(i.certNo)return i.certNo;const c=(typeof C!=='undefined'?C:[]).filter(c=>c.id===i.id&&c.no&&!/^ไม่ระบุ/.test(c.no)).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')))[0];return c&&(!i.last||!c.date||c.date>=i.last)?c.no:''}
 window.bmOf=bmOf;window.certOf=certOf;
+// ---------- รายการเครื่องมือแบบแบ่งกลุ่ม (ตามกลุ่มงาน · แยกเครื่องมือ / เครื่องแก้ว / วัสดุ) + ช่องพิมพ์ค้นหา ----------
+const PTS={kru:'',gls:' [เครื่องแก้ว]',wat:' [วัสดุ]'},PTO={kru:0,gls:1,wat:2};
+function eqOpts(list,sel,first,q){q=String(q||'').trim().toLowerCase();const by={};
+ list.filter(i=>!q||(i.id+' '+i.name+' '+(i.serial||'')+' '+(i.loc||'')+' '+(i.brand||'')).toLowerCase().includes(q)||i.id===sel).forEach(i=>{const g=(i.scope==='shared'?'เครื่องมือรวม (ใช้ร่วมกัน)':i.group)||'ไม่ระบุกลุ่มงาน';(by[g]=by[g]||[]).push(i)});
+ const ks=Object.keys(by).sort((a,b)=>a.localeCompare(b,'th'));
+ return(first||'')+(ks.length?ks.map(g=>`<optgroup label="▸ ${esc(g)} (${by[g].length} เครื่อง)">${by[g].sort((a,b)=>(PTO[ptOf(a)]??3)-(PTO[ptOf(b)]??3)||String(a.name).localeCompare(String(b.name),'th')).map(i=>`<option value="${esc(i.id)}" ${i.id===sel?'selected':''}>${esc(i.name)} · ${esc(i.id)}${PTS[ptOf(i)]||''}</option>`).join('')}</optgroup>`).join(''):'<option value="" disabled>— ไม่พบเครื่องที่ค้นหา —</option>')}
+function eqFill(el,list,sel,first){if(!el)return;el._eq={list,first};el.innerHTML=eqOpts(list,sel,first);
+ if(!el.previousElementSibling||!el.previousElementSibling.classList.contains('eqf')){const w=document.createElement('div');w.className='eqfw';
+  w.innerHTML='<input type="search" class="eqf" placeholder="พิมพ์ค้นหาเครื่อง (ชื่อ / รหัส / S/N / ห้อง)" aria-label="ค้นหาในรายการเครื่องมือ"><button type="button" class="go alt sm eqfb">ค้นหา</button>';
+  el.before(w);const inp=w.querySelector('input'),go=()=>{const v=el.value;el.innerHTML=eqOpts(el._eq.list,v,el._eq.first,inp.value);
+   const opts=[...el.options].filter(o=>o.value&&!o.disabled);if(inp.value.trim()&&opts.length===1&&el.value!==opts[0].value){el.value=opts[0].value;el.dispatchEvent(new Event('change',{bubbles:true}))}};
+  inp.addEventListener('input',e=>{e.stopPropagation();go()});inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();go()}});w.querySelector('button').onclick=go}
+ else el.previousElementSibling.querySelector('input').value=''}
+window.eqFill=eqFill;window.eqOpts=eqOpts;
+// ทุกช่องค้นหามีปุ่ม “ค้นหา” (กด Enter ก็ได้)
+function addSearchBtns(root){(root||document).querySelectorAll('input[type=search]:not([data-sb]):not(.eqf)').forEach(inp=>{inp.dataset.sb=1;const w=document.createElement('span');w.className='sbox';inp.before(w);w.appendChild(inp);
+ const b=document.createElement('button');b.type='button';b.className='go sm sbtn';b.innerHTML='🔍 ค้นหา';b.setAttribute('aria-label','ค้นหา');w.appendChild(b);
+ const run=()=>{inp.dispatchEvent(new Event('input',{bubbles:true}));inp.dispatchEvent(new Event('change',{bubbles:true}))};b.onclick=run;inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();run()}})})}
+window.addSearchBtns=addSearchBtns;
 function mk(o){const days=o.due?Math.round((new Date(o.due)-TODAY)/864e5):NaN;return{...o,days,s:(/จำหน่าย/.test(o.note||'')||o.ops==='จำหน่าย')?'out':!o.due?'nodate':days<0?'bad':days<=30?'soon':'ok',m:o.due&&o.last?Math.round((new Date(o.due)-new Date(o.last))/2629800000):12}}
 const D=[
 ['AB-014','เครื่องชั่ง 4 ตำแหน่ง','Mettler Toledo / XPR205','B948213021','207','ยา','2025-09-27','2026-09-27','ผู้รับผิดชอบ ก','เกินกำหนด รอส่งสอบเทียบ'],
@@ -774,12 +805,19 @@ const fy=d=>{const t=new Date(d);return t.getUTCFullYear()+(t.getUTCMonth()>=9?1
 const C=D.filter(i=>i.last).map((i,n)=>({no:'CERT-'+fy(i.last)+'-'+String(n+101).padStart(4,'0'),id:i.id,date:i.last,by:'NIMT',res:'ผ่าน',file:n%3?'seed':null,url:''}));
 C.push({no:'CERT-2567-0388',id:'AB-014',date:'2024-09-25',by:'NIMT',res:'ผ่าน',file:'seed',url:''});
 if(SAVED&&Array.isArray(SAVED.C)){C.length=0;SAVED.C.forEach(c=>C.push({...c,url:''}))}
-const fileBtn=c=>c.link||c.url?`<span style="white-space:nowrap"><button class="go sm" data-cv="${C.indexOf(c)}">ดูใบรับรอง</button> ${c.link?`<a class="go alt sm" href="${esc(c.dl||c.link)}" target="_blank" rel="noopener">ดาวน์โหลด</a>`:''}</span>`:c.file&&c.file!=='seed'?'<span class="pill p-soon" title="ไฟล์ถูกแนบไว้ในเครื่องเดิม ยังไม่ได้อยู่ใน Drive">มีชื่อไฟล์ แต่ยังไม่อยู่ใน Drive</span>':c.file?'<span class="pill p-ok">แนบแล้ว</span>':'<span class="pill p-soon">ยังไม่แนบไฟล์</span>';
-const dfid=c=>c.fileId||((String(c.link||'').match(/\/d\/([\w-]+)/)||[])[1]||'');
-function cview(k){const c=C[k];if(!c)return;const i=byId(c.id)||{},id=dfid(c),src=id?'https://drive.google.com/file/d/'+id+'/preview':c.url||'';
+// มีไฟล์จริง = มีลิงก์ Drive หรือไฟล์ที่เปิดได้ · ชื่อไฟล์อย่างเดียว (ข้อมูลเดิม/ตัวอย่าง) ถือว่ายังไม่แนบ
+const hasFile=c=>!!(c&&(c.link||c.url));
+const dfid=c=>c.fileId||((String(c.link||'').match(/\/d\/([\w-]{10,})/)||String(c.link||'').match(/[?&]id=([\w-]{10,})/)||[])[1]||'');
+const dfold=u=>(String(u||'').match(/folders\/([\w-]{10,})/)||[])[1]||'';
+const fileBtn=c=>{const k=C.indexOf(c);return hasFile(c)?`<span style="white-space:nowrap"><button class="go sm" data-cv="${k}">ดูใบรับรอง</button> ${c.link?`<a class="go alt sm" href="${esc(c.dl||c.link)}" target="_blank" rel="noopener">ดาวน์โหลด</a>`:''}</span>`
+ :`<span style="white-space:nowrap"><span class="pill p-soon"${c.file&&c.file!=='seed'?` title="มีชื่อไฟล์เดิม “${esc(c.file)}” แต่ยังไม่มีไฟล์จริงในระบบ"`:''}>ยังไม่มีไฟล์</span>${ADMIN?` <button class="go alt sm adm" data-cl="${k}">แนบลิงก์ Drive</button>`:''}</span>`};
+// แปลงลิงก์ Google Drive → ลิงก์ดาวน์โหลด
+const dlOf=u=>{const id=dfid({link:u});return id&&/drive\.google\.com/.test(u)?'https://drive.google.com/uc?export=download&id='+id:u};
+function linkSet(c,u){u=String(u||'').trim();if(!u){delete c.link;delete c.dl;delete c.fileId;return}c.link=u;c.dl=dlOf(u);const id=dfid({link:u});if(id)c.fileId=id;else delete c.fileId;if(!c.file||c.file==='seed')c.file='ลิงก์ Google Drive'}
+function cview(k){const c=C[k];if(!c)return;const i=byId(c.id)||{},id=dfid(c),fo=dfold(c.link),src=id?'https://drive.google.com/file/d/'+id+'/preview':fo?'https://drive.google.com/embeddedfolderview?id='+fo+'#list':c.url||c.link||'';
  $('#cvt').textContent=c.no+' · '+c.id+(i.name?' · '+i.name:'');
  $('#cvi').innerHTML=`<dl><div><dt>วันที่สอบเทียบ</dt><dd>${fd(c.date)}</dd></div><div><dt>ปีงบประมาณ</dt><dd>${fy(c.date)}</dd></div><div><dt>ผู้ให้บริการ</dt><dd>${esc(c.by||'–')}</dd></div><div><dt>ผล</dt><dd>${rp(c.res||'ไม่ระบุ')}</dd></div>${c.u?`<div><dt>U / เกณฑ์</dt><dd>${esc(c.u)} / ±${esc(c.crit||'–')}</dd></div>`:''}${c.disp?`<div><dt>สถานะต่อไป</dt><dd>${esc(c.disp)}</dd></div>`:''}<div><dt>ไฟล์</dt><dd>${esc(c.file&&c.file!=='seed'?c.file:'–')}</dd></div></dl>`;
- $('#cvf').innerHTML=src?`<iframe src="${esc(src)}" title="ตัวอย่างใบรับรอง" allow="autoplay"></iframe>`:'<p class="lead" style="padding:30px;text-align:center">ยังไม่มีไฟล์ใบรับรองให้ดู'+(ADMIN?' — กด “แก้ไข / แนบไฟล์” เพื่ออัปโหลด PDF':'')+'</p>';
+ $('#cvf').innerHTML=src?`<iframe src="${esc(src)}" title="ตัวอย่างใบรับรอง" allow="autoplay"></iframe>`:'<p class="lead" style="padding:30px;text-align:center">ยังไม่มีไฟล์ใบรับรองให้ดู'+(ADMIN?' — กด “แก้ไข / แนบไฟล์” แล้ววางลิงก์ Google Drive หรืออัปโหลด PDF':'')+'</p>'+(src&&id?'<p class="lead" style="font-size:.8rem;margin:6px 0 0">ถ้าเห็นหน้า “ต้องขอสิทธิ์” ให้เจ้าของไฟล์ตั้งแชร์เป็น “ทุกคนที่มีลิงก์ดูได้”</p>':'');
  $('#cvo').hidden=!(c.link||c.url);$('#cvo').href=c.link||c.url||'#';$('#cvdl').hidden=!c.link;$('#cvdl').href=c.dl||c.link||'#';$('#cve').hidden=!ADMIN;$('#cve').dataset.ce=k;$('#cvd').showModal()}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cv]');if(!b||e.target.closest('a,[data-ce]'))return;e.preventDefault();cview(+b.dataset.cv)});
 const rp=r=>`<span class="pill ${r==='ผ่าน'?'p-ok':r==='ไม่ผ่าน'?'p-bad':'p-soon'}">${r}</span>`;
@@ -792,7 +830,8 @@ function fyOpts(sel){const ys=[...new Set([...C.map(c=>fy(c.date)),fy(TODAY)])].
  $('#cy').innerHTML=ys.map(y=>`<option value="${y}">ปีงบประมาณ ${y}</option>`).join('');$('#cy').value=sel||(C.length?Math.max(...C.map(c=>fy(c.date))):fy(TODAY))}
 function rc(){const y=+$('#cy').value,q=$('#cq').value.trim().toLowerCase();
  const rows=C.filter(c=>fy(c.date)===y&&(!q||(c.no+c.id).toLowerCase().includes(q))).sort((a,b)=>b.date.localeCompare(a.date));
- $('#cs').textContent=`ปีงบประมาณ ${y} (1 ต.ค. ${y-544} – 30 ก.ย. ${y}): ${rows.length} ฉบับ · ยังไม่แนบไฟล์ ${rows.filter(c=>!c.file&&!c.url).length} ฉบับ`;
+ $('#cs').textContent=`ปีงบประมาณ ${y} (1 ต.ค. ${y-1} – 30 ก.ย. ${y}): ${rows.length} ฉบับ · ยังไม่มีไฟล์ ${rows.filter(c=>!hasFile(c)).length} ฉบับ`;
+ const fu=(window.CFOLD||{})[y]||'';$('#cfold').innerHTML=`<span>📁 โฟลเดอร์ Google Drive ปีงบ ${y}:</span>${fu?`<a class="go alt sm" href="${esc(fu)}" target="_blank" rel="noopener">เปิดโฟลเดอร์</a>`:'<span style="color:var(--mute)">ยังไม่ได้ใส่ลิงก์</span>'}${ADMIN?` <button class="go alt sm adm" data-cfy="${y}">${fu?'แก้ลิงก์โฟลเดอร์':'ใส่ลิงก์โฟลเดอร์'}</button>`:''}<span style="color:var(--mute);font-size:.82rem">เก็บใบรับรองของปีงบนี้ไว้ในโฟลเดอร์เดียว แล้วแนบลิงก์ไฟล์ให้แต่ละใบ</span>`;
  $('#ct').innerHTML=rows.map(c=>`<tr data-cv="${C.indexOf(c)}" style="cursor:pointer" title="คลิกเพื่อดูรายละเอียด"><td>${fy(c.date)}</td><td><b>${c.no}</b>${c.kind&&c.kind!=='cal'?` <span class="mtag mt-${c.kind}">${ML[c.kind]}</span>`:''}</td><td>${c.id} · ${(D.find(i=>i.id===c.id)||{}).name||''}</td><td>${fd(c.date)}</td><td>${c.by||'–'}</td><td>${rp(c.res)}</td><td>${c.u?'U '+esc(c.u)+' / ±'+esc(c.crit||'–'):'–'}</td><td>${c.disp?esc(c.disp)+(c.corr?'<small style="display:block;color:var(--mute)">ค่าแก้: '+esc(c.corr)+'</small>':''):'–'}</td><td>${fileBtn(c)}</td><td class="adm"><button class="go alt" data-ce="${C.indexOf(c)}">แก้ไข / แนบไฟล์</button></td></tr>`).join('')||'<tr><td colspan="10">ยังไม่มีใบรับรองในปีงบประมาณนี้</td></tr>'}
 $('#cy').onchange=rc;$('#cq').oninput=rc;
 function defcrit(){const m=parseFloat((((byId($('#ci').value).x)||{}).mpe||'').replace(/[^\d.]/g,''));if(!isNaN(m))$('#ccr').value=m}
@@ -800,7 +839,7 @@ function cchk(auto){const e=parseFloat($('#cem').value),u=parseFloat($('#cu').va
  if(!isNaN(e)&&!isNaN(t)){const uu=isNaN(u)?0:u,sum=Math.abs(e)+uu,r=sum<=t?'ผ่าน':Math.abs(e)<=t?'ผ่านแบบมีเงื่อนไข':'ไม่ผ่าน';h.textContent=`|E| ${n(Math.abs(e))} + U ${n(uu)} = ${n(sum)} ${sum<=t?'≤':'>'} เกณฑ์ ${n(t)} → ระบบแนะนำ: ${r}`;if(auto)$('#cr').value=r}
  const c=CAT[byId($('#ci').value).cat];if(c)h.textContent+=(h.textContent?' · ':'')+'หมวด '+c.n;
  $('#dsp').style.display=/มีเงื่อนไข|ไม่ผ่าน/.test($('#cr').value)?'grid':'none'}
-function cform(p){p=p||{};CEDIT=-1;$('#cfile').value='';$('#cread').innerHTML='';$('#ck').value=(byId(p.id)||{}).meth||'cal';$('#cf h2').textContent='อัปโหลดใบรับรองสอบเทียบ';$('#ci').innerHTML=D.map(i=>`<option value="${esc(i.id)}">${esc(i.id)} · ${esc(i.name)}</option>`).join('');if(p.id)$('#ci').value=p.id;
+function cform(p){p=p||{};CEDIT=-1;$('#cfile').value='';$('#cread').innerHTML='';$('#ck').value=(byId(p.id)||{}).meth||'cal';$('#cf h2').textContent='อัปโหลดใบรับรองสอบเทียบ';eqFill($('#ci'),D,p.id||'');
  ['cem','cu','ccr','ccv','cdr','cdp'].forEach(k=>$('#'+k).value=p[k]??'');$('#cr').value=p.cr||'ผ่าน';if(!$('#ccr').value)defcrit();cchk();$('#cerr').textContent='';$('#cf').classList.add('on');$('#cn').focus()}
 $('#cadd').onclick=()=>cform();
 ['cem','cu','ccr'].forEach(k=>$('#'+k).oninput=()=>cchk(1));$('#cr').onchange=()=>cchk();$('#ci').onchange=()=>{if(!$('#ccr').value)defcrit();cchk(1)};
@@ -866,7 +905,7 @@ $('#cread').addEventListener('click',e=>{const n=e.target.closest('[data-cnew],[
 const b64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f)});
 $('#cvc').onclick=()=>$('#cvd').close();$('#cve').onclick=()=>{$('#cvd').close();const x=document.createElement('span');x.dataset.ce=$('#cve').dataset.ce;$('#ct').onclick({target:x})};
 $('#ct').onclick=e=>{const b=e.target.closest('[data-ce]');if(!b)return;const c=C[+b.dataset.ce];CEDIT=+b.dataset.ce;
- $('#ci').innerHTML=D.map(i=>`<option value="${i.id}">${i.id} · ${i.name}</option>`).join('');$('#ci').value=c.id;$('#cn').value=c.no;$('#cfile').value='';$('#cread').innerHTML='';$('#cd').value=c.date;$('#cfy').value=fy(c.date);$('#cb').value=c.by||'';$('#cr').value=c.res;$('#ck').value=c.kind||'cal';$('#cem').value=c.em||'';$('#cu').value=c.u||'';$('#ccr').value=c.crit||'';$('#ccv').value=c.corr||'';$('#cdr').value=c.dref||'';$('#cdp').value=c.disp||'';cchk();
+ eqFill($('#ci'),D,c.id);$('#cn').value=c.no;$('#cfile').value='';$('#clink').value=c.link||'';$('#cread').innerHTML='';$('#cd').value=c.date;$('#cfy').value=fy(c.date);$('#cb').value=c.by||'';$('#cr').value=c.res;$('#ck').value=c.kind||'cal';$('#cem').value=c.em||'';$('#cu').value=c.u||'';$('#ccr').value=c.crit||'';$('#ccv').value=c.corr||'';$('#cdr').value=c.dref||'';$('#cdp').value=c.disp||'';cchk();
  $('#cf h2').textContent='แก้ไขใบรับรอง / แนบไฟล์';$('#cerr').textContent='';$('#cf').classList.add('on');$('#cf').scrollIntoView({behavior:'smooth',block:'nearest'})};
 $('#csave').onclick=async()=>{const n=$('#cn').value.trim(),d=$('#cd').value,f=$('#cfile').files[0];
  if(!n||!d){$('#cerr').textContent='กรอกเลขที่ใบรับรองและวันที่สอบเทียบให้ครบ';return}
@@ -882,11 +921,23 @@ $('#csave').onclick=async()=>{const n=$('#cn').value.trim(),d=$('#cd').value,f=$
    try{up=await upFile(f,{fy:fy(d),group:it.scope==='shared'?'เครื่องมือรวม':it.group,no:n,id});$('#cerr').textContent=''}
    catch(err){$('#cerr').textContent='อัปโหลดไม่สำเร็จ: '+err.message;$('#csave').disabled=false;return}
    $('#csave').disabled=false}else up={file:f.name,url:URL.createObjectURL(f)}}
- if(old){const bb={},aa={};['no','id','date','by','res','u','crit','em','corr','disp','dref'].forEach(k=>{if((old[k]||'')!==(rec[k]||'')){bb[k]=old[k];aa[k]=rec[k]}});if(up.file)aa.ไฟล์=up.file;Object.assign(old,rec,up);log('แก้ไขใบรับรอง',n,bb,aa);applyRes(id,d,n,0)}
+ const LK=$('#clink').value.trim();if(LK&&!/^https?:\/\//i.test(LK)){$('#cerr').textContent='ลิงก์ต้องขึ้นต้นด้วย https://';return}
+ if(!f&&LK!==((old||{}).link||'')){up={...up};const tmp={};linkSet(tmp,LK);Object.assign(up,LK?tmp:{link:'',dl:'',fileId:''})}
+ if(old){const bb={},aa={};['no','id','date','by','res','u','crit','em','corr','disp','dref'].forEach(k=>{if((old[k]||'')!==(rec[k]||'')){bb[k]=old[k];aa[k]=rec[k]}});if(up.file)aa.ไฟล์=up.file;if('link' in up&&up.link!==(old.link||''))aa.ลิงก์=up.link||'(ลบลิงก์)';Object.assign(old,rec,up);if(old.link==='')['link','dl','fileId'].forEach(k=>delete old[k]);log('แก้ไขใบรับรอง',n,bb,aa);applyRes(id,d,n,0)}
  else{C.push({...rec,file:null,url:'',...up});log('เพิ่มใบรับรอง',n,null,{เครื่อง:id,ไฟล์:up.file||'–'});
   applyRes(id,d,n,1)}
- ['cn','cd','cb','cu','cfy','cfile','cem','ccr','ccv','cdr','cdp'].forEach(k=>$('#'+k).value='');CEDIT=-1;$('#cf').classList.remove('on');fyOpts(fy(d));rc();toast('บันทึกแล้ว — ปีงบประมาณ '+fy(d))};
+ ['cn','cd','cb','cu','cfy','cfile','clink','cem','ccr','ccv','cdr','cdp'].forEach(k=>$('#'+k).value='');CEDIT=-1;$('#cf').classList.remove('on');fyOpts(fy(d));rc();toast('บันทึกแล้ว — ปีงบประมาณ '+fy(d))};
 fyOpts();rc();
+// ---------- แนบลิงก์ Google Drive แบบเร็ว (รายใบ / โฟลเดอร์รายปีงบ) ----------
+window.CFOLD=SAVED&&SAVED.CF||{};
+function linkDlg(title,sub,val,ok){let d=$('#cld');if(!d){d=document.createElement('dialog');d.id='cld';d.className='udlg';d.style.maxWidth='560px';document.body.appendChild(d)}
+ d.innerHTML=`<h2 style="margin:0 0 4px;font-size:1.05rem">${esc(title)}</h2><p class="lead" style="margin:0 0 12px;font-size:.88rem">${sub}</p><label for="cldu">ลิงก์ Google Drive</label><input id="cldu" type="url" value="${esc(val||'')}" placeholder="https://drive.google.com/…"><p class="lead" style="font-size:.8rem;margin:8px 0 0">วิธีเอาลิงก์: ใน Google Drive คลิกขวาที่ไฟล์ → แชร์ → คัดลอกลิงก์ (ตั้ง “ทุกคนที่มีลิงก์” = ผู้มีสิทธิ์อ่าน เพื่อให้เปิดดูในระบบได้)</p><div class="err" id="clde"></div><p style="margin:12px 0 0;display:flex;gap:8px;flex-wrap:wrap"><button class="go" id="cldok">บันทึก</button>${val?'<button class="go alt" id="cldx">ลบลิงก์</button>':''}<button class="go alt" id="cldc">ยกเลิก</button></p>`;
+ const done=v=>{const r=ok(v);if(r){$('#clde').textContent=r;return}d.close()};
+ $('#cldok').onclick=()=>{const v=$('#cldu').value.trim();if(!/^https?:\/\//i.test(v)){$('#clde').textContent='วางลิงก์ที่ขึ้นต้นด้วย https://';return}done(v)};
+ if($('#cldx'))$('#cldx').onclick=()=>done('');$('#cldc').onclick=()=>d.close();d.showModal();setTimeout(()=>$('#cldu').focus(),50)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cl],[data-cfy]');if(!b||!ADMIN)return;e.preventDefault();e.stopPropagation();
+ if(b.dataset.cl!==undefined){const c=C[+b.dataset.cl];if(!c)return;linkDlg('แนบลิงก์ไฟล์ใบรับรอง',`${esc(c.no)} · ${esc(c.id)} · ปีงบ ${fy(c.date)}`,c.link,v=>{if(v&&!dfid({link:v})&&/drive\.google\.com/.test(v)&&!dfold(v))return'อ่านรหัสไฟล์จากลิงก์ไม่ได้ — ใช้ลิงก์ที่คัดลอกจากปุ่ม “แชร์”';const o=c.link||'';linkSet(c,v);log(v?'แนบลิงก์ใบรับรอง':'ลบลิงก์ใบรับรอง',c.no,{ลิงก์:o},{ลิงก์:v});rc();if($('#det')&&$('#det').classList.contains('on')&&typeof open==='function')open(c.id);toast(v?'แนบลิงก์แล้ว — กด “ดูใบรับรอง” เพื่อเปิดดู':'ลบลิงก์แล้ว')})}
+ else{const y=+b.dataset.cfy;linkDlg('ลิงก์โฟลเดอร์ใบรับรอง ปีงบ '+y,'โฟลเดอร์ใน Google Drive ที่เก็บใบรับรองของปีงบนี้',CFOLD[y],v=>{const o=CFOLD[y]||'';if(v)CFOLD[y]=v;else delete CFOLD[y];log('ตั้งลิงก์โฟลเดอร์ใบรับรอง','ปีงบ '+y,{ลิงก์:o},{ลิงก์:v});rc();persist();toast('บันทึกลิงก์โฟลเดอร์แล้ว')})}},true);
 
 // plans
 const PR=['ยังอยู่ในประกัน / รอบของบริษัท','เครื่องเสีย รอซ่อม','จำหน่ายแล้ว','ไม่ได้ใช้งานรอบนี้','เลื่อนไปรอบถัดไป','อื่น ๆ'];
@@ -984,7 +1035,7 @@ function pdocSet(p,el){const d=pdoc(p),k=el.dataset.pd,m=k.match(/^s(\d)([npd])$
 rpl();
 
 // persistence, dashboard, import, backup
-function store(){try{localStorage.setItem('caltrack-v1',JSON.stringify({sample:SAMPLE,rev:REV,D:D.map(({days,s,m,...r})=>r),G:GROUPS,C:C.map(({url,...r})=>r),PL,nid,CO,PS,A:AUD,RC:window.RC||[],FT:window.FT||[],FF:window.FF||{},FREG:window.FREG,FSET:window.FSET,ACT:window.ACT,PLD:typeof PLD!=='undefined'?PLD:undefined}))}catch(e){}}
+function store(){try{localStorage.setItem('caltrack-v1',JSON.stringify({sample:SAMPLE,rev:REV,D:D.map(({days,s,m,...r})=>r),G:GROUPS,C:C.map(({url,...r})=>r),PL,nid,CO,PS,A:AUD,RC:window.RC||[],FT:window.FT||[],FF:window.FF||{},FREG:window.FREG,FSET:window.FSET,ACT:window.ACT,PLD:typeof PLD!=='undefined'?PLD:undefined,CF:window.CFOLD||{}}))}catch(e){}}
 function persist(){store();if(SYNC&&ADMIN){clearTimeout(sy);sy=setTimeout(push,900)}}
 // ---------- ภาพรวม: เลือกปีงบประมาณ (1 ต.ค. – 30 ก.ย.) ----------
 let DFY=null;try{DFY=+localStorage.getItem('caltrack-dfy')||null}catch(e){}
@@ -1330,7 +1381,7 @@ if(SYNC)dget().then(r=>{
 // calibration
 let RP=[[10,10.0002,.0004,.001],[100,100.0004,.0004,.001],[200,200.0013,.0004,.001]],RES=null;
 const f6=v=>isNaN(v)?'–':String(+v.toFixed(6)),sg=v=>(v>0?'+':'')+f6(v);
-function rri(){const v=$('#ri').value;$('#ri').innerHTML=D.filter(i=>i.s!=='out').map(i=>`<option value="${esc(i.id)}">${esc(i.id)} · ${esc(i.name)}</option>`).join('');if(v)$('#ri').value=v}
+function rri(){const v=$('#ri').value;eqFill($('#ri'),D.filter(i=>i.s!=='out'),v)}
 function rrows(){const inp=(k,f,v,l)=>`<td><input data-k="${k}" data-f="${f}" value="${v}" inputmode="decimal" aria-label="${l}"></td>`;
  $('#cal').innerHTML=RP.map((p,k)=>`<tr>${inp(k,0,p[0],'ค่าอ้างอิง')}${inp(k,1,p[1],'ค่าที่อ่านได้')}<td id="e${k}"></td><td id="c${k}"></td>${inp(k,2,p[2],'U')}${inp(k,3,p[3],'เกณฑ์')}<td id="r${k}"></td><td><button class="go alt sm" data-x="${k}" aria-label="ลบจุดนี้">✕</button></td></tr>`).join('');calc()}
 function calc(){let bad=0,cond=0,mE=0,mU=0,mT=Infinity,cr=[],n=0;
@@ -1357,5 +1408,6 @@ rri();rrows();
 const go=()=>document.querySelectorAll('table').forEach(t=>{if(t.closest('#ftb'))return;if(t.closest('#fed')&&!t.closest('#fed').querySelector('#frows'))return;if(!t.closest('#fed'))t.classList.add('cardm');lab(t)});
 new MutationObserver(go).observe(document.body,{childList:true,subtree:true});go()})();
 </script>
+<script>try{addSearchBtns()}catch(e){}</script>
 </body>
 </html>
