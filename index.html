@@ -152,7 +152,7 @@ tr.picked td{background:color-mix(in srgb,#06c755 9%,transparent)}
 .mtag{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99px;font-size:.72rem;font-weight:700;vertical-align:middle;border:1px solid currentColor}.mt-ver{color:#2563c9}.mt-pm{color:#7a4fc4}
 .udlg.frd{max-width:880px;width:96%}
 .cdrop{border:2px dashed var(--line);border-radius:12px;padding:14px;margin:0 0 14px;background:var(--bg)}.cdrop label{display:block;margin-bottom:8px;font-size:.9rem}.cdrop input{width:100%}.cread:empty{display:none}.cread{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:.88rem;background:var(--panel)}.cread.ok{background:var(--okbg)}.cread.warn{background:var(--soonbg)}.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--brand);border-radius:50%;animation:sp .8s linear infinite;vertical-align:-1px}@keyframes sp{to{transform:rotate(360deg)}}
-.ptag{display:block;width:fit-content;margin-top:3px;padding:0 7px;border-radius:99px;font-size:.7rem;font-weight:600;background:var(--line);color:var(--mute)}.pt-kru{background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
+.ptag{display:block;width:fit-content;margin-top:3px;padding:0 7px;border-radius:99px;font-size:.7rem;font-weight:600;background:var(--line);color:var(--mute)}.pt-gls{background:color-mix(in srgb,#7c5cbf 16%,transparent);color:#7c5cbf}.pt-kru{background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
 small.be{display:block;color:var(--brand);font-size:.8rem;margin-top:3px;font-weight:600}
 .udlg{border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);padding:22px;max-width:560px;width:92%}
 .abar{display:none}body.apage.admin .abar{display:block;background:var(--brand);color:#fff;font-size:.85rem;padding:6px 14px;border-radius:8px;margin:-10px 0 16px}
@@ -235,7 +235,7 @@ body.gated .mtop{display:none}
   <div class="tools">
     <input type="search" id="q" placeholder="ค้นหาชื่อ / รหัสครุภัณฑ์ / Serial / สถานที่" aria-label="ค้นหา">
     <select id="gp" aria-label="กรองกลุ่มงาน"></select>
-    <select id="ptf" aria-label="กรองประเภทพัสดุ"><option value="">ครุภัณฑ์ + วัสดุ</option><option value="kru">ครุภัณฑ์วิทยาศาสตร์และการแพทย์</option><option value="wat">วัสดุวิทยาศาสตร์และการแพทย์</option></select>
+    <select id="ptf" aria-label="กรองประเภทพัสดุ"><option value="">ทุกประเภท (เครื่องมือ / เครื่องแก้ว / วัสดุ)</option><option value="kru">เครื่องมือวิทยาศาสตร์ (ครุภัณฑ์)</option><option value="gls">เครื่องแก้ว</option><option value="wat">วัสดุวิทยาศาสตร์</option></select>
     <select id="sc" aria-label="กรองประเภท"><option value="">ทุกประเภท</option><option value="lab">เฉพาะ Lab</option><option value="shared">เครื่องมือรวม</option></select>
     <select id="kt" aria-label="กรองหมวด"><option value="">ทุกหมวด</option><option value="A">หมวด A</option><option value="B">หมวด B</option><option value="C">หมวด C</option><option value="-">ยังไม่จัดหมวด</option></select>
     <select id="st" aria-label="กรองสถานะ"><option value="">ทุกสถานะ</option><option value="bad">เกินกำหนด</option><option value="soon">ใกล้ครบกำหนด</option><option value="ok">ปกติ</option><option value="out">จำหน่ายแล้ว</option><option value="nodate">ยังไม่ระบุวันที่</option></select>
@@ -256,7 +256,7 @@ body.gated .mtop{display:none}
       <div><label for="fg">กลุ่มงาน</label><select id="fg"></select></div>
       <div><label for="fw">ผู้รับผิดชอบหลัก</label><select id="fw"></select><input id="fwo" hidden placeholder="พิมพ์ชื่อ-สกุล" style="margin-top:6px"></div>
       <div><label for="fw2">ผู้รับผิดชอบสำรอง</label><select id="fw2"></select><input id="fw2o" hidden placeholder="พิมพ์ชื่อ-สกุล" style="margin-top:6px"></div>
-      <div><label for="fpt">ประเภทพัสดุ</label><select id="fpt"><option value="">— ให้ระบบดูจากรหัส —</option><option value="kru">ครุภัณฑ์วิทยาศาสตร์และการแพทย์</option><option value="wat">วัสดุวิทยาศาสตร์และการแพทย์</option></select></div>
+      <div><label for="fpt">ประเภทพัสดุ</label><select id="fpt"><option value="">— ให้ระบบดูจากรหัส / ชื่อ —</option><option value="kru">เครื่องมือวิทยาศาสตร์ (ครุภัณฑ์ มีเลขครุภัณฑ์)</option><option value="gls">เครื่องแก้ว</option><option value="wat">วัสดุวิทยาศาสตร์</option></select></div>
       <div><label for="fsc">ประเภทเครื่องมือ</label><select id="fsc"><option value="">— เลือก —</option><option value="lab">เฉพาะ Lab (ใช้ในแล็บเดียว)</option><option value="shared">เครื่องมือรวม (ใช้ร่วมหลายแล็บ)</option></select></div>
       <div><label for="fc">หมวดเครื่องมือ * (ผลต่อการคีย์ค่าแก้)</label><select id="fc"><option value="">— เลือก —</option><option value="A">A · วิกฤต (Critical)</option><option value="B">B · สำคัญ (Major)</option><option value="C">C · ทั่วไป (Indicator)</option></select></div>
       <div style="grid-column:1/-1" class="cat" id="chint"></div>
@@ -530,7 +530,10 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
 let SEL=new Set();
 let AUD=SAVED&&Array.isArray(SAVED.A)?SAVED.A:[],REV=SAVED&&SAVED.rev||0,sy=null,EID=null,CEDIT=-1;
 if(SAVED&&Array.isArray(SAVED.D)){D.length=0;SAVED.D.forEach(o=>D.push(mk(o)));GROUPS.length=0;(SAVED.G||[]).forEach(g=>GROUPS.push(g))}
-const PTL={kru:'ครุภัณฑ์วิทยาศาสตร์และการแพทย์',wat:'วัสดุวิทยาศาสตร์และการแพทย์'},ptOf=i=>i.ptype||(/^ไม่มีรหัส|^[A-Z]{1,4}-\d{1,3}$/.test(i.id||'')?'wat':/^\d{4}-\d{3}-\d{2}/.test(i.id||'')?'kru':''),pttag=i=>{const t=ptOf(i);return t?`<span class="ptag pt-${t}">${t==='kru'?'ครุภัณฑ์':'วัสดุ'}</span>`:''};
+const PTL={kru:'เครื่องมือวิทยาศาสตร์ (ครุภัณฑ์ มีเลขครุภัณฑ์)',gls:'เครื่องแก้ว',wat:'วัสดุวิทยาศาสตร์'},
+ GLS=/เครื่องแก้ว|ปิเปตแก้ว|ปิเปต(ต์)?\s*(วัดปริมาตร|ปริมาตร)|บิวเรต|บิวเร็ต|ขวดวัดปริมาตร|กระบอกตวง|volumetric|burette|graduated cylinder|glass\s*pipet/i,
+ ptOf=i=>i.ptype||(/^\d{4}-\d{3}-\d{2}/.test(i.id||'')?'kru':GLS.test(i.name||'')&&!/ไมโคร|micro|auto/i.test(i.name||'')?'gls':/^ไม่มีรหัส|^[A-Z]{1,4}-\d{1,3}$/.test(i.id||'')?'wat':''),
+ pttag=i=>{const t=ptOf(i);return t?`<span class="ptag pt-${t}">${{kru:'ครุภัณฑ์',gls:'เครื่องแก้ว',wat:'วัสดุวิทย์'}[t]}</span>`:''};
 const ML={cal:'สอบเทียบ',ver:'ทวนสอบ',pm:'PM'},mtag=i=>i.meth&&i.meth!=='cal'?`<span class="mtag mt-${i.meth}">${ML[i.meth]}</span>`:'';
 const L={bad:'เกินกำหนด',soon:'ใกล้ครบกำหนด',ok:'ปกติ',out:'จำหน่ายแล้ว',nodate:'ยังไม่ระบุวันที่'};
 const fd=d=>d?new Date(d).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}):'–';
@@ -711,7 +714,7 @@ $('#fg').innerHTML=GROUPS.map(g=>`<option>${g}</option>`).join('');
 let PG=1,PSZ=15;try{PSZ=+localStorage.getItem('caltrack-psz')||15}catch(e){}
 const dleft=i=>{if(!i.due)return'';const n=Math.round((new Date(i.due)-TODAY)/864e5);return i.s==='out'?'':n<0?`เกิน ${-n} วัน`:n===0?'วันนี้':`อีก ${n} วัน`};
 function fcounts(){const c=k=>D.filter(i=>(i.cat||'-')===k).length,p=k=>D.filter(i=>ptOf(i)===k).length,set=(sel,v,t)=>{const o=document.querySelector(`#${sel} option[value="${v}"]`);if(o)o.textContent=t};
- ['A','B','C'].forEach(k=>set('kt',k,`หมวด ${k} (${c(k)})`));set('kt','-',`ยังไม่จัดหมวด (${c('-')})`);set('ptf','kru',`ครุภัณฑ์วิทยาศาสตร์และการแพทย์ (${p('kru')})`);set('ptf','wat',`วัสดุวิทยาศาสตร์และการแพทย์ (${p('wat')})`)}
+ ['A','B','C'].forEach(k=>set('kt',k,`หมวด ${k} (${c(k)})`));set('kt','-',`ยังไม่จัดหมวด (${c('-')})`);set('ptf','kru',`เครื่องมือวิทยาศาสตร์ (ครุภัณฑ์) (${p('kru')})`);set('ptf','gls',`เครื่องแก้ว (${p('gls')})`);set('ptf','wat',`วัสดุวิทยาศาสตร์ (${p('wat')})`)}
 function render(keep){fcounts();const q=$('#q').value.trim().toLowerCase(),s=$('#st').value,pt=$('#ptf').value,g=$('#gp').value,sc=$('#sc').value,kt=$('#kt').value,so=$('#so').value;
  let rows=D.map((i,n)=>[i,n+1]).filter(([i])=>(!s||i.s===s)&&(!pt||ptOf(i)===pt)&&(!g||i.group===g)&&(!sc||i.scope===sc)&&(!kt||(i.cat||'-')===kt)&&(!q||(i.id+i.name+i.serial+i.loc+i.brand+(i.own||'')).toLowerCase().includes(q)));
  if(so==='due')rows.sort((a,b)=>(a[0].due||'9999').localeCompare(b[0].due||'9999'));else if(so==='name')rows.sort((a,b)=>String(a[0].name).localeCompare(String(b[0].name),'th'));
