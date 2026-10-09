@@ -7,7 +7,7 @@ window.CALTRACK_SUPABASE = {
 };
 
 // ที่เก็บไฟล์ (Apps Script เดิม ลิงก์เดิม) — ใช้อัปโหลด/เปิดดูใบรับรองและแบบฟอร์มเท่านั้น
-window.CALTRACK_FILES = "https://script.google.com/macros/s/AKfycbyfCs-3aiVyNb2Tm2Rr8ng4pXiCwGeqTrpaSDhAb1qea-WYpv71WG7_edOynB_OsQ05XQ/exec";
+window.CALTRACK_FILES = "https://script.google.com/macros/s/AKfycbxIwbGu6SHC3D8AaJ6ScsR84v5iJ3LWixlQJp-nxUzEO7TuNvt-TDNUvHzbCVLj_9-X5A/exec";
 
 // ระบบเดิม (เก็บข้อมูลใน Google) — ไม่ใช้แล้ว เว้นว่างไว้
 window.CALTRACK_API = "";
