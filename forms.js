@@ -192,6 +192,12 @@ function calc(t,r){
  const c=parseFloat(m[2]),o=m[1];return{ok:o==='<='?v<=c:o==='>='?v>=c:o==='<'?v<c:o==='>'?v>c:v===c}}
 const used=rec=>rec.rows.filter(r=>Object.entries(r).some(([k,v])=>typeof v!=='boolean'&&!(rec.type==='A'&&k==='res')&&String(v??'').trim()));
 // F 36 05 033: แถวที่ “ต่อแถวบน” ใช้เกณฑ์ของรายการเดียวกัน · สูตรผลการสอบเทียบตามที่เลือก (ค่าที่ซ่อน ไม่ถูกบันทึก)
+// ชื่อหัวคอลัมน์ F 36 05 033 — ใช้ชุดเดียวกันทั้งหน้ากรอกและเอกสารที่พิมพ์
+const isMass=u=>/^\s*(µg|ug|mg|g|kg)\s*$/i.test(u||'');
+function labA(f){f=f||{};const m=isMass(f.unit),ue=f.unitE||f.unit||'',u=f.unit||'',pu=x=>x?' ('+x+')':'';
+ return{it:'รายการทวนสอบ',sub:'รายการย่อย',crit:'เกณฑ์การพิจารณา'+(ue?' (±'+ue+')':''),cert:'ผลที่ได้จากใบ Certificate'+pu(u),c1:f.c1||(m?'Conventional Mass':'True value'),c2:f.c2||(m?'Displayed Value':'Measured value'),
+  x:'Error (X)'+pu(ue),u:'Uncertainty (U)'+pu(ue),sum:'ผลการสอบเทียบ '+(f.fx==='sum'?'|X+U|':'|X|+U')+pu(ue),res:'ผลการทวนสอบ',note:'หมายเหตุ'}}
+const nil=v=>!String(v??'').trim()||/^[-–—.]+$/.test(String(v).trim());
 function prepA(rec){if(rec.type!=='A')return;let ic='';const hid=(r,k,v)=>Object.defineProperty(r,k,{value:v,configurable:true,writable:true,enumerable:false});
  rec.rows.forEach(r=>{if(r.pt!=null&&r.sub==null){r.sub=r.pt;delete r.pt}const c=String(r.crit??'').trim();if(!r.cont||c)ic=c;hid(r,'_ic',ic);hid(r,'_fx',rec.f&&rec.f.fx)})}
 const nSec=T=>1+((T&&T.parts)||[]).length;
@@ -435,7 +441,7 @@ Q('#ftb').addEventListener('click',e=>{const b=e.target.closest('button');if(!b|
   log('ลบแบบฟอร์ม',TB.doc,{ชื่อ:TB.label},null);FT.splice(TBI,1);TB=null;TBI=-1;Q('#ftb').classList.remove('on');reg();fir();toast('ลบแบบฟอร์มแล้ว')}
  else if(b.id==='tbclose'){TB=null;Q('#ftb').classList.remove('on')}});
 
-const inp=(k,l,t,li,v,at)=>/^(evalP|apprP|prePos|rvwPos|aprPos)$/.test(k)||/data-sf="p"/.test(at||'')?`<div><label>${l}</label>${PTA(at,v)}</div>`:`<div><label>${l}</label><input ${at} ${t?`type="${t}"`:''} ${li?`list="${li}"`:''} value="${E(v)}"></div>`;
+const inp=(k,l,t,li,v,at)=>/^c[12]$/.test(k)&&cur&&cur.type==='A'?`<div><label>${l}</label><input ${at} list="${li}" value="${E(v)}" placeholder="${E(labA(cur.f)[k])}"></div>`:/^(evalP|apprP|prePos|rvwPos|aprPos)$/.test(k)||/data-sf="p"/.test(at||'')?`<div><label>${l}</label>${PTA(at,v)}</div>`:`<div><label>${l}</label><input ${at} ${t?`type="${t}"`:''} ${li?`list="${li}"`:''} value="${E(v)}"></div>`;
 function draw(){if(cur.type==='X')return drawX();const t=cur.type,f=cur.f,h=cur.h,T=TY[t],A=t==='A',B=t==='B';if(A){prepA(cur);if(f.maker&&!f.other){f.other=f.maker;delete f.maker}}
  const pick=`<div><label>ดึงข้อมูลจากทะเบียนเครื่องมือ</label><select id="fpick"><option value="">— กรอกเอง —</option>${D.map(i=>`<option value="${E(i.id)}">${E(i.id)} · ${E(i.name)}</option>`).join('')}</select></div>`;
  const rows=cur.rows.map((r,i)=>`<tr>${COLS[t].map(([k])=>`<td><input data-r="${i}" data-c="${k}" value="${E(r[k])}" inputmode="${['pt','param','item','it','sub','note','x'].includes(k)||(t!=='B'&&k==='crit')?'text':'decimal'}" style="width:${['pt','param','item'].includes(k)?'230px':k==='it'||k==='note'?'160px':(t==='C'&&k==='crit')||k==='sub'?'110px':'88px'}"></td>`).join('')}${t==='C'?`<td><select data-r="${i}" data-c="res"><option value="">อัตโนมัติ</option><option ${r.res==='PASS'?'selected':''}>PASS</option><option ${r.res==='REJECT'?'selected':''}>REJECT</option></select></td>`:''}${A?`<td><select data-r="${i}" data-c="res" aria-label="ผลการทวนสอบ"><option value="">อัตโนมัติ</option><option value="PASS" ${r.res==='PASS'?'selected':''}>ยอมรับ</option><option value="REJECT" ${r.res==='REJECT'?'selected':''}>ไม่ยอมรับ</option><option value="NA" ${r.res==='NA'?'selected':''}>— ไม่ติ๊ก</option></select></td><td style="text-align:center"><input type="checkbox" data-r="${i}" data-c="cont" ${r.cont?'checked':''} aria-label="ต่อจากแถวบน" title="ต่อจากรายการแถวบน (รวมช่องรายการ/เกณฑ์)"></td>`:''}<td id="o${i}"></td><td><button class="go alt sm" data-del="${i}" aria-label="ลบแถว">✕</button></td></tr>`).join('');
@@ -447,8 +453,8 @@ function draw(){if(cur.type==='X')return drawX();const t=cur.type,f=cur.f,h=cur.
  <div class="fgrid">${pick}${INFO[t].map(([k,l,ty,li])=>inp(k,l,ty,li,f[k],`data-k="${k}"`)).join('')}</div>
  ${A?`<div class="tg" style="flex-wrap:wrap;gap:6px 18px;margin:0 0 12px"><label><input type="checkbox" data-k="accr" ${f.accr?'checked':''}> ได้รับการรับรอง ISO/IEC 17025</label><label><input type="checkbox" data-k="evid" ${f.evid?'checked':''}> มีหลักฐานการประเมินว่าปฏิบัติสอดคล้องกับ ISO/IEC 17025</label><label><input type="checkbox" data-k="mfr" ${f.mfr?'checked':''}> เป็นผู้ผลิต หรือผู้แทนจำหน่าย</label>
   <label>สูตรผลการสอบเทียบ <select data-k="fx" style="min-height:34px;padding:4px 8px"><option value="">|X| + U (แนะนำ · ปลอดภัยกว่า)</option><option value="sum" ${f.fx==='sum'?'selected':''}>|X + U| (ตามแบบฟอร์มเดิม)</option></select></label></div>`:''}
- <b>${A?'รายการทวนสอบ / จุดสอบเทียบ':B?'ผลการประเมิน (ค่าอ่านได้ ± U ต้องอยู่ในช่วงเกณฑ์)':'รายละเอียดการประเมิน'}</b> <span class="lead" style="font-size:.85rem">${A?'ผ่านเมื่อ |True − Measured| + U ≤ เกณฑ์':B?'ผ่านเมื่อ (X − U) ≥ เกณฑ์ต่ำสุด และ (X + U) ≤ เกณฑ์สูงสุด':'ระบบตัดสินอัตโนมัติจากเกณฑ์ที่เป็น <=, <, >=, > ถ้าเลือก PASS/REJECT เองจะใช้ค่าที่เลือก'}</span>
- <div class="tw" style="margin:8px 0"><table style="min-width:0"><thead><tr>${COLS[t].map(c=>`<th>${A&&c[0]==='tv'?E(f.c1||'ค่าอ้างอิง'):A&&c[0]==='mv'?E(f.c2||'ค่าที่อ่านได้'):c[1]}</th>`).join('')}${t==='C'?'<th>ผล</th>':''}${A?'<th>ผลทวนสอบ</th><th title="ต่อจากรายการแถวบน">ต่อแถวบน</th>':''}<th>ผลตัดสิน</th><th></th></tr></thead><tbody id="frows">${rows}</tbody></table></div>
+ <b>${A?'รายการทวนสอบ / จุดสอบเทียบ':B?'ผลการประเมิน (ค่าอ่านได้ ± U ต้องอยู่ในช่วงเกณฑ์)':'รายละเอียดการประเมิน'}</b> <span class="lead" style="font-size:.85rem">${A?'ยอมรับเมื่อ ผลการสอบเทียบ ≤ เกณฑ์การพิจารณา · หัวคอลัมน์ตรงกับเอกสารที่พิมพ์':B?'ผ่านเมื่อ (X − U) ≥ เกณฑ์ต่ำสุด และ (X + U) ≤ เกณฑ์สูงสุด':'ระบบตัดสินอัตโนมัติจากเกณฑ์ที่เป็น <=, <, >=, > ถ้าเลือก PASS/REJECT เองจะใช้ค่าที่เลือก'}</span>
+ <div class="tw" style="margin:8px 0"><table style="min-width:0"><thead><tr>${COLS[t].map(c=>`<th data-hc="${c[0]}">${A?E(labA(f)[{tv:'c1',mv:'c2'}[c[0]]||c[0]])+(c[0]==='x'?'<br><small style="font-weight:400">ว่าง = คำนวณให้</small>':''):c[1]}</th>`).join('')}${t==='C'?'<th>ผล</th>':''}${A?'<th>ผลการทวนสอบ</th><th title="ต่อจากรายการแถวบน">ต่อแถวบน</th>':''}<th>ผลตัดสิน</th><th></th></tr></thead><tbody id="frows">${rows}</tbody></table></div>
  <p style="margin:0 0 12px"><button class="go alt sm adm" data-add="1">+ เพิ่มแถว</button> ${presets}</p>
  <div class="verdict p-out" id="fov" style="margin:0 0 12px"></div>
  ${sum?`<b>สรุปผลการประเมิน</b><div style="margin:6px 0 12px">${sum}</div>`:''}
@@ -471,6 +477,7 @@ function upd(){wdNote();prepA(cur);const t=cur.type;if(t==='X')updX();else cur.r
  document.querySelectorAll('#fed input[name=conc]').forEach(x=>x.checked=x.value===cur.f.conc)}
 
 Q('#fed').addEventListener('input',e=>{const x=e.target,d=x.dataset;if(!cur)return;
+ if(cur.type==='A'&&/^(unit|unitE|c1|c2|fx)$/.test(d.k||''))setTimeout(()=>{const L=labA(cur.f);document.querySelectorAll('#fed th[data-hc]').forEach(th=>{const k=th.dataset.hc,t=L[{tv:'c1',mv:'c2'}[k]||k];if(t&&k!=='x')th.textContent=t;else if(k==='x')th.firstChild.textContent=t});document.querySelectorAll('#fed [data-k=c1],#fed [data-k=c2]').forEach(i=>i.placeholder=L[i.dataset.k])},0);
  if(d.k){if(x.type==='checkbox')cur.f[d.k]=x.checked;else{cur.f[d.k]=x.value;if(d.k==='conc')cur.f.concM=1}}
  else if(d.h)cur.h[d.h]=x.value;else if(d.s!==undefined)cur.f.sg[+d.s][d.sf]=x.value;else if(d.r!==undefined)secRows(cur,+(d.p||0))[+d.r][d.c]=x.type==='checkbox'?x.checked:x.value;else return;upd()});
 function fillFrom(i){const f=cur.f,b=String(i.brand||'').split('/').map(s=>s.trim());
@@ -562,19 +569,19 @@ function sign(rec){const f=rec.f,B=rec.type==='B',A=rec.type==='A',c=(l,n,p,d)=>
  return`<table class="sg"><tr>${c(B?'ผู้ตรวจสอบ':'ผู้ประเมิน',f.evalN,f.evalP,f.evalD)}${B?'':c('ผู้อนุมัติ',f.apprN,f.apprP,f.apprD)}</tr></table>`}
 const line=(a,b)=>`<tr><td>${a}</td></tr>`;
 function body(rec){if(rec.type==='X')return bodyX(rec);const f=rec.f,t=rec.type,R=used(rec),own=`<p><b>ผู้รับผิดชอบดูแลเครื่องมือ</b> ${V(f.owner)}</p>`,note=`<p><b>หมายเหตุ</b> ${V(f.note)}</p>`;
- if(t==='A'){prepA(rec);const U=E(f.unit),UE=E(f.unitE||f.unit),pu=x=>x?' ('+x+')':'',fxs=f.fx==='sum'?'|X+U|':'|X|+U';
+ if(t==='A'){prepA(rec);const L=labA(f);
   // รวมช่อง “รายการทวนสอบ” และ “เกณฑ์” ของแถวที่ต่อจากแถวบน (เหมือนเซลล์ผสานในแบบฟอร์มเดิม)
   const G=[];R.forEach(r=>{if(r.cont&&G.length)G[G.length-1].push(r);else G.push([r])});
   const rs=G.map(g=>{const its=g.map(r=>r.it).filter(v=>String(v||'').trim()),mc=g.slice(1).every(r=>!String(r.crit??'').trim());
    return g.map((r,j)=>{const c=calc('A',r),cell=j===0?`<td rowspan="${g.length}" class="l" style="vertical-align:top">${its.map(E).join('<br>')}</td>`:'',cr=mc?(j===0?`<td rowspan="${g.length}">${E(r.crit)}</td>`:''):`<td>${E(r.crit)}</td>`;
     return`<tr>${cell}<td>${E(r.sub)}</td>${cr}<td>${E(r.tv)}</td><td>${E(r.mv)}</td><td>${c.err??''}</td><td>${E(r.u)}</td><td>${c.sum??''}</td><td>${c.ok===true?'✓':''}</td><td>${c.ok===false?'✓':''}</td><td class="l">${E(r.note)}</td></tr>`}).join('')}).join('');
-  const oth=f.other||f.maker||'';
+  const oth=nil(f.other||f.maker)?'':(f.other||f.maker);
   return`<div class="a33" style="margin-top:8px"><p>ชื่อเครื่องมือ : ${V(f.name)} หมายเลขครุภัณฑ์: ${V(f.asset)} ที่ตั้ง: ${V(f.room)}</p>
 <p>Manufacture/ ยี่ห้อ: ${V(f.brand)} Model/ รุ่น: ${V(f.model)} หมายเลขเครื่อง (S/N) ${V(f.serial)} พิสัยการใช้งาน: ${V(f.range)} วันที่สอบเทียบ ${V(dl(f.calDate))}</p>
 <p>เลขที่ใบรายงานผลการสอบเทียบ: ${V(f.certNo)} ชื่อห้องปฏิบัติการสอบเทียบ/บริษัท: ${V(f.calco)}</p>
 <p>${ck(f.accr)} ได้รับการรับรอง ISO/ IEC 17025 &nbsp;${ck(f.evid)} มีหลักฐานการประเมินว่าปฏิบัติสอดคล้องกับ ISO/IEC 17025 &nbsp;${ck(f.mfr)} เป็นผู้ผลิต หรือผู้แทนจำหน่าย &nbsp;${ck(!!oth)} อื่นๆ (ระบุ) ${V(oth)}</p></div>
-<table class="dt" style="margin-top:4px"><thead><tr><th colspan="2" rowspan="2">รายการทวนสอบ</th><th rowspan="2">เกณฑ์การพิจารณา<br>${UE?'(±'+UE+')':''}</th><th colspan="2">ผลที่ได้จากใบ Certificate${pu(U)}</th><th rowspan="2">Error<br>(X)${pu(UE)}</th><th rowspan="2">Uncertainty<br>(U)${pu(UE)}</th><th rowspan="2">ผลการสอบเทียบ<br>${fxs}${pu(UE)}</th><th colspan="2">ผลการทวนสอบ</th><th rowspan="2">หมายเหตุ</th></tr>
-<tr><th>${E(f.c1||'True value')}</th><th>${E(f.c2||'Measured value')}</th><th>ยอมรับ</th><th>ไม่ยอมรับ</th></tr></thead><tbody>${rs}
+<table class="dt" style="margin-top:4px"><thead><tr><th colspan="2" rowspan="2">${L.it}</th><th rowspan="2">${E(L.crit)}</th><th colspan="2">${E(L.cert)}</th><th rowspan="2">${E(L.x)}</th><th rowspan="2">${E(L.u)}</th><th rowspan="2">${E(L.sum)}</th><th colspan="2">${L.res}</th><th rowspan="2">${L.note}</th></tr>
+<tr><th>${E(L.c1)}</th><th>${E(L.c2)}</th><th>ยอมรับ</th><th>ไม่ยอมรับ</th></tr></thead><tbody>${rs}
 <tr><td colspan="11" class="l"><b>สรุปผลการประเมิน</b> ${ck(f.conc==='ok')} <b>ใช้งานได้</b> ${ck(f.conc==='range')} <b>ใช้งานได้เฉพาะในช่วง</b> ${V(f.rangeTxt)} ${ck(f.conc==='no')} <b>ห้ามใช้งาน ติดป้ายและ/หรือนำออกไปจากจุดใช้งาน</b></td></tr></tbody></table>
 <p>หมายเหตุ ${f.note?E(f.note)+' · ':''}${E(TY.A.foot||'')}</p>${sign(rec)}`}
  if(t==='B'){let ps='';const rs=R.map(r=>{const c=calc('B',r),s=r.sp===ps?'':r.sp;ps=r.sp;return`<tr><td>${E(s)}</td><td>${E(r.param)}</td><td>${E(r.x)}</td><td>${E(r.err)}</td><td>${E(r.u)}</td><td>${c.rng??''}</td><td>${r.min!==''||r.max!==''?E(r.min)+' - '+E(r.max):''}</td><td>${c.ok===true?'✓':''}</td><td>${c.ok===false?'✓':''}</td></tr>`}).join('');
@@ -592,9 +599,12 @@ const hasTHS=(()=>{let r=null;return()=>{if(r!=null)return r;try{const c=documen
 const fsz=(h,k)=>k===1?h:String(h).replace(/font-size:\s*([\d.]+)pt/g,(m,v)=>'font-size:'+(Math.round(+v*k*2)/2)+'pt');
 const thsify=h=>fsz(String(h).replace(/font-family:\s*Sarabun[^;}"]*/g,'font-family:'+THF),THK);
 // เนื้อหาเอกสาร: ฉบับที่แก้แบบ Word (ถ้ามี) หรือสร้างจากข้อมูลที่กรอก · คืนค่าในหน่วยของโหมดฟอนต์ที่ขอ
-function inner(rec,ths){if(rec.doc){const f=rec.docF==='ths';return f===ths?rec.doc:fsz(rec.doc,ths?THK:1/THK)}const h=head(rec)+body(rec);return ths?fsz(h,THK):h}
+const ARD=h=>String(h).replace(/[๐-๙]/g,d=>'๐๑๒๓๔๕๖๗๘๙'.indexOf(d));
+function inner(rec,ths){return ARD(inner0(rec,ths))}
+function inner0(rec,ths){if(rec.doc){const f=rec.docF==='ths';return f===ths?rec.doc:fsz(rec.doc,ths?THK:1/THK)}const h=head(rec)+body(rec);return ths?fsz(h,THK):h}
 const WCSS='@page Section1{size:21cm 29.7cm;margin:1.2cm 1.4cm 1.2cm 1.4cm}div.Section1{page:Section1}';
-function html(rec,w,o={}){const ths=o.ths!=null?o.ths:(w?true:hasTHS()),css=ths?thsify(CSS):CSS;
+function html(rec,w,o={}){return ARD(html0(rec,w,o))}
+function html0(rec,w,o={}){const ths=o.ths!=null?o.ths:(w?true:hasTHS()),css=ths?thsify(CSS):CSS;
  return`<!DOCTYPE html><html lang="th" ${w?'xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"':''}><head><meta charset="utf-8"><title>${E(rec.h.doc)} ${E(rec.f.name)}</title>${w?'<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->':'<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">'}<style>${css}${w?WCSS:''}</style>${o.extra||''}</head><body>${w?'<div class="Section1">':''}${inner(rec,ths)}${w?'</div>':''}</body></html>`}
 function print(rec){const w=window.open('','_blank');if(!w){toast('เบราว์เซอร์บล็อกหน้าต่างใหม่ — กรุณาอนุญาต pop-up แล้วลองอีกครั้ง');return}
  w.document.open();w.document.write(html(rec));w.document.close();setTimeout(()=>{w.focus();w.print()},900)}
